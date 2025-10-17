@@ -13,3 +13,4 @@ tmp/
 .cache/
 .DS_Store
 *.log
+! .env.example
