@@ -139,8 +139,8 @@ Used AI assistants to:
 * **Harden logging** and error messages to make debugging faster without leaking secrets. 
 * **Refactor small utilities** (e.g., tiny image fallback, cleaner auth helpers), keeping business logic intact and reviewed by a human.  
 * **Generate boilerplate** for routes and emails, then human-edited for correctness and security (JWT handling, SMTP).
-* **Standerize the code base/vars**
-* **Write this README**
+* **Standerize the code base/vars.**
+* **Write this README.**
  
 
 
