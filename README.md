@@ -179,9 +179,9 @@ npm test
 
 ## 10) AI
 
-AI assistance was used to:
+AI was used to:
 
-* **Normalize formatting** and **add inline comments** for clarity and maintainability.
+* **Normalize formatting** and **add inline comments** for clarity and maintainability across all files.
 * **Harden logging and error messages** for debugging without exposing sensitive data.
 * **Refactor small utilities** (e.g., image fallback, auth helpers) with human review for accuracy and security.
 * **Generate boilerplate routes and emails**, edited for correctness (JWT, SMTP).
