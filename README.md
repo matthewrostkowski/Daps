@@ -133,7 +133,7 @@ npm test
 
 ## 10) AI
 
-We used AI assistants to:
+Used AI assistants to:
 
 * **Normalize formatting** and **add inline comments** for readability/maintainability.
 * **Harden logging** and error messages to make debugging faster without leaking secrets. 
