@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# environment and secrets
+.env
+.env.*
+server/cookies.txt
+
+# build & system files
+dist/
+build/
+tmp/
+.cache/
+.DS_Store
+*.log

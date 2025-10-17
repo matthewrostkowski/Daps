@@ -1,0 +1,136 @@
+// prisma/schema.prisma  (PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  firstName       String
+  lastName        String
+  passwordHash    String
+  emailVerifiedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  offers             Offer[]
+  emailVerifications EmailVerification[]
+  passwordResets     PasswordReset[]
+  loginEvents        LoginEvent[]
+
+  @@index([email])
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model LoginEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Athlete {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  team      String
+  league    String
+  imageUrl  String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  games  Game[]
+  offers Offer[]
+}
+
+model Game {
+  id        String   @id @default(cuid())
+  athleteId String
+  date      DateTime
+  opponent  String
+  venue     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  athlete Athlete @relation(fields: [athleteId], references: [id])
+  offers  Offer[]
+
+  @@index([athleteId, date])
+}
+
+enum OfferStatus {
+  pending
+  approved
+  declined
+}
+
+model Offer {
+  id              String      @id @default(cuid())
+  userId          String
+  athleteId       String
+  gameId          String?
+  description     String?
+  amount          Int?
+  offered         Int?
+  customerName    String?
+  customerEmail   String?
+  customerPhone   String?
+  gameDesc        String?
+  expDesc         String?
+  expType         String?
+  paymentLast4    String?
+  paymentMethod   String?
+  submittedById   String?
+  status          OfferStatus @default(pending)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  athlete Athlete @relation(fields: [athleteId], references: [id])
+  game    Game?   @relation(fields: [gameId], references: [id])
+
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  body      String
+  offerId   String?
+  createdAt DateTime @default(now())
+
+  offer Offer? @relation(fields: [offerId], references: [id])
+}

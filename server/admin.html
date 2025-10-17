@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Daps Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --container:1160px;
+    --radius:12px;
+    --line:#EDEEF1;
+    --ink:#0A0A0B;
+    --muted:#6B7280;
+    --chip:#F7F8FA;
+    --chip-border:#E5E7EB;
+    --cta-a:#DAFA22; --cta-b:#64FA00;
+    --ok:#12B76A; --bad:#EF4444; --warn:#FDB022;
+    --shadow-1:0 2px 2px rgba(16,24,40,.04), 0 10px 20px rgba(16,24,40,.07);
+    --shadow-2:0 8px 24px rgba(16,24,40,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--ink); background:#fff;
+    font-family:Poppins,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  body.no-scroll{overflow:hidden}
+
+  header{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--line)}
+  .bar{max-width:var(--container);margin:auto;display:flex;align-items:center;gap:12px;padding:14px 20px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand img{height:30px;width:auto}
+  .beta{font-size:12px;font-weight:800;color:#fff;background:#FF6000;padding:2px 8px;border-radius:6px}
+
+  .wrap{max-width:var(--container);margin:auto;padding:20px;display:grid;grid-template-columns:240px 1fr;gap:20px}
+  @media (max-width:1000px){.wrap{grid-template-columns:1fr}}
+  .side{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;box-shadow:var(--shadow-1);height:max-content;position:sticky;top:72px}
+  .main{min-width:0}
+
+  .nav{display:flex;flex-direction:column;gap:6px}
+  .nav button{
+    appearance:none;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;
+    text-align:left;font-weight:800;cursor:pointer
+  }
+  .nav button[aria-current="page"]{background:#111;color:#fff;border-color:#111}
+  .nav small{display:block;color:var(--muted);font-weight:700}
+
+  .head{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:12px}
+  h1{font-size:26px;margin:0;font-weight:900;letter-spacing:-.01em}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border-radius:999px;
+        border:1px solid var(--chip-border);background:var(--chip);font-weight:800;cursor:pointer}
+  .chip[aria-pressed="true"]{background:#111;border-color:#111;color:#fff}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-1);padding:12px}
+  .search{position:relative;flex:1}
+  .search input{width:100%;height:38px;border:1px solid var(--line);border-radius:999px;padding:0 42px 0 12px}
+  .search svg{position:absolute;right:12px;top:50%;transform:translateY(-50%);opacity:.55}
+
+  .table-wrap{overflow:auto}
+  table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+  thead th{
+    text-align:left;font-size:12px;color:#87909A;font-weight:900;
+    padding:10px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:1;
+    white-space:nowrap;
+  }
+  thead th.sortable{cursor:pointer}
+  thead th .sort{margin-left:6px;font-size:11px;line-height:1;opacity:.35;display:inline-block;user-select:none}
+  thead th[aria-sort="asc"] .sort, thead th[aria-sort="desc"] .sort{opacity:.9}
+  tbody td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tbody tr:hover{background:#FAFBFC}
+
+  .cell{min-width:0}
+  .stack{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .primary{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+  .secondary{color:var(--muted);font-family:Manrope,system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+  .avatar{width:26px;height:26px;border-radius:6px;object-fit:cover;background:#EEE;margin-right:8px;flex:none}
+
+  .pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line);font-weight:900;font-size:14px}
+  .pill.pending{background:#FEF3C7;color:#92400E;border-color:#FDE68A}
+  .pill.approved{background:#ECFDF3;color:#065F46;border-color:#A7F3D0}
+  .pill.declined{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
+  .money{font-weight:900;font-size:18px}
+
+  .btn{appearance:none;cursor:pointer;border-radius:999px;border:1px solid #111;background:#fff;color:#111;font-weight:900;height:34px;padding:0 12px;font-size:15px}
+  .btn:hover{background:#111;color:#fff}
+  .btn-cta{border:none;background:linear-gradient(90deg,var(--cta-a),var(--cta-b));color:#073b0f}
+  .btn-ghost{border:1px solid var(--line);background:#fff}
+  .btn-view{min-width:84px;text-align:center}
+
+  .actions-cell{position:relative}
+  .menu-btn{height:34px}
+  .menu{
+    position:absolute;right:10px;top:42px;max-height:220px;overflow:auto;
+    min-width:180px;background:#fff;border:1px solid var(--line);
+    border-radius:12px;box-shadow:var(--shadow-2);padding:6px;display:none;z-index:5
+  }
+  .menu.open{display:block}
+  .menu .item{display:flex;align-items:center;gap:8px;width:100%;border:none;background:#fff;padding:10px;border-radius:10px;cursor:pointer;font-weight:800}
+  .menu .item:hover{background:#F6F7FA}
+
+  .drawer{position:fixed;inset:0;background:rgba(17,24,39,.45);display:none;z-index:1000}
+  .drawer.open{display:flex}
+  .drawer .panel{margin-left:auto; width:520px; max-width:92vw; height:100%; background:#fff; border-left:1px solid var(--line); box-shadow:var(--shadow-2); padding:18px 18px 28px; overflow:auto}
+  .close-x{border:1px solid var(--line);background:#fff;font-size:20px;line-height:1;padding:6px;border-radius:8px;cursor:pointer}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}}
+  .ath-card{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .ath-card img{width:56px;height:56px;border-radius:12px;object-fit:cover;background:#EEE}
+
+  .field{margin:10px 0}
+  label{display:block;font-weight:900;margin-bottom:6px}
+  input[type=text], input[type=email], input[type=tel], input[type=password], select, textarea{
+    width:100%;height:42px;border:1px solid #D9DDE4;border-radius:12px;padding:0 12px;
+    font-family:Manrope,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+  }
+  textarea{height:100px;padding:10px 12px;resize:vertical}
+
+  footer{border-top:1px solid var(--line);background:#FAFBFC}
+  .foot{max-width:var(--container);margin:auto;padding:20px;color:#6B7280;font-size:14px}
+
+  #gate{position:fixed;inset:0;z-index:2000;background:#0b0c0d;display:grid;place-items:center;color:#fff}
+  
+  #adminToast{
+    position:fixed;bottom:24px;right:24px;background:#111;color:#fff;
+    padding:12px 18px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);
+    display:none;z-index:9999;font-weight:600;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <img src="./images/Daps-2 Copy.png" alt="Daps Bounty logo"><span class="beta">BETA</span>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <span id="adminEmail" class="secondary" style="font-family:Manrope">admin@daps.com</span>
+      <button id="logout" class="btn btn-ghost">Log out</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="side">
+    <div class="nav">
+      <button data-view="inbox" aria-current="page">Offers inbox<small id="countBadge"></small></button>
+      <button data-view="athletes">Athletes</button>
+      <button data-view="messages">Messaging</button>
+      <button data-view="settings">Settings</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section id="view-inbox">
+      <div class="head">
+        <h1>Offers</h1>
+        <div class="chips">
+          <button class="chip" data-status="all" aria-pressed="true">All</button>
+          <button class="chip" data-status="pending">Pending</button>
+          <button class="chip" data-status="approved">Approved</button>
+          <button class="chip" data-status="declined">Declined</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center">
+        <div class="search" style="flex:1">
+          <input id="search" type="search" placeholder="Search by name, email, athlete, team, game…"/>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M14.5 14.5l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <button id="exportCsv" class="btn">Export CSV</button>
+      </div>
+
+      <div class="card table-wrap">
+        <table id="tblOffers" aria-label="Offers table">
+          <colgroup>
+            <col style="width:14.2857%"><col style="width:14.2857%"><col style="width:14.2857%">
+            <col style="width:14.2857%"><col style="width:14.2857%"><col style="width:14.2857%"><col style="width:14.2857%">
+          </colgroup>
+          <thead><tr>
+            <th id="thStatus">Status</th>
+            <th id="thSubmitted" class="sortable" aria-sort="none">Submitted <span class="sort">▲▼</span></th>
+            <th>Customer</th><th>Athlete</th>
+            <th id="thOffer" class="sortable" aria-sort="none">Offer <span class="sort">▲▼</span></th>
+            <th>Actions</th><th>Details</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="view-athletes" style="display:none">
+      <div class="head">
+        <h1>Athletes</h1>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label class="btn btn-ghost" for="csvAth" style="margin-inline:auto">Upload CSV</label>
+          <input id="csvAth" type="file" accept=".csv" hidden>
+          <button id="addAthBtn" class="btn btn-cta">Add athlete</button>
+        </div>
+      </div>
+      
+      <div class="card table-wrap" style="margin-bottom:12px">
+        <table id="tblAthletes" aria-label="Athletes table">
+          <colgroup>
+            <col style="width:10%">
+            <col style="width:30%">
+            <col style="width:20%">
+            <col style="width:15%">
+            <col style="width:15%">
+            <col style="width:10%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Team</th>
+              <th>League</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card" id="athFormWrap" style="margin-top:12px;display:none">
+        <h2 style="margin:4px 0 8px;font-weight:900">New athlete</h2>
+        <div class="field"><label>Name</label><input id="athName" type="text" placeholder="Anthony Edwards"></div>
+        <div class="field"><label>Team</label><input id="athTeam" type="text" placeholder="Timberwolves"></div>
+        <div class="field"><label>League</label><input id="athLeague" type="text" placeholder="NBA"></div>
+        <div class="field"><label>Image URL</label><input id="athImg" type="text" placeholder="./images/your-image.png"></div>
+        <div style="display:flex;gap:8px">
+          <button id="saveAth" class="btn btn-cta">Save</button>
+          <button id="cancelAth" class="btn btn-ghost">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-messages" style="display:none">
+      <div class="head"><h1>Messaging</h1></div>
+      <div class="card table-wrap">
+        <table id="tblMsgs">
+          <colgroup><col style="width:20%"><col style="width:30%"><col style="width:35%"><col style="width:15%"></colgroup>
+          <thead><tr><th>Sent</th><th>To</th><th>Subject</th><th>Offer</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="view-settings" style="display:none">
+      <div class="head"><h1>Settings</h1></div>
+      <div class="card">
+        <h2 style="margin:6px 0 10px;font-weight:900">Notifications</h2>
+        <div class="field"><label>Send new-offer email to</label><input id="notifEmail" type="email" placeholder="ops@daps.com"></div>
+        <div class="field"><label>Send SMS to (optional)</label><input id="notifPhone" type="tel" placeholder="+1 (555) 123-4567"></div>
+        <button id="saveSettings" class="btn btn-cta">Save changes</button>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h2 style="margin:6px 0 10px;font-weight:900">Danger zone</h2>
+        <button id="wipeDemo" class="btn" style="border-color:#b91c1c;color:#b91c1c">Clear demo data</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Offer details">
+    <div style="display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1">
+      <h2 style="margin:4px 0 10px;font-weight:900">Offer details</h2>
+      <button class="close-x" aria-label="Close" onclick="closeDrawer()">×</button>
+    </div>
+    <div id="detail"></div>
+  </div>
+</div>
+
+<div class="drawer" id="compose" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Email customer">
+    <div style="display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1">
+      <h2 style="margin:4px 0 10px;font-weight:900">Email customer</h2>
+      <button class="close-x" aria-label="Close" onclick="closeCompose()">×</button>
+    </div>
+    <div id="composeBody"></div>
+  </div>
+</div>
+
+<footer><div class="foot">© <span id="yr"></span> Daps – Admin</div></footer>
+
+<div id="adminToast"></div>
+
+<!-- Gate -->
+<div id="gate">
+  <form id="gateForm" onsubmit="handleGateSubmit(event)" style="width:min(420px,92vw);background:#111;border:1px solid #2a2a2a;border-radius:14px;padding:20px;box-shadow:0 30px 90px rgba(0,0,0,.35)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <img src="./images/Daps-2 Copy.png" alt="" style="height:28px"><span class="beta">BETA</span>
+    </div>
+    <h2 style="margin:0 0 6px;font-weight:900">Admin sign in</h2>
+    <p class="secondary" style="margin:0 0 12px;color:#C2C7CE">Restricted area – DAPS staff only.</p>
+    <div class="field"><label for="gateEmail">Email</label><input id="gateEmail" type="email" required></div>
+    <div class="field"><label for="gatePass">Password</label><input id="gatePass" type="password" required></div>
+    <button id="gateGo" class="btn" style="width:100%;margin-top:6px;background:linear-gradient(90deg,var(--cta-a),var(--cta-b));border:none">Enter</button>
+    <p id="gateErr" style="color:#fecaca;display:none;margin-top:8px">Invalid credentials</p>
+  </form>
+</div>
+
+<script>
+/*** CONFIG ***/
+const API = 'http://localhost:5175';
+const TOKEN = 'dev-admin-token';
+const AUTH_HEADERS = { 'Authorization': `Bearer ${TOKEN}` };
+
+console.log('═════════════════════════════════════════════════════════════');
+console.log('[admin] 🚀 ADMIN PANEL INITIALIZING');
+console.log('[admin] API:', API);
+console.log('[admin] TOKEN:', TOKEN);
+console.log('[admin] AUTH_HEADERS:', AUTH_HEADERS);
+console.log('═════════════════════════════════════════════════════════════');
+
+/* ---------- Gate ---------- */
+const gate = document.getElementById('gate');
+function handleGateSubmit(e){ e.preventDefault(); document.getElementById('gateGo').click(); }
+function doLogin(){
+  const em = document.getElementById('gateEmail').value.trim();
+  const pw = document.getElementById('gatePass').value;
+  if (em && pw === 'admin'){ 
+    document.getElementById('adminEmail').textContent = em; 
+    gate.style.display='none'; 
+    init(); 
+  }
+  else document.getElementById('gateErr').style.display='block';
+}
+document.getElementById('gateGo').onclick = doLogin;
+window.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('gateEmail').value = 'admin@daps.com';
+  document.getElementById('gatePass').value = 'admin';
+  document.getElementById('gateForm').addEventListener('keydown',(ev)=>{
+    if(ev.key==='Enter'){ ev.preventDefault(); doLogin(); }
+  });
+  document.getElementById('gateGo').focus();
+});
+
+document.getElementById('logout').onclick = () => location.reload();
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ---------- State ---------- */
+const q = s=>document.querySelector(s); 
+const qa=s=>[...document.querySelectorAll(s)];
+const store = { 
+  get(k,f){ try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f} }, 
+  set(k,v){ localStorage.setItem(k, JSON.stringify(v)) } 
+};
+
+let offers=[], athletes=[], settings=store.get('settings',{email:'ops@daps.com',phone:''}), messages=store.get('messages',[]);
+let sortState = { key:'submitted', dir:'desc' };
+
+/* ---------- Toast ---------- */
+function showToast(message) {
+  const toast = document.getElementById('adminToast');
+  toast.textContent = message;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
+/* ---------- API helpers ---------- */
+async function api(path, opts = {}) {
+  try {
+    console.log('[admin:api] ═══════════════════════════════════════════════════════════════');
+    console.log('[admin:api] 📡 Making request to:', path);
+    console.log('[admin:api] Method:', opts.method || 'GET');
+    console.log('[admin:api] Using AUTH_HEADERS:', AUTH_HEADERS);
+    
+    const response = await fetch(`${API}${path}`, { 
+      headers: { ...AUTH_HEADERS, ...(opts.headers || {}) }, 
+      ...opts 
+    });
+    
+    console.log('[admin:api] Response status:', response.status);
+    console.log('[admin:api] Response ok:', response.ok);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[admin:api] ❌ API error:', response.status, response.statusText);
+      console.error('[admin:api] Error response:', errorText);
+      console.log('[admin:api] ═══════════════════════════════════════════════════════════════');
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('[admin:api] ✅ Success, received data');
+    console.log('[admin:api] ═══════════════════════════════════════════════════════════════');
+    return data;
+  } catch (e) {
+    console.error('[admin:api] ❌ Request failed:', e);
+    console.log('[admin:api] ═══════════════════════════════════════════════════════════════');
+    throw e;
+  }
+}
+
+async function fetchOffers() {
+  try {
+    console.log('[admin] 📥 Fetching offers from API...');
+    const data = await api('/api/offers');
+    offers = data;
+    console.log('[admin] ✅ Loaded', offers.length, 'offers from API');
+    return offers;
+  } catch (error) {
+    console.error('[admin] ❌ Failed to fetch offers:', error);
+    showToast('Failed to load offers');
+    return [];
+  }
+}
+
+async function fetchAthletes() {
+  try {
+    console.log('[admin] 📥 Fetching athletes from API...');
+    const response = await fetch(`${API}/api/athletes`, {
+      headers: AUTH_HEADERS
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+    
+    const data = await response.json();
+    athletes = data;
+    console.log('[admin] ✅ Loaded', athletes.length, 'athletes from API');
+    console.log('[admin] Athletes data:', athletes);
+    return athletes;
+  } catch (error) {
+    console.error('[admin] ❌ Failed to fetch athletes:', error);
+    showToast('Failed to load athletes');
+    return [];
+  }
+}
+
+/* ---------- Helpers ---------- */
+function money(n){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n||0) }
+function timeAgo(ts){ const s=Math.round((Date.now()-ts)/1000); if(s<60)return s+'s ago'; if(s<3600)return Math.round(s/60)+'m ago'; if(s<86400)return Math.round(s/3600)+'h ago'; return Math.round(s/86400)+'d ago'; }
+function setView(view){
+  qa('[id^=view-]').forEach(s=>s.style.display='none');
+  q(`#view-${view}`).style.display='';
+  qa('.nav button').forEach(b=>b.setAttribute('aria-current', b.dataset.view===view ? 'page' : 'false'));
+}
+
+/* ---------- Sorting + render ---------- */
+function applySorting(rows){
+  if(sortState.key==='offer'){
+    return rows.sort((a,b)=> (sortState.dir==='asc' ? a.payment.offered-b.payment.offered : b.payment.offered-a.payment.offered));
+  }
+  return rows.sort((a,b)=> (sortState.dir==='asc' ? a.ts-b.ts : b.ts-a.ts));
+}
+
+function renderOffers(){
+  const tbody = q('#tblOffers tbody'); 
+  tbody.innerHTML='';
+  const query = q('#search').value.trim().toLowerCase();
+  const pressed = q('.chip[aria-pressed="true"]').dataset.status;
+
+  let rows = offers.slice();
+  if(pressed!=='all') rows = rows.filter(o=>o.status===pressed);
+  if(query){ rows = rows.filter(o=>JSON.stringify(o).toLowerCase().includes(query)); }
+  rows = applySorting(rows);
+  q('#countBadge').textContent = `${offers.filter(o=>o.status==='pending').length} pending`;
+
+  rows.forEach(o=>{
+    const tr = document.createElement('tr');
+    const ath = athletes.find(a=>a.id===o.athlete.id || a.slug===o.athlete.id);
+    const athleteInactive = ath?.active===false;
+
+    tr.innerHTML = `
+      <td class="cell"><span class="pill ${o.status}">${o.status[0].toUpperCase()+o.status.slice(1)}</span></td>
+      <td class="cell"><div class="stack"><div class="primary">${timeAgo(o.ts)}</div><div class="secondary">${new Date(o.ts).toLocaleDateString()}</div></div></td>
+      <td class="cell">
+        <div class="stack">
+          <div class="primary">${o.customer.name}</div>
+          <div class="secondary" title="${o.customer.email}">${o.customer.email}</div>
+        </div>
+      </td>
+      <td class="cell">
+        <div style="display:flex;align-items:center;min-width:0">
+          <img class="avatar" src="${o.athlete.image||ath?.imageUrl||'./images/Daps-2 Copy.png'}" alt="" onerror="this.onerror=null;this.src='./images/Daps-2 Copy.png'">
+          <div class="stack" style="min-width:0">
+            <div class="primary" title="${o.athlete.name}">${o.athlete.name}</div>
+            <div class="secondary">${o.athlete.team}${athleteInactive?' • Inactive':''}</div>
+          </div>
+        </div>
+      </td>
+      <td class="cell money">${money(o.payment.offered)}</td>
+      <td class="cell actions-cell">
+        <button class="btn menu-btn" aria-haspopup="true" aria-expanded="false">Actions ▾</button>
+        <div class="menu" role="menu">
+          <button class="item" role="menuitem" onclick='setStatus("${o.id}","approved")'>Approve</button>
+          <button class="item" role="menuitem" onclick='setStatus("${o.id}","declined")'>Decline</button>
+          ${o.status!=='pending'?`<button class="item" role="menuitem" onclick='setStatus("${o.id}","pending")'>Set pending</button>`:''}
+          <button class="item" role="menuitem" onclick='openCompose("${o.id}")'>Email customer</button>
+        </div>
+      </td>
+      <td class="cell"><button class="btn btn-view" onclick='openDrawer("${o.id}")'>View</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  qa('.menu-btn').forEach(btn=>{
+    btn.onclick = (e)=>{
+      closeAllMenus();
+      const menu = e.target.closest('td').querySelector('.menu');
+      menu.classList.add('open'); btn.setAttribute('aria-expanded','true');
+      e.stopPropagation();
+    };
+  });
+}
+
+function closeAllMenus(){
+  qa('.menu').forEach(m=>m.classList.remove('open'));
+  qa('.menu-btn').forEach(b=>b.setAttribute('aria-expanded','false'));
+}
+document.addEventListener('click', closeAllMenus);
+
+/* Sorting controls */
+q('#thSubmitted').addEventListener('click', ()=>{
+  sortState.key='submitted'; sortState.dir = (sortState.dir==='desc' ? 'asc' : 'desc');
+  q('#thSubmitted').setAttribute('aria-sort', sortState.dir);
+  q('#thOffer').setAttribute('aria-sort','none');
+  renderOffers();
+});
+q('#thOffer').addEventListener('click', ()=>{
+  sortState.key='offer'; sortState.dir = (sortState.dir==='desc' ? 'asc' : 'desc');
+  q('#thOffer').setAttribute('aria-sort', sortState.dir);
+  q('#thSubmitted').setAttribute('aria-sort','none');
+  renderOffers();
+});
+
+/* ---------- Drawer ---------- */
+function openDrawer(id){
+  const o = offers.find(x=>x.id===id); if(!o) return;
+  const d = q('#detail');
+  d.innerHTML = `
+    <div class="pill ${o.status}" style="margin:4px 0 10px">${o.status[0].toUpperCase()+o.status.slice(1)}</div>
+    <div class="stack" style="margin-bottom:8px"><div class="secondary">Submitted</div><div class="primary">${new Date(o.ts).toLocaleString()}</div></div>
+    <div class="stack" style="margin-bottom:8px"><div class="secondary">Offer</div><div class="primary">${money(o.payment.offered)}</div></div>
+    <div class="stack" style="margin-bottom:12px"><div class="secondary">Payment</div><div class="primary">${o.payment.method?.toUpperCase()||'—'} •••• ${o.payment.last4||'—'}</div></div>
+    <div class="stack" style="margin-bottom:8px"><div class="secondary">Customer</div><div class="primary">${o.customer.name} • ${o.customer.email}</div></div>
+    <div class="stack" style="margin-bottom:8px"><div class="secondary">Athlete</div><div class="primary">${o.athlete.name} • ${o.athlete.team}</div></div>
+    <div class="stack" style="margin-bottom:12px"><div class="secondary">Game</div><div class="primary">${o.game.desc}</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;position:sticky;bottom:0;background:#fff;padding-top:8px">
+      <button class="btn" onclick='setStatus("${o.id}","approved",true)'>Approve</button>
+      <button class="btn" onclick='setStatus("${o.id}","declined",true)'>Decline</button>
+      ${o.status!=='pending'?`<button class="btn" onclick='setStatus("${o.id}","pending",true)'>Set pending</button>`:''}
+      <button class="btn btn-ghost" onclick="closeDrawer()">Close</button>
+    </div>
+  `;
+  q('#drawer').classList.add('open');
+  document.body.classList.add('no-scroll');
+}
+function closeDrawer(){
+  q('#drawer').classList.remove('open');
+  document.body.classList.remove('no-scroll');
+}
+
+async function setStatus(id, status, andClose = false) {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[admin:setStatus] 🔄 Called with:', { id, status, andClose });
+  
+  try {
+    const url = `${API}/api/offers/${id}/status`;
+    console.log('[admin:setStatus] Target URL:', url);
+    console.log('[admin:setStatus] Using API base:', API);
+    console.log('[admin:setStatus] Using TOKEN:', TOKEN);
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${TOKEN}`
+    };
+    console.log('[admin:setStatus] Request headers:', JSON.stringify(headers, null, 2));
+    
+    const body = JSON.stringify({ status });
+    console.log('[admin:setStatus] Request body:', body);
+    
+    console.log('[admin:setStatus] 📡 Making API call...');
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: headers,
+      body: body
+    });
+    
+    console.log('[admin:setStatus] Response status:', response.status);
+    console.log('[admin:setStatus] Response ok:', response.ok);
+    console.log('[admin:setStatus] Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[admin:setStatus] ❌ Error response text:', errorText);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
+    }
+    
+    const updated = await response.json();
+    console.log('[admin:setStatus] ✅ Success! Updated offer:', updated);
+    
+    const index = offers.findIndex(o => o.id === id);
+    if (index >= 0) {
+      offers[index] = updated;
+      console.log('[admin:setStatus] Updated local offers array at index', index);
+    }
+    
+    renderOffers();
+    
+    if (andClose) {
+      closeDrawer();
+    }
+    
+    showToast(`Offer ${status}`);
+    console.log('[admin:setStatus] ✅ Complete');
+    console.log('═════════════════════════════════════════════════════════════');
+    
+  } catch (error) {
+    console.error('═════════════════════════════════════════════════════════════');
+    console.error('[admin:setStatus] ❌ ERROR:', error);
+    console.error('[admin:setStatus] Error message:', error.message);
+    console.error('[admin:setStatus] Error stack:', error.stack);
+    console.error('═════════════════════════════════════════════════════════════');
+    showToast(`Failed to update status: ${error.message}`);
+  }
+}
+
+window.setStatus = setStatus;
+window.openDrawer = openDrawer;
+window.closeDrawer = closeDrawer;
+
+/* ---------- Email compose ---------- */
+function openCompose(id){
+  const o = offers.find(x=>x.id===id); if(!o) return;
+  const wrap = q('#composeBody');
+  const subject = `Your Daps offer ${o.id} – Status: ${o.status[0].toUpperCase()+o.status.slice(1)}`;
+  const body = `Hi ${o.customer.name},\n\nThanks for your offer of ${money(o.payment.offered)} for ${o.athlete.name}. Current status: ${o.status}.\n\n– Daps Team`;
+  wrap.innerHTML = `
+    <div class="field"><label>To</label><input type="email" value="${o.customer.email}" readonly></div>
+    <div class="field"><label>Subject</label><input id="emSubj" type="text" value="${subject}"></div>
+    <div class="field"><label>Body</label><textarea id="emBody">${body}</textarea></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;position:sticky;bottom:0;background:#fff;padding-top:8px">
+      <button class="btn btn-cta" onclick='sendEmail("${o.id}")'>Send</button>
+      <a class="btn btn-ghost" href="mailto:${o.customer.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}">Open in email app</a>
+    </div>
+  `;
+  q('#compose').classList.add('open');
+  document.body.classList.add('no-scroll');
+}
+function closeCompose(){ q('#compose').classList.remove('open'); document.body.classList.remove('no-scroll'); }
+function sendEmail(id){
+  const o = offers.find(x=>x.id===id); if(!o) return;
+  const subj = q('#emSubj').value; const body = q('#emBody').value;
+  messages.unshift({id:'msg_'+Date.now(),offerId:id,to:o.customer.email,subject:subj,body,ts:Date.now()});
+  saveMessages(); closeCompose(); renderMessages(); setView('messages');
+}
+
+window.openCompose = openCompose;
+window.closeCompose = closeCompose;
+window.sendEmail = sendEmail;
+
+function saveMessages(){ store.set('messages',messages); }
+
+/* ---------- Messages ---------- */
+function renderMessages(){
+  const tb = q('#tblMsgs tbody'); tb.innerHTML='';
+  if(!messages.length){ tb.innerHTML = `<tr><td colspan="4" class="secondary" style="padding:16px;text-align:center">No messages yet.</td></tr>`; return; }
+  messages.forEach(m=>{
+    const tr=document.createElement('tr');
+    const offer = offers.find(o=>o.id===m.offerId);
+    tr.innerHTML = `
+      <td><div class="stack"><div class="primary">${timeAgo(m.ts)}</div><div class="secondary">${new Date(m.ts).toLocaleString()}</div></div></td>
+      <td><div class="stack"><div class="primary">${m.to}</div><div class="secondary">${offer?.customer?.name||''}</div></div></td>
+      <td class="cell"><div class="primary" title="${m.subject}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.subject}</div></td>
+      <td class="secondary">${offer?offer.athlete.name+' • '+money(offer.payment.offered):'—'}</td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+/* ---------- Athletes ---------- */
+function renderAthletes(){
+  console.log('[admin:renderAthletes] ═══════════════════════════════════════════════════════════════');
+  console.log('[admin:renderAthletes] 🎨 Starting render...');
+  console.log('[admin:renderAthletes] Athletes count:', athletes.length);
+  console.log('[admin:renderAthletes] Athletes:', athletes);
+  
+  const tbody = q('#tblAthletes tbody');
+  if (!tbody) {
+    console.error('[admin:renderAthletes] ❌ Table body not found!');
+    return;
+  }
+  
+  console.log('[admin:renderAthletes] Table body found, clearing...');
+  tbody.innerHTML = '';
+  
+  if (!athletes.length) {
+    console.log('[admin:renderAthletes] No athletes, showing empty state');
+    tbody.innerHTML = '<tr><td colspan="6" class="secondary" style="padding:16px;text-align:center">No athletes yet. Add one to get started!</td></tr>';
+    return;
+  }
+  
+  console.log('[admin:renderAthletes] Rendering', athletes.length, 'athletes...');
+  athletes.forEach((a, index) => {
+    console.log(`[admin:renderAthletes] Rendering athlete ${index}:`, a.name, '| id:', a.id, '| active:', a.active);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="cell">
+        <img class="avatar" src="${a.imageUrl||'./images/Daps-2 Copy.png'}" alt="${a.name}" onerror="this.onerror=null;this.src='./images/Daps-2 Copy.png'" style="width:40px;height:40px;margin:0">
+      </td>
+      <td class="cell">
+        <div class="primary">${a.name}</div>
+      </td>
+      <td class="cell">
+        <div class="secondary">${a.team}</div>
+      </td>
+      <td class="cell">
+        <div class="secondary">${a.league}</div>
+      </td>
+      <td class="cell">
+        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" ${a.active ? 'checked' : ''} onchange='toggleAth("${a.id}", this.checked)'>
+          <span class="secondary">${a.active ? 'Active' : 'Inactive'}</span>
+        </label>
+      </td>
+      <td class="cell">
+        <button class="btn" style="height:30px;font-size:13px" onclick='removeAth("${a.id}")'>Remove</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  console.log('[admin:renderAthletes] ✅ Render complete');
+  console.log('[admin:renderAthletes] ═══════════════════════════════════════════════════════════════');
+}
+
+async function toggleAth(id, on) {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[admin:toggleAth] 🔄 TOGGLE ATHLETE CALLED');
+  console.log('[admin:toggleAth] Athlete ID:', id);
+  console.log('[admin:toggleAth] New active state:', on);
+  console.log('[admin:toggleAth] API:', API);
+  console.log('[admin:toggleAth] TOKEN:', TOKEN);
+  
+  try {
+    const url = `${API}/api/offers/athletes/${id}`;
+    console.log('[admin:toggleAth] Target URL:', url);
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${TOKEN}`
+    };
+    console.log('[admin:toggleAth] Request headers:', JSON.stringify(headers, null, 2));
+    
+    const body = JSON.stringify({ active: on });
+    console.log('[admin:toggleAth] Request body:', body);
+    
+    console.log('[admin:toggleAth] 📡 Making fetch request...');
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: headers,
+      body: body
+    });
+    
+    console.log('[admin:toggleAth] Response status:', response.status);
+    console.log('[admin:toggleAth] Response ok:', response.ok);
+    console.log('[admin:toggleAth] Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[admin:toggleAth] ❌ Error response:', errorText);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
+    }
+    
+    const updated = await response.json();
+    console.log('[admin:toggleAth] ✅ Success! Updated athlete:', updated);
+    
+    const index = athletes.findIndex(x => x.id === id);
+    if (index >= 0) {
+      athletes[index] = updated;
+      console.log('[admin:toggleAth] Updated local athletes array at index', index);
+    } else {
+      console.warn('[admin:toggleAth] ⚠️ Athlete not found in local array!');
+    }
+    
+    console.log('[admin:toggleAth] 🎨 Re-rendering athletes...');
+    renderAthletes();
+    console.log('[admin:toggleAth] 🎨 Re-rendering offers...');
+    renderOffers();
+    showToast(`Athlete ${on ? 'activated' : 'deactivated'}`);
+    
+    console.log('[admin:toggleAth] ✅ Complete');
+    console.log('═════════════════════════════════════════════════════════════');
+  } catch (error) {
+    console.error('═════════════════════════════════════════════════════════════');
+    console.error('[admin:toggleAth] ❌ FAILED:', error);
+    console.error('[admin:toggleAth] Error name:', error.name);
+    console.error('[admin:toggleAth] Error message:', error.message);
+    console.error('[admin:toggleAth] Error stack:', error.stack);
+    console.error('═════════════════════════════════════════════════════════════');
+    showToast('Failed to update athlete: ' + error.message);
+    renderAthletes();
+  }
+}
+
+async function removeAth(id) {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[admin:removeAth] 🗑️ REMOVE ATHLETE CALLED');
+  console.log('[admin:removeAth] Athlete ID:', id);
+  
+  if (!confirm('Remove this athlete? This cannot be undone.')) {
+    console.log('[admin:removeAth] User cancelled removal');
+    console.log('═════════════════════════════════════════════════════════════');
+    return;
+  }
+  
+  try {
+    const url = `${API}/api/offers/athletes/${id}`;
+    console.log('[admin:removeAth] Target URL:', url);
+    
+    const headers = {
+      'Authorization': `Bearer ${TOKEN}`
+    };
+    console.log('[admin:removeAth] Request headers:', JSON.stringify(headers, null, 2));
+    
+    console.log('[admin:removeAth] 📡 Making DELETE request...');
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: headers
+    });
+    
+    console.log('[admin:removeAth] Response status:', response.status);
+    console.log('[admin:removeAth] Response ok:', response.ok);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[admin:removeAth] ❌ Error response:', errorText);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
+    }
+    
+    console.log('[admin:removeAth] ✅ Success!');
+    
+    athletes = athletes.filter(x => x.id !== id);
+    console.log('[admin:removeAth] Removed from local array, new count:', athletes.length);
+    
+    renderAthletes();
+    showToast('Athlete removed');
+    
+    console.log('[admin:removeAth] ✅ Complete');
+    console.log('═════════════════════════════════════════════════════════════');
+  } catch (error) {
+    console.error('═════════════════════════════════════════════════════════════');
+    console.error('[admin:removeAth] ❌ FAILED:', error);
+    console.error('[admin:removeAth] Error name:', error.name);
+    console.error('[admin:removeAth] Error message:', error.message);
+    console.error('[admin:removeAth] Error stack:', error.stack);
+    console.error('═════════════════════════════════════════════════════════════');
+    showToast('Failed to remove athlete: ' + error.message);
+  }
+}
+
+window.toggleAth = toggleAth;
+window.removeAth = removeAth;
+
+q('#addAthBtn').onclick = () => q('#athFormWrap').style.display = '';
+q('#cancelAth').onclick = () => q('#athFormWrap').style.display = 'none';
+q('#saveAth').onclick = async () => {
+  console.log('[admin:saveAth] ═══════════════════════════════════════════════════════════════');
+  console.log('[admin:saveAth] 💾 SAVE NEW ATHLETE CALLED');
+  
+  const name = q('#athName').value.trim();
+  const team = q('#athTeam').value.trim();
+  const league = q('#athLeague').value.trim();
+  const imageUrl = q('#athImg').value.trim();
+  
+  console.log('[admin:saveAth] Form data:', { name, team, league, imageUrl });
+  
+  if (!name) {
+    alert('Name is required');
+    return;
+  }
+  
+  try {
+    const url = `${API}/api/offers/athletes`;
+    console.log('[admin:saveAth] Target URL:', url);
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${TOKEN}`
+    };
+    console.log('[admin:saveAth] Request headers:', JSON.stringify(headers, null, 2));
+    
+    const body = JSON.stringify({ name, team, league, imageUrl });
+    console.log('[admin:saveAth] Request body:', body);
+    
+    console.log('[admin:saveAth] 📡 Making POST request...');
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    });
+    
+    console.log('[admin:saveAth] Response status:', response.status);
+    console.log('[admin:saveAth] Response ok:', response.ok);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[admin:saveAth] ❌ Error response:', errorText);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
+    }
+    
+    const newAthlete = await response.json();
+    console.log('[admin:saveAth] ✅ Success! New athlete:', newAthlete);
+    
+    athletes.push(newAthlete);
+    console.log('[admin:saveAth] Added to local array, new count:', athletes.length);
+    
+    renderAthletes();
+    q('#athFormWrap').style.display = 'none';
+    ['athName', 'athTeam', 'athLeague', 'athImg'].forEach(id => q('#' + id).value = '');
+    showToast('Athlete added');
+    
+    console.log('[admin:saveAth] ✅ Complete');
+    console.log('[admin:saveAth] ═══════════════════════════════════════════════════════════════');
+  } catch (error) {
+    console.error('[admin:saveAth] ═══════════════════════════════════════════════════════════════');
+    console.error('[admin:saveAth] ❌ FAILED:', error);
+    console.error('[admin:saveAth] Error message:', error.message);
+    console.error('[admin:saveAth] Error stack:', error.stack);
+    console.error('[admin:saveAth] ═══════════════════════════════════════════════════════════════');
+    alert('Failed to add athlete: ' + error.message);
+  }
+};
+
+q('#csvAth').onchange = (e) => {
+  console.log('[admin:csvImport] 📄 CSV file selected');
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const lines = reader.result.split(/\r?\n/).filter(Boolean);
+    console.log('[admin:csvImport] Processing', lines.length, 'lines');
+    let added = 0;
+    lines.forEach((line, i) => {
+      const [name, team, league, imageUrl] = line.split(',').map(s => s?.replace(/^"|"$|^\s+|\s+$/g, ''));
+      if (i === 0 && name?.toLowerCase() === 'name') {
+        console.log('[admin:csvImport] Skipping header row');
+        return;
+      }
+      if (!name) {
+        console.log('[admin:csvImport] Skipping empty line', i);
+        return;
+      }
+      
+      console.log('[admin:csvImport] Adding athlete:', name);
+      
+      fetch(`${API}/api/offers/athletes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${TOKEN}`
+        },
+        body: JSON.stringify({ name, team, league, imageUrl })
+      }).then(response => {
+        if (!response.ok) throw new Error('Failed');
+        return response.json();
+      }).then(newAthlete => {
+        athletes.push(newAthlete);
+        added++;
+        console.log('[admin:csvImport] ✅ Added:', name);
+      }).catch(err => {
+        console.error('[admin:csvImport] ❌ Failed to add:', name, err);
+      });
+    });
+    
+    setTimeout(() => {
+      renderAthletes();
+      alert(`Imported ${added} athletes`);
+      e.target.value = '';
+      console.log('[admin:csvImport] ✅ Import complete');
+    }, 1000);
+  };
+  reader.readAsText(file);
+};
+
+/* ---------- Settings ---------- */
+function renderSettings(){ 
+  q('#notifEmail').value = settings.email || ''; 
+  q('#notifPhone').value = settings.phone || ''; 
+}
+
+function saveSettings() {
+  settings.email = q('#notifEmail').value.trim();
+  settings.phone = q('#notifPhone').value.trim();
+  store.set('settings', settings);
+  showToast('Settings saved');
+}
+
+q('#saveSettings').onclick = saveSettings;
+q('#wipeDemo').onclick = () => {
+  if (confirm('Clear all demo data? This will reload the page.')) {
+    localStorage.clear();
+    location.reload();
+  }
+};
+
+/* ---------- Export CSV ---------- */
+q('#exportCsv').onclick = () => {
+  const csv = [
+    ['ID', 'Status', 'Submitted', 'Customer', 'Email', 'Phone', 'Athlete', 'Team', 'Game', 'Offer', 'Payment Method'].join(','),
+    ...offers.map(o => [
+      o.id,
+      o.status,
+      new Date(o.ts).toISOString(),
+      `"${o.customer.name}"`,
+      o.customer.email,
+      o.customer.phone || '',
+      `"${o.athlete.name}"`,
+      `"${o.athlete.team}"`,
+      `"${o.game.desc}"`,
+      o.payment.offered,
+      o.payment.method
+    ].join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `daps-offers-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+/* ---------- Nav & filters ---------- */
+qa('.nav button').forEach(b => b.onclick = () => setView(b.dataset.view));
+qa('.chip').forEach(c => c.onclick = () => {
+  qa('.chip').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  c.setAttribute('aria-pressed', 'true');
+  renderOffers();
+});
+q('#search').addEventListener('input', () => renderOffers());
+
+/* ---------- Init ---------- */
+async function init() {
+  console.log('[admin] ═════════════════════════════════════════════════════════════');
+  console.log('[admin] 🚀 INITIALIZING ADMIN PANEL...');
+  
+  try {
+    console.log('[admin] Step 1: Fetching athletes...');
+    await fetchAthletes();
+    console.log('[admin] ✅ Athletes fetched:', athletes.length);
+    console.log('[admin] Athletes data:', athletes);
+    
+    console.log('[admin] Step 2: Rendering athletes...');
+    renderAthletes();
+    console.log('[admin] ✅ Athletes rendered');
+    
+    console.log('[admin] Step 3: Fetching offers...');
+    await fetchOffers();
+    console.log('[admin] ✅ Offers fetched:', offers.length);
+    
+    console.log('[admin] Step 4: Rendering offers...');
+    renderOffers();
+    console.log('[admin] ✅ Offers rendered');
+    
+    console.log('[admin] Step 5: Loading settings...');
+    settings = store.get('settings', { email: 'ops@daps.com', phone: '' });
+    renderSettings();
+    
+    console.log('[admin] Step 6: Loading messages...');
+    messages = store.get('messages', []);
+    renderMessages();
+    
+    console.log('[admin] Step 7: Setting view to inbox...');
+    setView('inbox');
+    q('#thSubmitted').setAttribute('aria-sort', 'desc');
+    
+    console.log('[admin] ✅✅✅ INITIALIZATION COMPLETE ✅✅✅');
+    console.log('[admin] ═════════════════════════════════════════════════════════════');
+  } catch (error) {
+    console.error('[admin] ═════════════════════════════════════════════════════════════');
+    console.error('[admin] ❌❌❌ INITIALIZATION FAILED ❌❌❌');
+    console.error('[admin] Error:', error);
+    console.error('[admin] Error message:', error.message);
+    console.error('[admin] Error stack:', error.stack);
+    console.error('[admin] ═════════════════════════════════════════════════════════════');
+    showToast('Failed to initialize admin panel');
+  }
+}
+
+// Auto-refresh offers every 10 seconds
+setInterval(async () => {
+  console.log('[admin] 🔄 Auto-refreshing offers...');
+  try {
+    await fetchOffers();
+    renderOffers();
+  } catch (error) {
+    console.error('[admin] ❌ Auto-refresh failed:', error);
+  }
+}, 10000);
+</script>
+</body>
+</html>

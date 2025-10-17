@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daps • Account</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --beta:#FF6000;
+      --cta-a:#DAFA22;
+      --cta-b:#64FA00;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04), 0 10px 20px rgba(16,24,40,.07);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family:Poppins,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink); background:#FAFBFC;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Header */
+    .site-header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
+    .bar{max-width:var(--container);margin:auto;display:flex;align-items:center;gap:12px;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .brand .logo{height:30px;width:auto}
+    .beta{font-size:12px;font-weight:700;color:#fff;background:var(--beta);padding:2px 8px;border-radius:6px}
+
+    /* Main Content */
+    .main{max-width:var(--container);margin:auto;padding:40px 20px 80px}
+    h1{font-weight:900;font-size:40px;letter-spacing:-.02em;margin:0 0 12px;text-align:center}
+    .subtitle{color:#6B7280;font-size:16px;margin:0 0 40px;text-align:center}
+
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1000px;margin:0 auto}
+    @media (max-width:900px){.row{grid-template-columns:1fr}}
+
+    .card{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-1);padding:32px;
+    }
+    .card h2{font-size:24px;font-weight:900;margin:0 0 8px;letter-spacing:-.01em}
+    .card .card-subtitle{color:#6B7280;font-size:14px;margin:0 0 24px}
+
+    label{display:block;font-weight:700;margin-top:16px;font-size:14px;margin-bottom:8px}
+    label:first-of-type{margin-top:0}
+    
+    input{
+      width:100%;height:44px;border:1px solid #D9DDE4;border-radius:10px;
+      padding:0 14px;font-family:inherit;font-size:14px;outline:0;
+      transition:border-color .15s;
+    }
+    input:focus{border-color:#9CA3AF;background:#fff}
+
+    button{
+      margin-top:20px;padding:12px 20px;border:none;border-radius:10px;
+      background:#111;color:#fff;cursor:pointer;font-weight:700;
+      font-size:15px;font-family:inherit;transition:transform .12s,box-shadow .12s;
+    }
+    button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    button:active{transform:translateY(0)}
+    
+    button[type="submit"]{
+      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));
+      color:#073b0f;box-shadow:0 4px 16px rgba(100,250,0,.2);
+    }
+    button[type="submit"]:hover{box-shadow:0 6px 20px rgba(100,250,0,.3)}
+
+    .btn-secondary{
+      background:#F3F4F6;color:#374151;margin-left:8px;
+      box-shadow:none;padding:10px 16px;font-size:14px;
+    }
+    .btn-secondary:hover{background:#E5E7EB;box-shadow:none;transform:none}
+
+    .muted{color:#6B7280;font-size:13px;margin-top:12px;line-height:1.5}
+
+    #toast{
+      position:fixed;right:24px;bottom:24px;background:#111;color:#fff;
+      padding:14px 18px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);
+      display:none;font-weight:600;z-index:1000;
+    }
+
+    /* Footer */
+    footer{border-top:1px solid var(--line);background:#FAFBFC;margin-top:60px}
+    .foot{max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px}
+    .foot a{color:inherit;text-decoration:none}
+    .foot a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <div class="brand" onclick="window.location.href='/index.html'">
+      <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
+      <span class="beta">BETA</span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <h1>My Account</h1>
+  <p class="subtitle">Create an account or sign in to submit offers</p>
+
+  <div class="row">
+    <div class="card">
+      <h2>Create Account</h2>
+      <p class="card-subtitle">New to Daps? Get started here</p>
+      
+      <form id="registerForm" autocomplete="on">
+        <label for="firstName">First Name</label>
+        <input name="firstName" id="firstName" autocomplete="given-name" required>
+        
+        <label for="lastName">Last Name</label>
+        <input name="lastName" id="lastName" autocomplete="family-name" required>
+        
+        <label for="regEmail">Email</label>
+        <input name="email" id="regEmail" type="email" autocomplete="email" required>
+        
+        <label for="regPass">Password</label>
+        <input name="password" id="regPass" type="password" autocomplete="new-password" required>
+        
+        <label for="regPass2">Confirm Password</label>
+        <input name="passwordConfirm" id="regPass2" type="password" autocomplete="new-password" required>
+        
+        <button type="submit">Create Account</button>
+      </form>
+      <p class="muted">We'll email you a verification link to confirm your account.</p>
+    </div>
+
+    <div class="card">
+      <h2>Sign In</h2>
+      <p class="card-subtitle">Already have an account?</p>
+      
+      <form id="loginForm" autocomplete="on">
+        <label for="loginEmail">Email</label>
+        <input name="email" id="loginEmail" type="email" autocomplete="email" required>
+        
+        <label for="loginPass">Password</label>
+        <input name="password" id="loginPass" type="password" autocomplete="current-password" required>
+        
+        <button type="submit">Sign In</button>
+        <button type="button" id="btnResend" class="btn-secondary">Resend Verification</button>
+        <button type="button" id="btnForgot" class="btn-secondary">Forgot Password</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot">
+    <span>Copyright © 2024 Daps</span>
+    <span style="margin-left:auto"></span>
+    <a href="#">Privacy policy</a><span aria-hidden="true"> · </span>
+    <a href="#">Terms of use</a>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  var API = 'http://localhost:5175/api/users';
+
+  function toast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(function(){ t.style.display='none'; }, 3000);
+  }
+
+  var token = localStorage.getItem('jwt') || '';
+  function setToken(t){ 
+    token = t || ''; 
+    if(token) localStorage.setItem('jwt', token); 
+    else localStorage.removeItem('jwt'); 
+  }
+
+  // Check if already logged in - WITH ERROR HANDLING
+  if(token){
+    fetch(API + '/me', { 
+      headers:{ Authorization: 'Bearer ' + token }
+    }).then(function(res){
+      if(res.ok){
+        // Already logged in, redirect
+        window.location.href = '/index.html';
+      } else {
+        // Invalid token, clear it
+        console.log('[user] Invalid token, clearing...');
+        localStorage.removeItem('jwt');
+      }
+    }).catch(function(err){
+      // Network error or server down, just clear token
+      console.error('[user] Auth check failed:', err);
+      localStorage.removeItem('jwt');
+    });
+  }
+
+  // REGISTER
+  var regForm = document.getElementById('registerForm');
+  if (regForm) regForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(regForm);
+    var firstName = (fd.get('firstName') || '').toString().trim();
+    var lastName = (fd.get('lastName') || '').toString().trim();
+    var email = (fd.get('email') || '').toString().trim();
+    var password = (fd.get('password') || '').toString();
+    var passwordConfirm = (fd.get('passwordConfirm') || '').toString();
+
+    if (!email || !password || !passwordConfirm) return toast('Please fill all required fields.');
+    if (password !== passwordConfirm) return toast('Passwords do not match.');
+
+    fetch(API + '/register', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ 
+        firstName: firstName, 
+        lastName: lastName, 
+        email: email, 
+        password: password, 
+        passwordConfirm: passwordConfirm 
+      })
+    }).then(function(res){
+      return res.json().then(function(data){
+        return { ok: res.ok, data: data };
+      }).catch(function(){ 
+        return { ok: res.ok, data: {} }; 
+      });
+    }).then(function(result){
+      if (result.ok){
+        toast('Check your email for a verification link!');
+        regForm.reset();
+      } else {
+        toast(result.data.error || 'Could not create account.');
+      }
+    }).catch(function(err){
+      console.error('register error', err);
+      toast('Network error while registering.');
+    });
+  });
+
+  // LOGIN
+  var loginForm = document.getElementById('loginForm');
+  if (loginForm) loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(loginForm);
+    var email = (fd.get('email') || '').toString().trim();
+    var password = (fd.get('password') || '').toString();
+    if (!email || !password) return toast('Email and password required.');
+
+    fetch(API + '/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email: email, password: password })
+    }).then(function(res){
+      return res.json().then(function(data){
+        return { ok: res.ok, data: data };
+      }).catch(function(){ 
+        return { ok: res.ok, data: {} }; 
+      });
+    }).then(function(result){
+      if (result.ok){
+        setToken(result.data.token);
+        toast('Signed in! Redirecting...');
+        setTimeout(function(){
+          window.location.href = '/index.html';
+        }, 1000);
+      } else {
+        toast(result.data.error || 'Could not sign in.');
+      }
+    }).catch(function(err){
+      console.error('login error', err);
+      toast('Network error while signing in.');
+    });
+  });
+
+  // RESEND VERIFY
+  var btnResend = document.getElementById('btnResend');
+  if (btnResend) btnResend.addEventListener('click', function(){
+    var email = document.getElementById('loginEmail').value.trim();
+    if (!email) return toast('Enter your email in the Sign in form first.');
+    fetch(API + '/resend-verification', {
+      method:'POST', 
+      headers:{'Content-Type':'application/json'}, 
+      body: JSON.stringify({ email: email })
+    }).then(function(res){
+      toast(res.ok ? 'Verification email sent (if account exists).' : 'Could not resend verification email.');
+    });
+  });
+
+  // FORGOT PASSWORD
+  var btnForgot = document.getElementById('btnForgot');
+  if (btnForgot) btnForgot.addEventListener('click', function(){
+    var email = document.getElementById('loginEmail').value.trim();
+    if (!email) return toast('Enter your email in the Sign in form first.');
+    fetch(API + '/request-password-reset', {
+      method:'POST', 
+      headers:{'Content-Type':'application/json'}, 
+      body: JSON.stringify({ email: email })
+    }).then(function(res){
+      toast(res.ok ? 'Password reset email sent (if account exists).' : 'Could not send password reset email.');
+    });
+  });
+})();
+</script>
+</body>
+</html>

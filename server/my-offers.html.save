@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Offers - Daps Bounty</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --beta:#FF6000;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04), 0 10px 20px rgba(16,24,40,.07);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family:Poppins,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink); background:#FAFBFC;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Header */
+    .site-header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
+    .bar{max-width:var(--container);margin:auto;display:flex;align-items:center;gap:12px;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{height:30px;width:auto}
+    .beta{font-size:12px;font-weight:700;color:#fff;background:var(--beta);padding:2px 8px;border-radius:6px}
+    nav{margin-left:24px;display:flex;gap:28px;flex-wrap:wrap}
+    nav a{color:#111;text-decoration:none;font-size:14px;font-weight:500;opacity:.9}
+    nav a:hover{opacity:1}
+    nav a.active{font-weight:600}
+
+    .userbar{margin-left:auto;display:flex;gap:10px;align-items:center}
+    .user-badge{
+      width:36px;height:36px;border-radius:50%;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;font-weight:700;font-size:14px;cursor:pointer;
+      border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.1);position:relative;
+    }
+    .dropdown{
+      position:absolute;right:0;top:calc(100% + 8px);
+      min-width:200px;background:#fff;border:1px solid var(--line);
+      border-radius:12px;box-shadow:0 8px 24px rgba(16,24,40,.12);
+      padding:8px;display:none;z-index:100;
+    }
+    .dropdown.open{display:block}
+    .dropdown-header{padding:12px 12px 8px;border-bottom:1px solid var(--line);margin-bottom:4px}
+    .dropdown-name{font-weight:700;font-size:14px;margin:0 0 2px}
+    .dropdown-email{font-size:12px;color:#6B7280;margin:0}
+    .dropdown-item{
+      display:block;width:100%;text-align:left;padding:10px 12px;
+      border:none;background:none;border-radius:8px;cursor:pointer;
+      font-weight:600;font-size:14px;color:#111;text-decoration:none;
+    }
+    .dropdown-item:hover{background:#F9FAFB}
+    .dropdown-divider{height:1px;background:var(--line);margin:4px 0}
+
+    /* Main */
+    .main{max-width:var(--container);margin:auto;padding:40px 20px 80px}
+    h1{font-weight:900;font-size:40px;letter-spacing:-.02em;margin:0 0 8px}
+    .subtitle{color:#6B7280;font-size:16px;margin:0 0 32px}
+
+    /* Status Filter */
+    .filters{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+    .chip{
+      height:40px;display:inline-flex;align-items:center;justify-content:center;
+      padding:0 16px;border-radius:999px;font-size:14px;font-weight:600;
+      border:1px solid #E5E7EB;background:#F7F8FA;cursor:pointer;user-select:none;
+    }
+    .chip[aria-pressed="true"]{background:#111;border-color:#111;color:#fff}
+
+    /* Offers Grid */
+    .offers-grid{display:grid;gap:16px}
+    .offer-card{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-1);padding:20px;display:grid;
+      grid-template-columns:80px 1fr auto;gap:16px;align-items:center;
+      transition:transform .12s,box-shadow .12s;
+    }
+    .offer-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.1)}
+    
+    .offer-thumb{width:80px;height:80px;border-radius:12px;overflow:hidden;background:#eee}
+    .offer-thumb img{width:100%;height:100%;object-fit:cover}
+    
+    .offer-details{min-width:0}
+    .offer-athlete{font-weight:800;font-size:18px;margin:0 0 4px}
+    .offer-meta{color:#6B7280;font-size:14px;margin:0 0 8px}
+    .offer-desc{color:#374151;font-size:14px;margin:0;line-height:1.4}
+    
+    .offer-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+    .offer-price{font-weight:900;font-size:24px;color:#111}
+    .status-pill{
+      display:inline-flex;align-items:center;padding:6px 12px;
+      border-radius:999px;border:1px solid;font-weight:700;font-size:13px;
+    }
+    .status-pill.pending{background:#FEF3C7;color:#92400E;border-color:#FDE68A}
+    .status-pill.approved{background:#ECFDF3;color:#065F46;border-color:#A7F3D0}
+    .status-pill.declined{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
+    
+    .offer-date{color:#9CA3AF;font-size:12px}
+
+    .empty-state{
+      text-align:center;padding:60px 20px;
+      background:#fff;border:1px solid var(--line);
+      border-radius:var(--radius-lg);box-shadow:var(--shadow-1);
+    }
+    .empty-state h2{font-size:24px;font-weight:800;margin:0 0 8px}
+    .empty-state p{color:#6B7280;margin:0 0 20px}
+    .btn{
+      display:inline-block;padding:12px 20px;border-radius:10px;
+      border:1.5px solid #111;background:#111;color:#fff;
+      font-weight:700;text-decoration:none;cursor:pointer;
+    }
+    .btn.ghost{background:#fff;color:#111}
+
+    @media (max-width:768px){
+      .offer-card{grid-template-columns:60px 1fr;gap:12px}
+      .offer-right{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <div class="brand">
+      <a href="/index.html"><img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo"></a>
+      <span class="beta">BETA</span>
+    </div>
+    <nav>
+      <a href="/index.html">At-game experiences</a>
+      <a href="#" class="active">My offers</a>
+      <a href="#">Live bounties</a>
+    </nav>
+    
+    <div class="userbar">
+      <div id="userProfile">
+        <div class="user-badge" id="userBadge" onclick="toggleDropdown()">
+          <span id="userInitials"></span>
+        </div>
+        <div class="dropdown" id="userDropdown">
+          <div class="dropdown-header">
+            <p class="dropdown-name" id="dropdownName"></p>
+            <p class="dropdown-email" id="dropdownEmail"></p>
+          </div>
+          <a href="/my-offers.html" class="dropdown-item">My Offers</a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" onclick="logout()">Log out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <h1>My Offers</h1>
+  <p class="subtitle">Track the status of your experience offers</p>
+
+  <div class="filters">
+    <button class="chip" aria-pressed="true" data-status="all">All</button>
+    <button class="chip" aria-pressed="false" data-status="pending">Pending</button>
+    <button class="chip" aria-pressed="false" data-status="approved">Approved</button>
+    <button class="chip" aria-pressed="false" data-status="declined">Declined</button>
+  </div>
+
+  <div class="offers-grid" id="offersGrid">
+    <div class="empty-state">
+      <h2>Loading your offers...</h2>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const API = 'http://localhost:5175/api';
+  
+  function getToken(){ return localStorage.getItem('jwt') || ''; }
+  
+  function logout(){
+    localStorage.removeItem('jwt');
+    window.location.href = '/user';
+  }
+  window.logout = logout;
+  
+  function toggleDropdown(){
+    document.getElementById('userDropdown').classList.toggle('open');
+  }
+  window.toggleDropdown = toggleDropdown;
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e){
+    const badge = document.getElementById('userBadge');
+    const dropdown = document.getElementById('userDropdown');
+    if(badge && !badge.contains(e.target) && dropdown && !dropdown.contains(e.target)){
+      dropdown.classList.remove('open');
+    }
+  });
+  
+  function formatMoney(amount){
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(amount || 0);
+  }
+  
+  function formatDate(dateStr){
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+  
+  function timeAgo(dateStr){
+    const now = Date.now();
+    const then = new Date(dateStr).getTime();
+    const diff = Math.floor((now - then) / 1000);
+    
+    if(diff < 60) return `${diff}s ago`;
+    if(diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if(diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+  }
+  
+  let allOffers = [];
+  
+  // Check auth
+  async function checkAuth(){
+    const token = getToken();
+    if(!token){
+      window.location.href = '/user';
+      return null;
+    }
+    
+    try{
+      const res = await fetch(`${API}/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if(res.ok){
+        const user = await res.json();
+        const initials = (user.firstName[0] + user.lastName[0]).toUpperCase();
+        document.getElementById('userInitials').textContent = initials;
+        document.getElementById('dropdownName').textContent = `${user.firstName} ${user.lastName}`;
+        document.getElementById('dropdownEmail').textContent = user.email;
+        return user;
+      } else {
+        localStorage.removeItem('jwt');
+        window.location.href = '/user';
+        return null;
+      }
+    } catch(err){
+      console.error('Auth check failed:', err);
+      window.location.href = '/user';
+      return null;
+    }
+  }
+  
+  // Load offers
+  async function loadOffers(){
+    const token = getToken();
+    if(!token) return;
+    
+    try{
+      const res = await fetch(`${API}/users/my-offers`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if(res.ok){
+        allOffers = await res.json();
+        renderOffers();
+      } else {
+        showEmptyState('Failed to load offers', 'Please try refreshing the page');
+      }
+    } catch(err){
+      console.error('Failed to load offers:', err);
+      showEmptyState('Network error', 'Please check your connection and try again');
+    }
+  }
+  
+  // Render offers
+  function renderOffers(){
+    const grid = document.getElementById('offersGrid');
+    const activeFilter = document.querySelector('.chip[aria-pressed="true"]').dataset.status;
+    
+    let filtered = allOffers;
+    if(activeFilter !== 'all'){
+      filtered = allOffers.filter(o => o.status === activeFilter);
+    }
+    
+    if(filtered.length === 0){
+      const msg = activeFilter === 'all' ? 
+        "You haven't submitted any offers yet" :
+        `No ${activeFilter} offers`;
+      const cta = activeFilter === 'all' ?
+        '<a href="/index.html" class="btn">Browse athletes</a>' :
+        '';
+      showEmptyState(msg, '', cta);
+      return;
+    }
+    
+    grid.innerHTML = '';
+    filtered.forEach(offer => {
+      const card = document.createElement('div');
+      card.className = 'offer-card';
+      
+      const athleteImg = offer.athlete?.imageUrl || './images/placeholder.jpg';
+      const athleteName = offer.athlete?.name || 'Unknown Athlete';
+      const athleteTeam = offer.athlete?.team || '';
+      const gameDesc = offer.gameDesc || 'Game TBD';
+      const expDesc = offer.expDesc || offer.description || 'No description';
+      const amount = offer.offered || offer.amount || 0;
+      const status = offer.status || 'pending';
+      const created = offer.createdAt || new Date().toISOString();
+      
+      card.innerHTML = `
+        <div class="offer-thumb">
+          <img src="${athleteImg}" alt="${athleteName}" onerror="this.src='./images/placeholder.jpg'">
+        </div>
+        <div class="offer-details">
+          <h3 class="offer-athlete">${athleteName}</h3>
+          <p class="offer-meta">${athleteTeam} • ${gameDesc}</p>
+          <p class="offer-desc">${expDesc}</p>
+        </div>
+        <div class="offer-right">
+          <div class="offer-price">${formatMoney(amount)}</div>
+          <span class="status-pill ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+          <span class="offer-date">${timeAgo(created)}</span>
+        </div>
+      `;
+      
+      grid.appendChild(card);
+    });
+  }
+  
+  function showEmptyState(title, subtitle, cta){
+    const grid = document.getElementById('offersGrid');
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h2>${title}</h2>
+        <p>${subtitle}</p>
+        ${cta || ''}
+      </div>
+    `;
+  }
+  
+  // Filter handling
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+      this.setAttribute('aria-pressed', 'true');
+      renderOffers();
+    });
+  });
+  
+  // Poll for updates every 10 seconds
+  setInterval(loadOffers, 10000);
+  
+  // Initialize
+  checkAuth().then(() => loadOffers());
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email Verification - Daps</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --beta:#FF6000;
+      --cta-a:#DAFA22;
+      --cta-b:#64FA00;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04), 0 10px 20px rgba(16,24,40,.07);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;overflow-x:hidden}
+    body{
+      font-family:Poppins,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink); background:#FAFBFC;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      display:flex;flex-direction:column;
+    }
+
+    /* Header */
+    .site-header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
+    .bar{max-width:var(--container);margin:auto;display:flex;align-items:center;gap:12px;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .brand .logo{height:30px;width:auto}
+    .beta{font-size:12px;font-weight:700;color:#fff;background:var(--beta);padding:2px 8px;border-radius:6px}
+
+    /* Main Content */
+    .main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+    
+    .verify-card{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-1);padding:48px;max-width:500px;width:100%;text-align:center;
+    }
+
+    .icon{
+      width:80px;height:80px;margin:0 auto 24px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;font-size:40px;
+    }
+    .icon.success{background:#ECFDF3;color:#065F46}
+    .icon.error{background:#FEF2F2;color:#991B1B}
+    .icon.loading{background:#F3F4F6;color:#6B7280}
+
+    h1{font-size:32px;font-weight:900;margin:0 0 12px;letter-spacing:-.02em}
+    
+    .message{color:#6B7280;font-size:16px;margin:0 0 32px;line-height:1.6}
+    .message.error{color:#991B1B}
+    .message.success{color:#065F46}
+
+    .btn{
+      display:inline-block;padding:14px 28px;border:none;border-radius:10px;
+      cursor:pointer;font-weight:700;font-size:15px;font-family:inherit;
+      text-decoration:none;transition:transform .12s,box-shadow .12s;
+    }
+    .btn-primary{
+      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));
+      color:#073b0f;box-shadow:0 4px 16px rgba(100,250,0,.2);
+    }
+    .btn-primary:hover{
+      transform:translateY(-1px);box-shadow:0 6px 20px rgba(100,250,0,.3);
+    }
+    
+    .btn-secondary{
+      background:#F3F4F6;color:#374151;margin-left:12px;
+    }
+    .btn-secondary:hover{background:#E5E7EB;transform:translateY(-1px)}
+
+    .spinner{
+      width:48px;height:48px;margin:0 auto;
+      border:4px solid #F3F4F6;border-top-color:#6B7280;
+      border-radius:50%;animation:spin 1s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .details{
+      background:#F9FAFB;border:1px solid var(--line);border-radius:8px;
+      padding:16px;margin-top:24px;text-align:left;font-size:13px;color:#6B7280;
+    }
+    .details strong{color:var(--ink);display:block;margin-bottom:4px}
+
+    /* Footer */
+    footer{border-top:1px solid var(--line);background:#FAFBFC}
+    .foot{max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px;flex-wrap:wrap}
+    .foot a{color:inherit;text-decoration:none}
+    .foot a:hover{text-decoration:underline}
+    .grow{margin-left:auto}
+
+    /* Mobile breakpoint */
+    @media (max-width:800px){
+      .bar{padding:12px 16px}
+      .brand .logo{height:26px}
+      .beta{font-size:11px;padding:2px 6px}
+      
+      .main{padding:24px 16px}
+      
+      .verify-card{padding:32px 24px}
+      
+      .icon{width:64px;height:64px;font-size:32px;margin:0 auto 20px}
+      
+      h1{font-size:26px;margin:0 0 10px}
+      
+      .message{font-size:15px;margin:0 0 24px}
+      
+      .btn{
+        display:block;width:100%;padding:14px 24px;
+        font-size:15px;margin-left:0;margin-bottom:10px;
+      }
+      .btn:last-child{margin-bottom:0}
+      
+      .details{font-size:12px;padding:14px;margin-top:20px}
+      
+      .foot{padding:20px 16px;gap:12px;font-size:13px;justify-content:center;text-align:center}
+      .foot .grow{display:none}
+    }
+
+    /* Small mobile breakpoint */
+    @media (max-width:480px){
+      .verify-card{padding:24px 20px}
+      
+      .icon{width:56px;height:56px;font-size:28px;margin:0 auto 16px}
+      
+      h1{font-size:22px}
+      
+      .message{font-size:14px}
+      
+      .btn{padding:13px 20px;font-size:14px}
+      
+      .foot{flex-direction:column;gap:8px}
+      .foot span[aria-hidden]{display:none}
+    }
+
+    /* Ensure touch targets */
+    @media (max-width:800px){
+      .btn{min-height:48px}
+      .brand{min-height:44px}
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <div class="brand" onclick="window.location.href='/index.html'">
+      <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
+      <span class="beta">BETA</span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="verify-card" id="verifyCard">
+    <!-- Loading state (default) -->
+    <div id="loadingState">
+      <div class="icon loading">
+        <div class="spinner"></div>
+      </div>
+      <h1>Verifying Email</h1>
+      <p class="message">Please wait while we verify your email address...</p>
+    </div>
+
+    <!-- Success state -->
+    <div id="successState" style="display:none">
+      <div class="icon success">✓</div>
+      <h1>Email Verified!</h1>
+      <p class="message success">Your email has been successfully verified. You can now sign in to your account.</p>
+      <a href="/user" class="btn btn-primary">Sign In</a>
+      <a href="/index.html" class="btn btn-secondary">Browse Athletes</a>
+    </div>
+
+    <!-- Error state -->
+    <div id="errorState" style="display:none">
+      <div class="icon error">✕</div>
+      <h1>Verification Failed</h1>
+      <p class="message error" id="errorMessage">The verification link is invalid or has expired.</p>
+      <a href="/user" class="btn btn-primary">Go to Account</a>
+      <div class="details">
+        <strong>Need a new verification link?</strong>
+        Go to the sign in page and click "Resend Verification" to get a new email.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot">
+    <span>Copyright © 2025 Daps</span>
+    <span class="grow"></span>
+    <a href="#">Privacy policy</a><span aria-hidden="true"> · </span>
+    <a href="#">Terms of use</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+  const reason = params.get('reason');
+
+  const loadingState = document.getElementById('loadingState');
+  const successState = document.getElementById('successState');
+  const errorState = document.getElementById('errorState');
+  const errorMessage = document.getElementById('errorMessage');
+
+  console.log('[verify] Status:', status, '| Reason:', reason);
+
+  // Hide loading
+  loadingState.style.display = 'none';
+
+  if (status === 'success') {
+    // Show success
+    successState.style.display = 'block';
+    console.log('[verify] ✅ Verification successful');
+  } else {
+    // Show error
+    errorState.style.display = 'block';
+    
+    // Customize error message based on reason
+    let message = 'The verification link is invalid or has expired.';
+    
+    if (reason === 'missing_token') {
+      message = 'No verification token was provided in the link.';
+    } else if (reason === 'invalid_token') {
+      message = 'The verification token is invalid or has already been used.';
+    } else if (reason === 'expired') {
+      message = 'This verification link has expired. Please request a new one.';
+    } else if (reason === 'user_update_failed') {
+      message = 'Unable to update your account. Please contact support.';
+    } else if (reason === 'server_error') {
+      message = 'A server error occurred. Please try again later or contact support.';
+    }
+    
+    errorMessage.textContent = message;
+    console.error('[verify] ❌ Verification failed:', reason);
+  }
+})();
+</script>
+</body>
+</html>
