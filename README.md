@@ -1,6 +1,6 @@
 # Daps
 
-Daps is a Node/Express + Prisma backend with static pages for admin, user, and offers. The server exposes JSON APIs (e.g., `/api/athletes`, `/api/users/*`) and serves static assets from `public/`.   Frontend pages live in `server/` (`admin.html`, `index.html`, `my-offers.html`, `user.html`, etc).    
+Daps is a Node/Express + Prisma backend with pages for admin, user, offers, etc. The server exposes JSON APIs (e.g., `/api/athletes`, `/api/users/*`) and serves static assets from `public/`.   Frontend pages live in `server/` (`admin.html`, `index.html`, `my-offers.html`, `user.html`, etc).    
 
 ## Tech stack
 
