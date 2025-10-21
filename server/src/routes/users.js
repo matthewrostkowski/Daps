@@ -1,4 +1,4 @@
-// src/routes/users.js - COMPLETE FILE WITH EMAIL VERIFICATION FIXED
+// src/routes/users.js - COMPLETE FILE WITH GAME ID SUPPORT
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
@@ -224,6 +224,7 @@ router.post('/offers', requireUser, async (req, res) => {
   try {
     const {
       athleteId,
+      gameId,          // ← ADDED THIS
       customerName,
       customerEmail,
       customerPhone,
@@ -235,7 +236,7 @@ router.post('/offers', requireUser, async (req, res) => {
       paymentLast4
     } = req.body;
 
-    console.log('[users:offers] Create offer attempt', { athleteId, offered });
+    console.log('[users:offers] Create offer attempt', { athleteId, gameId, offered });
 
     // Validate required fields
     if (!athleteId || !customerName || !customerEmail) {
@@ -263,6 +264,7 @@ router.post('/offers', requireUser, async (req, res) => {
       data: {
         userId: req.user.uid,
         athleteId: athlete.id,
+        gameId: gameId || null,    // ← ADDED THIS
         customerName,
         customerEmail: customerEmail.toLowerCase(),
         customerPhone,
@@ -289,6 +291,14 @@ router.post('/offers', requireUser, async (req, res) => {
             lastName: true, 
             email: true 
           } 
+        },
+        game: {          // ← ADDED THIS
+          select: {
+            id: true,
+            date: true,
+            opponent: true,
+            venue: true
+          }
         }
       }
     });
@@ -298,6 +308,7 @@ router.post('/offers', requireUser, async (req, res) => {
     res.json({
       id: offer.id,
       athlete: offer.athlete,
+      game: offer.game,        // ← ADDED THIS
       status: offer.status,
       offered: offer.offered,
       customerName: offer.customerName,
@@ -325,6 +336,14 @@ router.get('/offers', requireUser, async (req, res) => {
             team: true,
             league: true
           } 
+        },
+        game: {          // ← ADDED THIS
+          select: {
+            id: true,
+            date: true,
+            opponent: true,
+            venue: true
+          }
         }
       },
       orderBy: { createdAt: 'desc' }

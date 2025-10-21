@@ -3,6 +3,7 @@ import express from 'express';
 import { prisma } from '../db.js';
 import { requireAdmin } from '../auth.js';
 import { sendOfferStatusEmail } from '../email.js';
+import { populateGamesForAthlete } from '../app.js';
 
 const router = express.Router();
 
@@ -288,6 +289,33 @@ router.delete('/:id', requireAdmin, async (req, res) => {
   }
 });
 
+// ==================== GET ALL ATHLETES (ADMIN) ====================
+router.get('/athletes', requireAdmin, async (_req, res) => {
+  try {
+    console.log('[offers] GET /athletes - Fetching all athletes');
+    const athletes = await prisma.athlete.findMany({
+      orderBy: { name: 'asc' }
+    });
+    
+    const transformed = athletes.map(a => ({
+      id: a.slug || a.id,
+      slug: a.slug,
+      name: a.name,
+      team: a.team,
+      league: a.league,
+      image: a.imageUrl || '',
+      imageUrl: a.imageUrl || '',
+      active: a.active
+    }));
+    
+    console.log(`[offers] Returning ${transformed.length} athletes`);
+    res.json(transformed);
+  } catch (error) {
+    console.error('[offers] Error fetching athletes:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // ==================== CREATE ATHLETE (ADMIN) ====================
 router.post('/athletes', requireAdmin, async (req, res) => {
   try {
@@ -313,8 +341,35 @@ router.post('/athletes', requireAdmin, async (req, res) => {
       }
     });
 
-    console.log('[offers] Athlete created:', athlete.id);
-    res.json(athlete);
+    console.log('[offers] ✓ Athlete created:', athlete.id);
+    
+    // ==================== AUTO-POPULATE GAMES ====================
+    console.log('[offers] Auto-populating games for new athlete...');
+    try {
+      const gamesResult = await populateGamesForAthlete(athlete);
+      
+      if (gamesResult.success) {
+        console.log(`[offers] ✓ Successfully populated ${gamesResult.count} games for ${athlete.name}`);
+      } else {
+        console.log(`[offers] ⚠️ Could not populate games: ${gamesResult.message || 'Unknown error'}`);
+      }
+    } catch (gameError) {
+      console.error('[offers] ⚠️ Game population failed:', gameError.message);
+      // Don't fail the athlete creation if game population fails
+    }
+    // ============================================================
+    
+    // Return in admin panel format
+    res.json({
+      id: athlete.slug,
+      slug: athlete.slug,
+      name: athlete.name,
+      team: athlete.team,
+      league: athlete.league,
+      image: athlete.imageUrl || '',
+      imageUrl: athlete.imageUrl || '',
+      active: athlete.active
+    });
 
   } catch (error) {
     console.error('[offers] Create athlete error:', error);
@@ -354,8 +409,37 @@ router.put('/athletes/:id', requireAdmin, async (req, res) => {
     });
 
     console.log('[offers] ✅ Athlete updated successfully:', athlete);
+    
+    // ==================== REFRESH GAMES IF TEAM CHANGED ====================
+    if (team !== undefined) {
+      console.log('[offers] Team was updated, refreshing games schedule...');
+      try {
+        const gamesResult = await populateGamesForAthlete(athlete);
+        if (gamesResult.success) {
+          console.log(`[offers] ✓ Refreshed ${gamesResult.count} games after team update`);
+        } else {
+          console.log(`[offers] ⚠️ Could not refresh games: ${gamesResult.message}`);
+        }
+      } catch (gameError) {
+        console.error('[offers] ⚠️ Game refresh failed:', gameError.message);
+        // Don't fail the update if game refresh fails
+      }
+    }
+    // =======================================================================
+    
     console.log('[offers] ═══════════════════════════════════════════════════════');
-    res.json(athlete);
+    
+    // Return in admin panel format
+    res.json({
+      id: athlete.slug || athlete.id,
+      slug: athlete.slug,
+      name: athlete.name,
+      team: athlete.team,
+      league: athlete.league,
+      image: athlete.imageUrl || '',
+      imageUrl: athlete.imageUrl || '',
+      active: athlete.active
+    });
 
   } catch (error) {
     console.error('[offers] ═══════════════════════════════════════════════════════');
@@ -380,6 +464,13 @@ router.delete('/athletes/:id', requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     console.log('[offers] Athlete ID:', id);
+
+    // ==================== DELETE GAMES FIRST ====================
+    const gamesDeleted = await prisma.game.deleteMany({
+      where: { athleteId: id }
+    });
+    console.log(`[offers] Deleted ${gamesDeleted.count} games for athlete`);
+    // ===========================================================
 
     await prisma.athlete.delete({
       where: { id }

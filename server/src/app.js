@@ -1,4 +1,4 @@
-// src/app.js
+// src/app.js - Complete with ESPN API for 2025-26 season (all 82 games)
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -69,6 +69,148 @@ app.use((req, res, next) => {
   next();
 });
 
+
+/* ==================== ESPN NBA API INTEGRATION ==================== */
+// ESPN Team IDs - ALL 30 NBA TEAMS (verified with ESPN API)
+const ESPN_TEAM_IDS = {
+  'Celtics': '2', 'Nets': '17', 'Knicks': '18', '76ers': '20', 'Raptors': '28',
+  'Bulls': '4', 'Cavaliers': '5', 'Pistons': '8', 'Pacers': '11', 'Bucks': '15',
+  'Hawks': '1', 'Hornets': '30', 'Heat': '14', 'Magic': '19', 'Wizards': '27',
+  'Nuggets': '7', 'Timberwolves': '16', 'Thunder': '25', 'Trail Blazers': '22', 'Jazz': '26',
+  'Warriors': '9', 'Clippers': '12', 'Lakers': '13', 'Suns': '21', 'Kings': '23',
+  'Mavericks': '6', 'Rockets': '10', 'Grizzlies': '29', 'Pelicans': '3', 'Spurs': '24'
+};
+
+// Fetch all 82 games from ESPN API (free, reliable, no auth needed)
+async function fetchESPNSchedule(teamName) {
+  const espnTeamId = ESPN_TEAM_IDS[teamName];
+  if (!espnTeamId) {
+    console.log('[ESPN-API] No team ID for:', teamName);
+    return [];
+  }
+
+  try {
+    const currentYear = new Date().getFullYear();
+    const season = currentYear + 1; // FIXED: ESPN uses END year (2025-26 season = 2026)
+    
+    const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${espnTeamId}/schedule?season=${season}`;
+    
+    console.log('[ESPN-API] Fetching schedule for', teamName);
+    console.log('[ESPN-API] Season:', season, '(NBA', (season-1) + '-' + season, 'season)');
+    console.log('[ESPN-API] URL:', url);
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log('[ESPN-API] ✗ Request failed:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    
+    if (!data.events || !Array.isArray(data.events)) {
+      console.log('[ESPN-API] ✗ No events in response');
+      return [];
+    }
+
+    console.log(`[ESPN-API] ✓ Found ${data.events.length} games for ${teamName}`);
+
+    // Transform ESPN data to our format
+    const games = data.events.map(event => {
+      const competition = event.competitions?.[0];
+      const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+      const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+      
+      // Determine if this is a home or away game for our team
+      const isHome = homeTeam?.team?.displayName?.includes(teamName.slice(0, -1)) || 
+                     homeTeam?.team?.name?.includes(teamName.slice(0, -1));
+      
+      const opponent = isHome ? 
+        (awayTeam?.team?.displayName || awayTeam?.team?.name || 'TBD') :
+        (homeTeam?.team?.displayName || homeTeam?.team?.name || 'TBD');
+      
+      const venue = competition?.venue?.fullName || 
+                    (isHome ? 'Home Arena' : 'Away Arena');
+      
+      // Parse date
+      const gameDate = new Date(event.date);
+
+      return {
+        date: gameDate,
+        opponent: opponent.split(' ').pop(), // Get team name (last word)
+        venue: venue,
+        isHome: isHome
+      };
+    });
+
+    console.log('[ESPN-API] ✓ Transformed', games.length, 'games');
+    
+    // Sort by date
+    games.sort((a, b) => a.date - b.date);
+    
+    return games;
+
+  } catch (error) {
+    console.error('[ESPN-API] ✗ Error:', error.message);
+    return [];
+  }
+}
+
+// Helper function to populate games for an athlete
+async function populateGamesForAthlete(athlete) {
+  console.log('[populate-games] Starting for athlete:', athlete.name, '(', athlete.team, ')');
+  
+  try {
+    // Check if team is supported
+    if (!ESPN_TEAM_IDS[athlete.team]) {
+      console.log('[populate-games] ⚠️ Team not supported in ESPN_TEAM_IDS:', athlete.team);
+      return { success: false, message: 'Team not supported for automatic schedule', count: 0 };
+    }
+
+    // Fetch games from ESPN
+    const espnGames = await fetchESPNSchedule(athlete.team);
+    
+    if (espnGames.length === 0) {
+      console.log('[populate-games] ⚠️ No games returned from ESPN API');
+      return { success: false, message: 'No games found from ESPN', count: 0 };
+    }
+
+    console.log(`[populate-games] ✓ Fetched ${espnGames.length} games from ESPN`);
+
+    // Clear any existing games for this athlete
+    await prisma.game.deleteMany({
+      where: { athleteId: athlete.id }
+    });
+    console.log('[populate-games] Cleared existing games');
+
+    // Insert new games
+    const gameData = espnGames.map(g => ({
+      athleteId: athlete.id,
+      date: g.date,
+      opponent: g.opponent,
+      venue: g.venue
+    }));
+
+    const result = await prisma.game.createMany({
+      data: gameData,
+      skipDuplicates: true
+    });
+
+    console.log(`[populate-games] ✓ Inserted ${result.count} games for ${athlete.name}`);
+    
+    return { success: true, count: result.count };
+
+  } catch (error) {
+    console.error('[populate-games] ✗ Error:', error.message);
+    return { success: false, message: error.message, count: 0 };
+  }
+}
+
 /* ==================== API ROUTES ==================== */
 // Shared athletes handler (used by both endpoints)
 async function athletesHandler(req, res) {
@@ -96,67 +238,124 @@ async function athletesHandler(req, res) {
 app.get('/api/athletes', athletesHandler);
 app.get('/api/users/athletes', athletesHandler);
 
-// Mount routers (keep as-is)
+// Games endpoint - Dynamic ESPN API with smart caching
+app.get('/api/games', async (req, res) => {
+  try {
+    const { athleteId } = req.query;
+    console.log('[api] ═══════════════════════════════════════════');
+    console.log('[api] GET /api/games - athleteId:', athleteId);
+    
+    if (!athleteId) {
+      return res.status(400).json({ error: 'athleteId query parameter required' });
+    }
+
+    // STEP 1: Find athlete by slug OR id
+    const athlete = await prisma.athlete.findFirst({
+      where: {
+        OR: [
+          { id: String(athleteId) },
+          { slug: String(athleteId) }
+        ]
+      }
+    });
+
+    if (!athlete) {
+      console.log('[api] ✗ Athlete not found:', athleteId);
+      return res.status(404).json({ error: 'Athlete not found' });
+    }
+
+    console.log('[api] ✓ Found:', athlete.name, '(' + athlete.team + ')');
+
+    // STEP 2: Check database for games
+    let games = await prisma.game.findMany({
+      where: { athleteId: athlete.id },
+      orderBy: { date: 'asc' },
+      select: {
+        id: true,
+        date: true,
+        opponent: true,
+        venue: true,
+        athleteId: true
+      }
+    });
+
+    console.log(`[api] Database has ${games.length} games`);
+
+    // STEP 3: If less than 70 games, fetch from ESPN (full season is 82)
+    if (games.length < 70) {
+      console.log('[api] Fetching full schedule from ESPN API...');
+      
+      const espnGames = await fetchESPNSchedule(athlete.team);
+
+      if (espnGames.length > 0) {
+        console.log(`[api] ✓ ESPN returned ${espnGames.length} games`);
+        
+        // Clear old games and insert new ones
+        console.log('[api] Clearing old games...');
+        await prisma.game.deleteMany({
+          where: { athleteId: athlete.id }
+        });
+
+        const gameData = espnGames.map(g => ({
+          athleteId: athlete.id,
+          date: g.date,
+          opponent: g.opponent,
+          venue: g.venue
+        }));
+
+        console.log('[api] Inserting', gameData.length, 'new games...');
+        const result = await prisma.game.createMany({
+          data: gameData,
+          skipDuplicates: true
+        });
+
+        console.log(`[api] ✓ Inserted ${result.count} games`);
+
+        // Re-fetch from database
+        games = await prisma.game.findMany({
+          where: { athleteId: athlete.id },
+          orderBy: { date: 'asc' },
+          select: {
+            id: true,
+            date: true,
+            opponent: true,
+            venue: true,
+            athleteId: true
+          }
+        });
+
+        console.log(`[api] ✓ Refreshed: now ${games.length} games in database`);
+      } else {
+        console.log('[api] ⚠️ ESPN returned 0 games');
+      }
+    } else {
+      console.log('[api] ✓ Using cached games from database');
+    }
+
+    console.log('[api] ✓ Returning', games.length, 'games');
+    console.log('[api] ═══════════════════════════════════════════');
+    return res.json(games);
+
+  } catch (error) {
+    console.error('[api] ✗ Error in /api/games:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/* ==================== MOUNTED ROUTERS ==================== */
+// These handle most user & offer routes
 app.use('/api/users', usersRouter);
 app.use('/api/offers', offersRouter);
 
-/* ==================== LOGIN + ME ==================== */
-app.post('/api/users/login', async (req, res) => {
-  try {
-    const { email, password } = req.body || {};
-    console.log('[login] attempt', { email });
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required.' });
-    }
-
-    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-    if (!user) return res.status(400).json({ error: 'Invalid email or password.' });
-
-    if (
-      (user.emailVerifiedAt === null || user.emailVerifiedAt === undefined) &&
-      (user.verified === false || user.verified === null || user.verified === undefined)
-    ) {
-      return res.status(403).json({ error: 'Please verify your email before signing in.' });
-    }
-
-    const ok = await bcrypt.compare(password, user.passwordHash || user.password || '');
-    if (!ok) return res.status(400).json({ error: 'Invalid email or password.' });
-
-    const token = signUserSession(user);
-    console.log('[login] success', { id: user.id });
-    return res.json({ token });
-  } catch (err) {
-    console.error('[login] error', err);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-app.get('/api/users/me', requireUser, async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.uid },
-      select: { id: true, email: true, firstName: true, lastName: true }
-    });
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
-    return res.json(user);
-  } catch (err) {
-    console.error('[me] error', err);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 /* ==================== EMAIL VERIFICATION ==================== */
-app.get('/api/users/verify', async (req, res) => {
+app.get('/api/email/verify', async (req, res) => {
+  const log = (event, obj = {}) => {
+    const ms = Date.now() - t0;
+    console.log(`[verify-email] [${ms}ms] ${event}`, obj);
+  };
   const t0 = Date.now();
-  const token = String(req.query.token || '').trim();
-  const log = (msg, obj={}) =>
-    console.log(`[verify] ${new Date().toISOString()} :: ${msg}`, Object.keys(obj).length ? obj : '');
-
   try {
-    if (!token) {
-      log('missing_token');
-      return res.redirect('/verify.html?status=error&reason=missing_token');
-    }
+    const { token } = req.query;
     log('start', { token });
 
     const rec = await prisma.emailVerification.findUnique({ where: { token } });
@@ -246,7 +445,6 @@ app.get('/api/offers', requireAdmin, async (_req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Transform to match admin.html expectations
     const transformed = offers.map(offer => ({
       id: offer.id,
       status: offer.status,
@@ -309,7 +507,6 @@ app.put('/api/offers/:id/status', requireAdmin, async (req, res) => {
       }
     });
 
-    // Transform response to match admin.html expectations
     const transformed = {
       id: updated.id,
       status: updated.status,
@@ -403,3 +600,6 @@ app.listen(PORT, () => {
     verifyTransport();
   }
 });
+
+// Export the helper function so it can be used by other routes
+export { populateGamesForAthlete };

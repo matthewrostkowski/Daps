@@ -235,8 +235,55 @@
       <div class="card" id="athFormWrap" style="margin-top:12px;display:none">
         <h2 style="margin:4px 0 8px;font-weight:900">New athlete</h2>
         <div class="field"><label>Name</label><input id="athName" type="text" placeholder="Anthony Edwards"></div>
-        <div class="field"><label>Team</label><input id="athTeam" type="text" placeholder="Timberwolves"></div>
-        <div class="field"><label>League</label><input id="athLeague" type="text" placeholder="NBA"></div>
+        <div class="field">
+          <label>Team</label>
+          <select id="athTeam">
+            <option value="">Select team...</option>
+            <optgroup label="Atlantic Division">
+              <option value="Celtics">Boston Celtics</option>
+              <option value="Nets">Brooklyn Nets</option>
+              <option value="Knicks">New York Knicks</option>
+              <option value="76ers">Philadelphia 76ers</option>
+              <option value="Raptors">Toronto Raptors</option>
+            </optgroup>
+            <optgroup label="Central Division">
+              <option value="Bulls">Chicago Bulls</option>
+              <option value="Cavaliers">Cleveland Cavaliers</option>
+              <option value="Pistons">Detroit Pistons</option>
+              <option value="Pacers">Indiana Pacers</option>
+              <option value="Bucks">Milwaukee Bucks</option>
+            </optgroup>
+            <optgroup label="Southeast Division">
+              <option value="Hawks">Atlanta Hawks</option>
+              <option value="Hornets">Charlotte Hornets</option>
+              <option value="Heat">Miami Heat</option>
+              <option value="Magic">Orlando Magic</option>
+              <option value="Wizards">Washington Wizards</option>
+            </optgroup>
+            <optgroup label="Northwest Division">
+              <option value="Nuggets">Denver Nuggets</option>
+              <option value="Timberwolves">Minnesota Timberwolves</option>
+              <option value="Thunder">Oklahoma City Thunder</option>
+              <option value="Trail Blazers">Portland Trail Blazers</option>
+              <option value="Jazz">Utah Jazz</option>
+            </optgroup>
+            <optgroup label="Pacific Division">
+              <option value="Warriors">Golden State Warriors</option>
+              <option value="Clippers">Los Angeles Clippers</option>
+              <option value="Lakers">Los Angeles Lakers</option>
+              <option value="Suns">Phoenix Suns</option>
+              <option value="Kings">Sacramento Kings</option>
+            </optgroup>
+            <optgroup label="Southwest Division">
+              <option value="Mavericks">Dallas Mavericks</option>
+              <option value="Rockets">Houston Rockets</option>
+              <option value="Grizzlies">Memphis Grizzlies</option>
+              <option value="Pelicans">New Orleans Pelicans</option>
+              <option value="Spurs">San Antonio Spurs</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field"><label>League</label><input id="athLeague" type="text" placeholder="NBA" value="NBA" readonly></div>
         <div class="field"><label>Image URL</label><input id="athImg" type="text" placeholder="./images/your-image.png"></div>
         <div style="display:flex;gap:8px">
           <button id="saveAth" class="btn btn-cta">Save</button>

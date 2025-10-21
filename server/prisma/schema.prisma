@@ -61,18 +61,22 @@ model LoginEvent {
 }
 
 model Athlete {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  name      String
-  team      String
-  league    String
-  imageUrl  String?
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  name       String
+  team       String
+  league     String   // "NBA" or "NCAA"
+  conference String?  // NEW: For NCAA teams (e.g., "Big East", "Big Ten", etc.)
+  imageUrl   String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   games  Game[]
   offers Offer[]
+
+  @@index([league, team])
+  @@index([conference])
 }
 
 model Game {
@@ -84,7 +88,7 @@ model Game {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  athlete Athlete @relation(fields: [athleteId], references: [id])
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
   offers  Offer[]
 
   @@index([athleteId, date])
@@ -122,6 +126,11 @@ model Offer {
   game    Game?   @relation(fields: [gameId], references: [id])
 
   messages Message[]
+
+  @@index([userId])
+  @@index([athleteId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Message {
@@ -133,4 +142,6 @@ model Message {
   createdAt DateTime @default(now())
 
   offer Offer? @relation(fields: [offerId], references: [id])
+
+  @@index([offerId])
 }

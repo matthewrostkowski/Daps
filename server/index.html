@@ -26,6 +26,11 @@
       --shadow-1:0 2px 2px rgba(16,24,40,.04), 0 10px 20px rgba(16,24,40,.07);
       --shadow-card:0 8px 20px rgba(16,24,40,.07);
       --heroW: 1000px;
+      
+      /* Theme colors - will be overridden by JavaScript */
+      --theme-primary: #0A0A0B;
+      --theme-secondary: #DAFA22;
+      --theme-accent: #64FA00;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -56,11 +61,11 @@
     nav a{position:relative;color:#111;text-decoration:none;font-size:14px;font-weight:500;opacity:.9;padding-bottom:8px}
     nav a:hover{opacity:1}
     nav a.active{font-weight:600}
-    nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:#111;border-radius:2px}
+    nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--theme-primary);border-radius:2px}
 
     .userbar{margin-left:auto;display:flex;gap:10px;align-items:center}
-    .btn{height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #111;background:#111;color:#fff;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap}
-    .btn.ghost{background:#fff;color:#111}
+    .btn{height:36px;padding:0 12px;border-radius:10px;border:1.5px solid var(--theme-primary);background:var(--theme-primary);color:#fff;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap}
+    .btn.ghost{background:#fff;color:var(--theme-primary)}
 
     /* User Profile Badge */
     .user-badge{
@@ -100,23 +105,26 @@
     .dropdown-item:hover{background:#F9FAFB}
     .dropdown-divider{height:1px;background:var(--line);margin:4px 0}
 
-    /* Hero */
-    .hero{position:relative;background:#0B0B0C;color:#fff;overflow:hidden}
+    /* Hero - Themed */
+    .hero{position:relative;background:var(--theme-primary);color:#fff;overflow:hidden}
     .hero-inner{
       max-width:var(--container); margin:auto; padding:72px 20px 116px;
       display:grid; grid-template-columns:1.05fr .95fr; gap:24px; position:relative;
     }
     .hero h1{font-weight:900;font-size:68px;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin:0 0 16px}
+    .hero .team-name{color:var(--theme-secondary);display:block;margin-bottom:8px}
     .hero p{max-width:520px;margin:0 0 20px;color:#E7E7EA;line-height:1.6;font-size:16px}
     .cta{
-      display:inline-block;border:0;padding:12px 18px;font-weight:700;border-radius:12px;cursor:pointer;color:#0B3810;
-      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));box-shadow:0 6px 24px rgba(100,250,0,.28);
-      text-decoration:none;font-size:16px
+      display:inline-block;border:0;padding:12px 18px;font-weight:700;border-radius:12px;cursor:pointer;
+      background:linear-gradient(90deg,var(--theme-secondary),var(--theme-accent));
+      box-shadow:0 6px 24px rgba(100,250,0,.28);
+      text-decoration:none;font-size:16px;
+      color:var(--theme-primary);
     }
     .hero-art{
       position:absolute; inset:0; pointer-events:none;
       background:
-        linear-gradient(90deg, rgba(11,11,12,.96) 0%, rgba(11,11,12,.80) 40%, rgba(11,11,12,0) 72%),
+        linear-gradient(90deg, var(--theme-primary) 0%, rgba(11,11,12,.80) 40%, rgba(11,11,12,0) 72%),
         url("/images/211224_court_tg_ig-9820.jpg") right 48% / var(--heroW) auto no-repeat;
     }
 
@@ -131,7 +139,7 @@
 
     .chip{height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border-radius:999px;font-size:13px;
       font-weight:600;border:1px solid var(--chip-border);background:var(--chip);cursor:pointer;user-select:none;white-space:nowrap;flex-shrink:0}
-    .chip[aria-pressed="true"]{background:var(--chip-active);border-color:var(--chip-active);color:#fff}
+    .chip[aria-pressed="true"]{background:var(--theme-primary);border-color:var(--theme-primary);color:#fff}
 
     /* Grid */
     .grid{display:grid;grid-template-columns:repeat(3,var(--cardW));column-gap:var(--gap);row-gap:var(--gap);justify-content:center}
@@ -148,11 +156,11 @@
     .name{margin:0;line-height:22px;font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .team{margin:0;line-height:18px;font-size:13px;color:#87909A}
     .cta-ghost{
-      align-self:flex-start;margin-top:6px;background:#fff;border:1.5px solid #111;color:#111;
+      align-self:flex-start;margin-top:6px;background:#fff;border:1.5px solid var(--theme-primary);color:var(--theme-primary);
       font-weight:600;font-size:14px;height:40px;padding:0 14px;border-radius:12px;white-space:nowrap;display:inline-flex;align-items:center;
       text-decoration:none;cursor:pointer
     }
-    .cta-ghost:hover{background:#111;color:#fff}
+    .cta-ghost:hover{background:var(--theme-primary);color:#fff}
 
     /* Footer */
     footer{border-top:1px solid var(--line);background:#FAFBFC}
@@ -186,7 +194,7 @@
       nav a{font-size:15px;padding:16px 24px;width:100%;border-left:3px solid transparent}
       nav a:hover{background:#F9FAFB}
       nav a.active::after{display:none}
-      nav a.active{border-left-color:#111;background:#F9FAFB}
+      nav a.active{border-left-color:var(--theme-primary);background:#F9FAFB}
       
       .userbar{gap:8px}
       #authButtons{display:flex;gap:8px;order:1}
@@ -199,7 +207,7 @@
       .cta{padding:10px 16px;font-size:15px}
       .hero-art{
         background:
-          linear-gradient(90deg, rgba(11,11,12,.98) 0%, rgba(11,11,12,.85) 60%, rgba(11,11,12,.3) 100%),
+          linear-gradient(90deg, var(--theme-primary) 0%, rgba(11,11,12,.85) 60%, rgba(11,11,12,.3) 100%),
           url("/images/211224_court_tg_ig-9820.jpg") right center / cover no-repeat;
       }
       
@@ -259,7 +267,7 @@
 <header class="site-header">
   <div class="bar">
     <div class="brand" onclick="window.location.href='/index.html'">
-      <img class="logo" src="/images/Daps-2 Copy.png" alt="Daps Bounty logo">
+      <img class="logo" src="/images/Daps-2 Copy.png" alt="Daps Bounty logo" id="brandLogo">
       <span class="beta">BETA</span>
     </div>
     
@@ -308,8 +316,8 @@
   <div class="hero-art" aria-hidden="true"></div>
   <div class="hero-inner">
     <div>
-      <h1>AT-GAME<br>EXPERIENCES</h1>
-      <p>Bid on unique game-day access. Create an account, verify once, then submit and track your offers.</p>
+      <h1><span class="team-name" id="heroTeamName"></span>AT-GAME<br>EXPERIENCES</h1>
+      <p id="heroDescription">Bid on unique game-day access. Create an account, verify once, then submit and track your offers.</p>
       <a class="cta" href="#athletes">Get started</a>
     </div>
     <div></div>
@@ -317,15 +325,15 @@
 </section>
 
 <main class="section" id="athletes">
-  <h2>CHOOSE AN ATHLETE</h2>
+  <h2 id="sectionTitle">CHOOSE AN ATHLETE</h2>
 
   <div class="toolbar">
     <label class="search" aria-label="Search athletes">
       <input id="search" type="search" placeholder="Search for an athlete by name or team" />
     </label>
-    <button class="chip" aria-pressed="true" data-filter="all">All athletes</button>
-    <button class="chip" aria-pressed="false" data-filter="nba">NBA</button>
-    <button class="chip" aria-pressed="false" data-filter="ncaa">NCAA men's basketball</button>
+    <button class="chip" aria-pressed="true" data-filter="all" id="chipAll">All athletes</button>
+    <button class="chip" aria-pressed="false" data-filter="nba" id="chipNBA">NBA</button>
+    <button class="chip" aria-pressed="false" data-filter="ncaa" id="chipNCAA">NCAA men's basketball</button>
   </div>
 
   <div class="grid" id="cards">
@@ -345,9 +353,90 @@
 
 <script>
 (function(){
-  var API = 'http://localhost:5175/api';
+  // CRITICAL: Use relative API URL so it works with subdomains
+  var API = '/api';
+  var teamConfig = null;
   
   console.log('[index] Initializing...');
+  console.log('[index] Current URL:', window.location.href);
+  
+  // Fetch team config and apply theming
+  async function fetchTeamConfig() {
+    try {
+      console.log('[index] Fetching team config from:', API + '/team-config');
+      const res = await fetch(API + '/team-config');
+      console.log('[index] Team config response status:', res.status);
+      
+      if (res.ok) {
+        teamConfig = await res.json();
+        console.log('[index] ✓ Team config loaded:', teamConfig);
+        console.log('[index] - Name:', teamConfig.name);
+        console.log('[index] - League:', teamConfig.league);
+        console.log('[index] - TeamName:', teamConfig.teamName);
+        console.log('[index] - Colors:', teamConfig.primaryColor, teamConfig.secondaryColor);
+        applyTheming(teamConfig);
+        return teamConfig;
+      } else {
+        console.error('[index] Team config request failed:', res.status);
+      }
+    } catch(err) {
+      console.error('[index] Failed to load team config:', err);
+    }
+    
+    // Fallback to default config
+    console.log('[index] Using default config');
+    teamConfig = {
+      name: 'Daps Bounty',
+      league: 'ALL',
+      primaryColor: '#0A0A0B',
+      secondaryColor: '#DAFA22',
+      accentColor: '#64FA00'
+    };
+    return teamConfig;
+  }
+  
+  // Apply team colors and branding
+  function applyTheming(config) {
+    const root = document.documentElement;
+    
+    console.log('[index] Applying theme:', config.name);
+    console.log('[index] Primary color:', config.primaryColor);
+    
+    // Apply CSS variables
+    root.style.setProperty('--theme-primary', config.primaryColor);
+    root.style.setProperty('--theme-secondary', config.secondaryColor);
+    root.style.setProperty('--theme-accent', config.accentColor);
+    
+    // Update page title
+    if (config.league !== 'ALL') {
+      document.title = `${config.name} – At-game experiences`;
+      
+      // Update hero text
+      const heroTeamName = document.getElementById('heroTeamName');
+      if (heroTeamName) {
+        heroTeamName.textContent = config.name.toUpperCase() + ' ';
+      }
+      
+      // Update section title for team-specific pages
+      const sectionTitle = document.getElementById('sectionTitle');
+      if (sectionTitle && config.league === 'NCAA') {
+        sectionTitle.textContent = 'CHOOSE YOUR ' + config.name.split(' ')[0].toUpperCase() + ' PLAYER';
+      }
+      
+      // Hide league filter chips on team-specific pages
+      if (config.league === 'NCAA') {
+        document.getElementById('chipNBA').style.display = 'none';
+        document.getElementById('chipNCAA').style.display = 'none';
+        document.getElementById('chipAll').textContent = 'All players';
+      } else if (config.league === 'NBA') {
+        document.getElementById('chipNBA').style.display = 'none';
+        document.getElementById('chipNCAA').style.display = 'none';
+        document.getElementById('chipAll').textContent = 'All players';
+      }
+    }
+    
+    console.log('[index] ✓ Theming applied for', config.name);
+  }
   
   // Auth functions
   function getToken(){ return localStorage.getItem('jwt') || ''; }
@@ -410,32 +499,39 @@
     });
   }
   
-  // Load athletes - ALWAYS from API, filter inactive
+  // Load athletes
   function loadAthletes(){
+    console.log('[index] ════════════════════════════════════════════');
     console.log('[index] Loading athletes from API...');
+    console.log('[index] API URL:', API + '/athletes');
+    console.log('[index] Team config:', teamConfig);
     
-    fetch(API + '/users/athletes')
+    // Use relative URL so it goes to the same domain (stjohns.localhost or localhost)
+    fetch(API + '/athletes')
       .then(function(res){
+        console.log('[index] Athletes API response status:', res.status);
         if (!res.ok) {
           throw new Error('API returned ' + res.status);
         }
         return res.json();
       })
       .then(function(athletes){
-        console.log('[index] Received ' + athletes.length + ' athletes from API');
+        console.log('[index] ✓ Received ' + athletes.length + ' athletes from API');
+        console.log('[index] First few athletes:', athletes.slice(0, 3));
         
         var grid = document.getElementById('cards');
         grid.innerHTML = '';
         
-        // CRITICAL: Filter to only ACTIVE athletes
+        // Filter to only ACTIVE athletes
         var activeAthletes = athletes.filter(function(a){ 
           return a.active === true || a.active === undefined || a.active === null; 
         });
         
-        console.log('[index] Displaying ' + activeAthletes.length + ' active athletes');
+        console.log('[index] ✓ Displaying ' + activeAthletes.length + ' active athletes');
         
         if(activeAthletes.length === 0){
-          grid.innerHTML = '<div class="empty-state">No athletes available at this time.</div>';
+          var teamNameDisplay = teamConfig && teamConfig.league !== 'ALL' ? teamConfig.name : 'this team';
+          grid.innerHTML = '<div class="empty-state">No athletes available for ' + teamNameDisplay + '. Please check back soon!</div>';
           return;
         }
         
@@ -451,7 +547,7 @@
           var cardHTML = '<div class="thumb">' +
             '<img src="' + imgSrc + '" ' +
             'alt="' + (athlete.name || '') + '" ' +
-            'onerror="this.style.display=\'none\'">' +
+            'onerror="this.src=\'/images/Daps-2 Copy.png\'">' +
             '</div>' +
             '<div class="meta">' +
             '<h3 class="name">' + (athlete.name || 'Unknown') + '</h3>' +
@@ -463,11 +559,12 @@
           grid.appendChild(card);
         });
         
+        console.log('[index] ════════════════════════════════════════════');
         applyFilters();
       })
       .catch(function(err){
-        console.error('[index] Failed to load athletes from API:', err);
-        document.getElementById('cards').innerHTML = '<div class="empty-state">Failed to load athletes. Please refresh the page.</div>';
+        console.error('[index] ✗ Failed to load athletes from API:', err);
+        document.getElementById('cards').innerHTML = '<div class="empty-state">Failed to load athletes: ' + err.message + '<br><br>Please refresh the page or contact support.</div>';
       });
   }
   
@@ -545,8 +642,10 @@
   });
 
   // Initialize
-  checkAuth();
-  loadAthletes();
+  fetchTeamConfig().then(function() {
+    checkAuth();
+    loadAthletes();
+  });
   
   // Refresh athletes every 30 seconds to catch admin changes
   setInterval(loadAthletes, 30000);

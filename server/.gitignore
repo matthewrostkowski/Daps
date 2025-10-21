@@ -1,3 +1,6 @@
+# allow the template env to be tracked
+!.env.example
+
 # Environment variables - CRITICAL
 .env
 .env.local

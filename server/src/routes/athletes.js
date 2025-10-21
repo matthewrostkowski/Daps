@@ -1,6 +1,7 @@
 // src/routes/athletes.js
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { populateGamesForAthlete } from '../app.js';
 
 const router = Router();
 
@@ -35,30 +36,46 @@ router.post('/', async (req, res) => {
   // Generate slug if not provided
   const finalSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   
-  const a = await prisma.athlete.create({ 
-    data: { 
-      slug: finalSlug, 
-      name, 
-      team, 
-      league, 
-      imageUrl: imageUrl || image || '', 
-      active: active ?? true 
-    } 
-  });
-  
-  console.log('[api] Created athlete:', a.name, '(slug:', a.slug, ')');
-  
-  // Return in admin panel format
-  res.json({
-    id: a.slug,
-    slug: a.slug,
-    name: a.name,
-    team: a.team,
-    league: a.league,
-    image: a.imageUrl || '',
-    imageUrl: a.imageUrl || '',
-    active: a.active
-  });
+  try {
+    // Create the athlete
+    const a = await prisma.athlete.create({ 
+      data: { 
+        slug: finalSlug, 
+        name, 
+        team, 
+        league, 
+        imageUrl: imageUrl || image || '', 
+        active: active ?? true 
+      } 
+    });
+    
+    console.log('[api] Created athlete:', a.name, '(slug:', a.slug, ')');
+    
+    // Automatically populate games for the new athlete
+    console.log('[api] Auto-populating games for new athlete...');
+    const gamesResult = await populateGamesForAthlete(a);
+    
+    if (gamesResult.success) {
+      console.log(`[api] ✓ Successfully populated ${gamesResult.count} games for ${a.name}`);
+    } else {
+      console.log(`[api] ⚠️ Could not populate games: ${gamesResult.message || 'Unknown error'}`);
+    }
+    
+    // Return in admin panel format
+    res.json({
+      id: a.slug,
+      slug: a.slug,
+      name: a.name,
+      team: a.team,
+      league: a.league,
+      image: a.imageUrl || '',
+      imageUrl: a.imageUrl || '',
+      active: a.active
+    });
+  } catch (error) {
+    console.error('[api] Error creating athlete:', error);
+    res.status(500).json({ error: 'Failed to create athlete' });
+  }
 });
 
 router.patch('/:id', async (req, res) => {
@@ -83,6 +100,22 @@ router.patch('/:id', async (req, res) => {
   });
   
   console.log('[api] Updated', result.count, 'athlete(s)');
+  
+  // If team was updated, refresh the games schedule
+  if (team !== undefined && result.count > 0) {
+    console.log('[api] Team was updated, refreshing games schedule...');
+    try {
+      const athlete = await prisma.athlete.findFirst({ where });
+      if (athlete) {
+        const gamesResult = await populateGamesForAthlete(athlete);
+        if (gamesResult.success) {
+          console.log(`[api] ✓ Refreshed ${gamesResult.count} games after team update`);
+        }
+      }
+    } catch (error) {
+      console.error('[api] ⚠️ Failed to refresh games:', error.message);
+    }
+  }
   
   res.json({ ok: true, updated: result.count });
 });

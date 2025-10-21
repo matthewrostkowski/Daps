@@ -108,6 +108,19 @@
       background-repeat:no-repeat;
     }
 
+    .game-option-past{color:#6B7280}
+    .game-option-upcoming{color:#111;font-weight:500}
+    
+    .loading-games{
+      padding:12px;background:#F9FAFB;border-radius:8px;
+      text-align:center;color:#6B7280;font-size:14px;
+    }
+    
+    .no-games{
+      padding:12px;background:#FEF2F2;border:1px solid #FEE2E2;
+      border-radius:8px;color:#DC2626;font-size:14px;
+    }
+
     .cta{
       display:inline-block;border:0;padding:12px 24px;font-weight:700;
       border-radius:12px;cursor:pointer;color:#0B3810;font-size:16px;
@@ -126,6 +139,31 @@
       display:none;max-width:400px;z-index:1000;
     }
     .toast.show{display:block}
+
+    /* Modal for alert */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.5);
+      display:none;align-items:center;justify-content:center;z-index:2000;
+    }
+    .modal-overlay.show{display:flex}
+    .modal{
+      background:#fff;border-radius:16px;padding:32px;
+      max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);
+    }
+    .modal h3{margin:0 0 16px;font-size:20px;font-weight:900}
+    .modal p{margin:0 0 24px;color:#6B7280;line-height:1.6}
+    .modal-actions{display:flex;gap:12px;justify-content:flex-end}
+    .modal-btn{
+      padding:10px 20px;border-radius:10px;font-weight:700;
+      border:none;cursor:pointer;font-size:14px;
+    }
+    .modal-btn-primary{
+      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));
+      color:#0B3810;
+    }
+    .modal-btn-secondary{
+      background:#F3F4F6;color:#111;
+    }
 
     /* Tablet breakpoint */
     @media (max-width:900px){
@@ -176,6 +214,9 @@
       .toast{bottom:16px;right:16px;left:16px;max-width:none}
       
       .dropdown{min-width:180px;right:0;left:auto}
+      
+      .modal{padding:24px}
+      .modal h3{font-size:18px}
     }
 
     /* Small mobile breakpoint */
@@ -204,151 +245,161 @@
 <header class="site-header">
   <div class="bar">
     <div class="brand">
-      <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
+      <img src="/images/Daps-2 Copy.png" alt="Daps" class="logo" onerror="this.style.display='none'">
       <span class="beta">BETA</span>
     </div>
     
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    
     <nav id="nav">
-      <a href="/index.html">At-game experiences</a>
-      <a href="#">Live bounties</a>
-      <a href="#">How it works</a>
+      <a href="/index.html">Browse</a>
+      <a href="/my-offers.html">My Offers</a>
     </nav>
-
+    
     <div class="userbar">
-      <div id="userProfile">
-        <div class="user-badge" id="userBadge" onclick="toggleDropdown()">
-          <span id="userInitials"></span>
-        </div>
+      <div class="user-badge" id="userBadge">
+        <span id="userInitials">?</span>
         <div class="dropdown" id="userDropdown">
           <div class="dropdown-header">
-            <p class="dropdown-name" id="dropdownName"></p>
-            <p class="dropdown-email" id="dropdownEmail"></p>
+            <div class="dropdown-name" id="dropdownName">User</div>
+            <div class="dropdown-email" id="dropdownEmail">user@example.com</div>
           </div>
-          <a href="/my-offers.html" class="dropdown-item">My Offers</a>
+          <button class="dropdown-item" onclick="window.location.href='/my-offers.html'">My Offers</button>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item" onclick="logout()">Log out</button>
+          <button class="dropdown-item" onclick="localStorage.removeItem('jwt'); window.location.href='/user'">Sign Out</button>
         </div>
       </div>
-      
-      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
     </div>
   </div>
-  <div class="nav-overlay" id="navOverlay"></div>
 </header>
+
+<div class="nav-overlay" id="navOverlay"></div>
 
 <section class="xp-hero">
   <div class="xp-wrap">
     <div class="head-card">
-      <a class="back" href="/index.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <a href="/index.html" class="back">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Back to athletes
+        Back
       </a>
-
       <div class="avatar">
-        <img id="athleteImage" src="/images/Daps-2 Copy.png" alt="Athlete">
+        <img id="athleteImage" src="/images/Daps-2 Copy.png" alt="Athlete" />
       </div>
-
       <h1 class="player-name" id="athleteName">Loading...</h1>
-      <p class="player-team" id="athleteTeam">-</p>
+      <p class="player-team" id="athleteTeam">Team • League</p>
     </div>
 
     <div class="panel">
-      <h2>SELECT AN EXPERIENCE</h2>
-
+      <h2>Submit an offer</h2>
       <form id="offerForm">
         <div class="field">
-          <label class="label" for="customerName">Your Name</label>
-          <input id="customerName" name="customerName" class="input" type="text" required>
+          <label class="label">Your Name</label>
+          <input type="text" class="input" id="customerName" name="customerName" required placeholder="John Doe" />
+        </div>
+        
+        <div class="field">
+          <label class="label">Your Email</label>
+          <input type="email" class="input" id="customerEmail" name="customerEmail" required placeholder="john@example.com" />
+        </div>
+        
+        <div class="field">
+          <label class="label">Your Phone (optional)</label>
+          <input type="tel" class="input" id="customerPhone" name="customerPhone" placeholder="(555) 123-4567" />
         </div>
 
         <div class="field">
-          <label class="label" for="customerEmail">Your Email</label>
-          <input id="customerEmail" name="customerEmail" class="input" type="email" required>
+          <label class="label">Select Game</label>
+          <div id="gameSelectContainer">
+            <div class="loading-games">Loading games...</div>
+          </div>
         </div>
 
         <div class="field">
-          <label class="label" for="customerPhone">Your Phone</label>
-          <input id="customerPhone" name="customerPhone" class="input" type="tel" placeholder="+1 (555) 123-4567">
-        </div>
-
-        <div class="field">
-          <label class="label" for="gameDesc">Which game are you attending?</label>
-          <input id="gameDesc" name="gameDesc" class="input" type="text" placeholder="Timberwolves vs Lakers - 1/15/2025" required>
-        </div>
-
-        <div class="field">
-          <label class="label" for="expDesc">Describe your experience</label>
-          <textarea id="expDesc" name="expDesc" class="textarea" placeholder="I want a postgame photo and signed jersey"></textarea>
-        </div>
-
-        <div class="field">
-          <label class="label" for="expType">Experience Type</label>
-          <select id="expType" name="expType" class="select">
-            <option value="Photo">Photo</option>
-            <option value="Merch">Signed Merchandise</option>
-            <option value="Meetup">Meet & Greet</option>
+          <label class="label">Experience Type</label>
+          <select class="select" name="expType" required>
+            <option value="">Select experience type</option>
+            <option value="Meet & Greet">Meet & Greet</option>
+            <option value="VIP Seats">VIP Seats</option>
+            <option value="Signed Merch">Signed Merchandise</option>
+            <option value="Pre-game Access">Pre-game Access</option>
             <option value="Other">Other</option>
           </select>
         </div>
 
         <div class="field">
-          <label class="label" for="offered">Your Offer ($)</label>
-          <input id="offered" name="offered" class="input" type="number" placeholder="4000" required>
+          <label class="label">Experience Details (optional)</label>
+          <textarea class="textarea" name="expDesc" placeholder="Describe what you're looking for..."></textarea>
         </div>
 
         <div class="field">
-          <label class="label" for="paymentMethod">Payment Method</label>
-          <select id="paymentMethod" name="paymentMethod" class="select">
-            <option value="card">Credit Card</option>
+          <label class="label">Your Offer ($)</label>
+          <input type="number" class="input" name="offered" min="1" required placeholder="250" />
+        </div>
+
+        <div class="field">
+          <label class="label">Payment Method</label>
+          <select class="select" name="paymentMethod" required>
+            <option value="card">Credit/Debit Card</option>
             <option value="paypal">PayPal</option>
             <option value="venmo">Venmo</option>
+            <option value="crypto">Cryptocurrency</option>
           </select>
         </div>
 
         <div class="field">
-          <label class="label" for="paymentLast4">Last 4 Digits</label>
-          <input id="paymentLast4" name="paymentLast4" class="input" type="text" placeholder="4242" maxlength="4">
+          <label class="label">Last 4 Digits of Payment (optional)</label>
+          <input type="text" class="input" name="paymentLast4" maxlength="4" placeholder="1234" />
         </div>
 
-        <button class="cta" type="submit">Submit offer</button>
+        <button type="submit" class="cta">Submit offer</button>
       </form>
     </div>
   </div>
 </section>
+
+<!-- Alert Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <h3>Account Required</h3>
+    <p>You need to create an account or sign in before you can submit an offer. Creating an account is quick and free!</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-secondary" onclick="closeAuthModal()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" onclick="goToSignIn()">Sign In / Sign Up</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
   const API = 'http://localhost:5175/api';
+  const params = new URLSearchParams(window.location.search);
   
-  function getToken(){ return localStorage.getItem('jwt') || ''; }
+  // ✅ FIX: Accept BOTH athleteId and athleteid parameters
+  const athleteId = params.get('athleteId') || params.get('athleteid') || params.get('id');
   
-  function logout(){
-    localStorage.removeItem('jwt');
-    window.location.href = '/user';
+  console.log('[playepage] URL params:', window.location.search);
+  console.log('[playepage] Extracted athleteId:', athleteId);
+  
+  let gamesData = [];
+  let selectedGameId = null;
+  
+  if(!athleteId){
+    alert('No athlete ID provided');
+    window.location.href = '/index.html';
+    return;
   }
-  window.logout = logout;
   
-  function toggleDropdown(){
-    document.getElementById('userDropdown').classList.toggle('open');
+  function getToken(){
+    return localStorage.getItem('jwt');
   }
-  window.toggleDropdown = toggleDropdown;
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(e){
-    const badge = document.getElementById('userBadge');
-    const dropdown = document.getElementById('userDropdown');
-    if(badge && !badge.contains(e.target) && dropdown && !dropdown.contains(e.target)){
-      dropdown.classList.remove('open');
-    }
-  });
   
   function showToast(msg){
     const toast = document.getElementById('toast');
@@ -357,20 +408,135 @@
     setTimeout(() => toast.classList.remove('show'), 3000);
   }
   
-  // Get athleteId from URL
-  const params = new URLSearchParams(window.location.search);
-  const athleteId = params.get('athleteId');
+  // Modal functions
+  function showAuthModal(){
+    document.getElementById('authModal').classList.add('show');
+  }
   
-  if(!athleteId){
-    showToast('No athlete selected');
-    setTimeout(() => window.location.href = '/index.html', 2000);
+  function closeAuthModal(){
+    document.getElementById('authModal').classList.remove('show');
+  }
+  
+  function goToSignIn(){
+    closeAuthModal();
+    window.location.href = '/user';
+  }
+  
+  // Make functions global
+  window.closeAuthModal = closeAuthModal;
+  window.goToSignIn = goToSignIn;
+  
+  // User dropdown
+  document.getElementById('userBadge').addEventListener('click', function(e){
+    e.stopPropagation();
+    document.getElementById('userDropdown').classList.toggle('open');
+  });
+  
+  document.addEventListener('click', function(){
+    document.getElementById('userDropdown').classList.remove('open');
+  });
+  
+  // Format date
+  function formatDate(dateStr){
+    const d = new Date(dateStr);
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${month}/${day}`;
+  }
+  
+  // Load games
+  async function loadGames(){
+    try{
+      console.log('[playepage] Loading games for athleteId:', athleteId);
+      const res = await fetch(`${API}/games?athleteId=${athleteId}`);
+      const games = await res.json();
+      
+      console.log('[playepage] Received games:', games);
+      
+      if(!games || !games.length){
+        const container = document.getElementById('gameSelectContainer');
+        container.innerHTML = '<div class="no-games">No games available for this athlete yet. Check back soon!</div>';
+        return;
+      }
+      
+      gamesData = games;
+      
+      // Separate upcoming and past games
+      const now = new Date();
+      const upcomingGames = games.filter(g => new Date(g.date) >= now);
+      const pastGames = games.filter(g => new Date(g.date) < now);
+      
+      // Create select element
+      const select = document.createElement('select');
+      select.className = 'select';
+      select.required = true;
+      select.name = 'gameId';
+      
+      // Add default option
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Select a game';
+      select.appendChild(defaultOption);
+      
+      // Add upcoming games
+      if (upcomingGames.length > 0) {
+        const upcomingGroup = document.createElement('optgroup');
+        upcomingGroup.label = '📅 Upcoming Games';
+        
+        upcomingGames.forEach(game => {
+          const option = document.createElement('option');
+          option.value = game.id;
+          option.className = 'game-option-upcoming';
+          const dateStr = formatDate(game.date);
+          option.textContent = `${dateStr} vs ${game.opponent} @ ${game.venue}`;
+          upcomingGroup.appendChild(option);
+        });
+        
+        select.appendChild(upcomingGroup);
+      }
+      
+      // Add past games
+      if (pastGames.length > 0) {
+        const pastGroup = document.createElement('optgroup');
+        pastGroup.label = '🕐 Past Games';
+        
+        pastGames.reverse().forEach(game => {
+          const option = document.createElement('option');
+          option.value = game.id;
+          option.className = 'game-option-past';
+          const dateStr = formatDate(game.date);
+          option.textContent = `${dateStr} vs ${game.opponent} @ ${game.venue}`;
+          pastGroup.appendChild(option);
+        });
+        
+        select.appendChild(pastGroup);
+      }
+      
+      // Handle selection
+      select.addEventListener('change', function() {
+        selectedGameId = this.value;
+        console.log('[playepage] Selected game ID:', selectedGameId);
+      });
+      
+      const container = document.getElementById('gameSelectContainer');
+      container.innerHTML = '';
+      container.appendChild(select);
+      
+      console.log(`[playepage] Loaded ${games.length} games (${upcomingGames.length} upcoming, ${pastGames.length} past)`);
+      
+    } catch (err) {
+      console.error('[playepage] Failed to load games:', err);
+      const container = document.getElementById('gameSelectContainer');
+      container.innerHTML = '<div class="no-games">Failed to load games. Please try again.</div>';
+    }
   }
   
   // Check auth and load user
   async function checkAuth(){
     const token = getToken();
     if(!token){
-      window.location.href = '/user';
+      // Don't redirect immediately, allow them to see the page
+      // They'll get an alert when they try to submit
       return null;
     }
     
@@ -394,12 +560,10 @@
         return user;
       } else {
         localStorage.removeItem('jwt');
-        window.location.href = '/user';
         return null;
       }
     } catch(err){
-      console.error('Auth check failed:', err);
-      window.location.href = '/user';
+      console.error('[playepage] Auth check failed:', err);
       return null;
     }
   }
@@ -407,22 +571,36 @@
   // Load athlete details
   async function loadAthlete(){
     try{
+      console.log('[playepage] Loading athlete details for:', athleteId);
       const res = await fetch(`${API}/users/athletes`);
       const athletes = await res.json();
-      const athlete = athletes.find(a => a.id === athleteId);
+      
+      console.log('[playepage] All athletes:', athletes);
+      
+      // Try to find by id OR slug
+      const athlete = athletes.find(a => 
+        a.id === athleteId || 
+        a.slug === athleteId ||
+        (a.slug && a.slug.toLowerCase() === athleteId.toLowerCase())
+      );
+      
+      console.log('[playepage] Found athlete:', athlete);
       
       if(athlete){
         document.getElementById('athleteName').textContent = athlete.name;
         document.getElementById('athleteTeam').textContent = `${athlete.team} • ${athlete.league}`;
         document.getElementById('athleteImage').src = athlete.imageUrl || '/images/Daps-2 Copy.png';
         document.getElementById('athleteImage').onerror = function(){ this.src = '/images/Daps-2 Copy.png'; };
-
+        
+        // Load games after athlete is loaded
+        await loadGames();
       } else {
         showToast('Athlete not found');
+        console.error('[playepage] Could not find athlete with id:', athleteId);
         setTimeout(() => window.location.href = '/index.html', 2000);
       }
     } catch(err){
-      console.error('Failed to load athlete:', err);
+      console.error('[playepage] Failed to load athlete:', err);
       showToast('Failed to load athlete');
     }
   }
@@ -433,18 +611,35 @@
     
     const token = getToken();
     if(!token){
-      showToast('Please sign in first');
-      window.location.href = '/user';
+      // Show modal instead of just redirecting
+      showAuthModal();
+      return;
+    }
+    
+    if(!selectedGameId){
+      showToast('Please select a game');
+      return;
+    }
+    
+    // Find the selected game details
+    const selectedGame = gamesData.find(g => g.id === selectedGameId);
+    if(!selectedGame){
+      showToast('Selected game not found');
       return;
     }
     
     const formData = new FormData(e.target);
+    
+    // Create game description from selected game
+    const gameDesc = `${formatDate(selectedGame.date)} vs ${selectedGame.opponent} @ ${selectedGame.venue}`;
+    
     const data = {
       athleteId: athleteId,
+      gameId: selectedGameId,
       customerName: formData.get('customerName'),
       customerEmail: formData.get('customerEmail'),
       customerPhone: formData.get('customerPhone') || null,
-      gameDesc: formData.get('gameDesc'),
+      gameDesc: gameDesc,
       expDesc: formData.get('expDesc') || null,
       expType: formData.get('expType') || 'Other',
       offered: parseInt(formData.get('offered')) || 0,
@@ -471,12 +666,20 @@
         setTimeout(() => window.location.href = '/my-offers.html', 1500);
       } else {
         const error = await res.json();
-        showToast(error.error || 'Failed to submit offer');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit offer';
+        
+        // Check if it's an authentication error
+        if (res.status === 401 || res.status === 403) {
+          showAuthModal();
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit offer';
+        } else {
+          showToast(error.error || 'Failed to submit offer');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit offer';
+        }
       }
     } catch(err){
-      console.error('Failed to submit offer:', err);
+      console.error('[playepage] Failed to submit offer:', err);
       showToast('Network error. Please try again.');
       const submitBtn = e.target.querySelector('button[type="submit"]');
       submitBtn.disabled = false;
