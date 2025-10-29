@@ -69,6 +69,7 @@ model Athlete {
   conference String?  // NEW: For NCAA teams (e.g., "Big East", "Big Ten", etc.)
   imageUrl   String?
   active     Boolean  @default(true)
+  featured   Boolean  @default(false)  // NEW: Mark athletes as featured
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -77,6 +78,7 @@ model Athlete {
 
   @@index([league, team])
   @@index([conference])
+  @@index([featured])
 }
 
 model Game {

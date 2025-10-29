@@ -1,36 +1,456 @@
 // src/routes/offers.js
-import express from 'express';
+import { Router } from 'express';
 import { prisma } from '../db.js';
 import { requireAdmin } from '../auth.js';
-import { sendOfferStatusEmail } from '../email.js';
+import { requireUser } from '../userAuth.js';
 import { populateGamesForAthlete } from '../app.js';
 
-const router = express.Router();
+const router = Router();
 
-// ==================== GET ALL OFFERS (ADMIN) ====================
-router.get('/', requireAdmin, async (req, res) => {
+/* ============================================================
+   =============== ATHLETES (ADMIN SIDE) ======================
+   These endpoints are what admin.html is calling:
+   - GET    /api/offers/athletes        (list for admin table)
+   - POST   /api/offers/athletes        (create new athlete)
+   - PUT    /api/offers/athletes/:id    (update toggle active/featured/etc)
+   - PATCH  /api/offers/athletes/:id    (same as PUT, just convenience)
+   - DELETE /api/offers/athletes/:id    (remove athlete + games)
+   ============================================================ */
+
+/**
+ * GET /api/offers/athletes
+ * Admin view of all athletes
+ */
+router.get('/athletes', requireAdmin, async (_req, res) => {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] GET /api/offers/athletes');
+
   try {
-    console.log('[offers] GET / - Fetching all offers for admin');
+    const list = await prisma.athlete.findMany({
+      orderBy: { name: 'asc' }
+    });
 
-    const offers = await prisma.offer.findMany({
+    const transformed = list.map(a => ({
+      id: a.slug || a.id,
+      slug: a.slug,
+      name: a.name,
+      team: a.team,
+      league: a.league,
+      image: a.imageUrl || '',
+      imageUrl: a.imageUrl || '',
+      active: a.active,
+      featured: a.featured || false
+    }));
+
+    console.log(`[offers] returning ${transformed.length} athletes to admin`);
+    transformed.forEach(a => {
+      console.log(
+        `[offers]   - ${a.name} [id=${a.id}] active=${a.active} featured=${a.featured}`
+      );
+    });
+
+    console.log('═════════════════════════════════════════════════════════════');
+    res.json(transformed);
+  } catch (err) {
+    console.error('[offers] ERROR /api/offers/athletes', err);
+    console.log('═════════════════════════════════════════════════════════════');
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+/**
+ * POST /api/offers/athletes
+ * Admin creates new athlete from admin.html ("Add Athlete" form)
+ * Body: { name, team, league, imageUrl?, featured? }
+ */
+router.post('/athletes', requireAdmin, async (req, res) => {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] POST /api/offers/athletes - CREATE ATHLETE');
+  console.log('[offers] Request body:', JSON.stringify(req.body));
+
+  try {
+    const { slug, name, team, league, imageUrl, image, active, featured } = req.body || {};
+
+    if (!name || !team || !league) {
+      console.error('[offers] ❌ Missing required fields');
+      console.log('═════════════════════════════════════════════════════════════');
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+
+    // generate slug if not provided
+    const finalSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    const created = await prisma.athlete.create({
+      data: {
+        slug: finalSlug,
+        name,
+        team,
+        league,
+        imageUrl: imageUrl || image || '',
+        active: active ?? true,
+        featured: featured ?? false
+      }
+    });
+
+    console.log('[offers] ✓ Athlete created:', created.name, `(slug: ${created.slug})`);
+    console.log('[offers] featured:', created.featured, 'active:', created.active);
+
+    // auto-populate schedule for this athlete
+    console.log('[offers] Auto-populating games for new athlete...');
+    try {
+      const gamesResult = await populateGamesForAthlete(created);
+      if (gamesResult.success) {
+        console.log(
+          `[offers] ✓ Populated ${gamesResult.count} games for ${created.name}`
+        );
+      } else {
+        console.warn(
+          `[offers] ⚠️ Could not populate games: ${gamesResult.message || 'Unknown error'}`
+        );
+      }
+    } catch (err) {
+      console.error('[offers] ⚠️ Failed to auto-populate games:', err.message);
+    }
+
+    // respond in the admin panel shape
+    const response = {
+      id: created.slug || created.id,
+      slug: created.slug,
+      name: created.name,
+      team: created.team,
+      league: created.league,
+      image: created.imageUrl || '',
+      imageUrl: created.imageUrl || '',
+      active: created.active,
+      featured: created.featured || false
+    };
+
+    console.log('[offers] RESPONSE to admin:', response);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.json(response);
+  } catch (err) {
+    console.error('[offers] ❌ ERROR creating athlete', err);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+/**
+ * Internal helper for PUT/PATCH below
+ * This is the FIX for featured.
+ */
+async function updateAthleteForAdmin(req, res) {
+  const { id } = req.params;
+
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] PUT/PATCH /api/offers/athletes/:id - UPDATE ATHLETE');
+  console.log('[offers] Athlete ID param:', id);
+  console.log('[offers] Raw body:', JSON.stringify(req.body));
+
+  // ⛑ pull EVERYTHING we allow admin to edit
+  const {
+    name,
+    team,
+    league,
+    imageUrl,
+    image,
+    active,
+    featured // ← THIS WAS MISSING BEFORE (root cause)
+  } = req.body || {};
+
+  console.log('[offers] Extracted fields:', {
+    name,
+    team,
+    league,
+    imageUrl,
+    image,
+    active,
+    featured
+  });
+
+  // we allow lookup by slug OR id because admin is using slug in some places
+  const where = { OR: [{ slug: id }, { id }] };
+
+  const updateData = {};
+  if (name     !== undefined) updateData.name     = name;
+  if (team     !== undefined) updateData.team     = team;
+  if (league   !== undefined) updateData.league   = league;
+  if (imageUrl !== undefined || image !== undefined) {
+    updateData.imageUrl = imageUrl || image;
+  }
+  if (active   !== undefined) updateData.active   = active;
+  if (featured !== undefined) updateData.featured = featured; // ← CRITICAL FIX
+
+  console.log('[offers] Update data object:', updateData);
+
+  try {
+    // 1. Find athlete first
+    const athlete = await prisma.athlete.findFirst({ where });
+    if (!athlete) {
+      console.error('[offers] ❌ Athlete not found for', id);
+      console.log('═════════════════════════════════════════════════════════════');
+      return res.status(404).json({ error: 'Athlete not found' });
+    }
+
+    console.log('[offers] Current DB athlete state:', {
+      id: athlete.id,
+      slug: athlete.slug,
+      name: athlete.name,
+      active: athlete.active,
+      featured: athlete.featured
+    });
+
+    // 2. Update athlete in DB
+    const updated = await prisma.athlete.update({
+      where: { id: athlete.id },
+      data: updateData
+    });
+
+    console.log('[offers] ✅ Athlete updated successfully');
+    console.log('[offers] Updated athlete state:', {
+      id: updated.id,
+      slug: updated.slug,
+      name: updated.name,
+      active: updated.active,
+      featured: updated.featured
+    });
+
+    // 3. If team changed, refresh schedule
+    if (team !== undefined) {
+      console.log('[offers] Team changed. Refreshing games...');
+      try {
+        const gamesResult = await populateGamesForAthlete(updated);
+        if (gamesResult.success) {
+          console.log(
+            `[offers] ✓ Refreshed ${gamesResult.count} games after team update`
+          );
+        } else {
+          console.warn(
+            `[offers] ⚠️ Failed to refresh games: ${gamesResult.message || 'Unknown error'}`
+          );
+        }
+      } catch (err) {
+        console.error('[offers] ⚠️ Failed to refresh games:', err.message);
+      }
+    }
+
+    // 4. Return response in admin panel format
+    const response = {
+      id: updated.slug || updated.id,
+      slug: updated.slug,
+      name: updated.name,
+      team: updated.team,
+      league: updated.league,
+      image: updated.imageUrl || '',
+      imageUrl: updated.imageUrl || '',
+      active: updated.active,
+      featured: updated.featured || false // ← ALSO CRITICAL
+    };
+
+    console.log('[offers] Response payload to admin:', response);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.json(response);
+  } catch (err) {
+    console.error('[offers] ❌ Error updating athlete:', err);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.status(500).json({ error: 'Failed to update athlete' });
+  }
+}
+
+router.put('/athletes/:id', requireAdmin, updateAthleteForAdmin);
+router.patch('/athletes/:id', requireAdmin, updateAthleteForAdmin);
+
+
+/**
+ * DELETE /api/offers/athletes/:id
+ * Admin deletes athlete (and associated games)
+ */
+router.delete('/athletes/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] DELETE /api/offers/athletes/' + id);
+
+  try {
+    // find athlete by slug or id
+    const athlete = await prisma.athlete.findFirst({
+      where: { OR: [{ slug: id }, { id }] }
+    });
+
+    if (!athlete) {
+      console.error('[offers] ❌ Athlete not found for delete');
+      console.log('═════════════════════════════════════════════════════════════');
+      return res.status(404).json({ error: 'Athlete not found' });
+    }
+
+    // delete games
+    console.log('[offers] Deleting games for athlete:', athlete.id);
+    await prisma.game.deleteMany({
+      where: { athleteId: athlete.id }
+    });
+
+    // delete athlete
+    console.log('[offers] Deleting athlete row');
+    await prisma.athlete.delete({
+      where: { id: athlete.id }
+    });
+
+    console.log('[offers] ✅ Athlete deleted:', athlete.name);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[offers] ❌ Error deleting athlete:', err);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.status(500).json({ error: 'Failed to delete athlete' });
+  }
+});
+
+
+/* ============================================================
+   =============== OFFERS (USER + ADMIN) ======================
+   - user creates offers
+   - admin views / updates status
+   ============================================================ */
+
+/**
+ * USER - create an offer
+ * POST /api/offers
+ * Body includes athleteId, etc.
+ * NOTE: requireUser is enforced at app.js level or here
+ */
+router.post('/', requireUser, async (req, res) => {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] POST /api/offers - user creating offer');
+  console.log('[offers] Request body:', JSON.stringify(req.body));
+
+  try {
+    const {
+      athleteId,
+      gameId,
+      customerName,
+      customerEmail,
+      customerPhone,
+      gameDesc,
+      expDesc,
+      expType,
+      offered,
+      paymentMethod,
+      paymentLast4
+    } = req.body || {};
+
+    // validate minimal fields
+    if (!athleteId || !customerName || !customerEmail) {
+      console.error('[offers] ❌ Missing required fields for offer create');
+      console.log('═════════════════════════════════════════════════════════════');
+      return res.status(400).json({
+        error: 'athleteId, customerName, and customerEmail are required'
+      });
+    }
+
+    // find athlete by slug OR id
+    const athlete = await prisma.athlete.findFirst({
+      where: {
+        OR: [{ id: athleteId }, { slug: athleteId }]
+      }
+    });
+    if (!athlete) {
+      console.error('[offers] ❌ Athlete not found for offer create');
+      console.log('═════════════════════════════════════════════════════════════');
+      return res.status(404).json({ error: 'Athlete not found.' });
+    }
+
+    // create offer
+    const offer = await prisma.offer.create({
+      data: {
+        userId: req.user.uid,
+        athleteId: athlete.id,
+        gameId: gameId || null,
+        customerName,
+        customerEmail: customerEmail.toLowerCase(),
+        customerPhone,
+        gameDesc,
+        expDesc,
+        expType,
+        offered: parseFloat(offered) || 0,
+        paymentMethod,
+        paymentLast4,
+        status: 'pending'
+      },
       include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true
-          }
-        },
         athlete: {
           select: {
-            id: true,
-            slug: true,
             name: true,
-            team: true,
-            league: true,
+            slug: true,
             imageUrl: true,
-            active: true
+            team: true
+          }
+        },
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true
+          }
+        },
+        game: {
+          select: {
+            id: true,
+            date: true,
+            opponent: true,
+            venue: true
+          }
+        }
+      }
+    });
+
+    console.log('[offers] ✅ Offer created successfully:', offer.id);
+
+    res.json({
+      id: offer.id,
+      athlete: offer.athlete,
+      game: offer.game,
+      status: offer.status,
+      offered: offer.offered,
+      customerName: offer.customerName,
+      expDesc: offer.expDesc,
+      gameDesc: offer.gameDesc,
+      createdAt: offer.createdAt
+    });
+    console.log('═════════════════════════════════════════════════════════════');
+  } catch (err) {
+    console.error('[offers] ❌ Error creating offer:', err);
+    console.log('═════════════════════════════════════════════════════════════');
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+/**
+ * ADMIN - list all offers
+ * GET /api/offers
+ */
+router.get('/', requireAdmin, async (_req, res) => {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] GET /api/offers - admin list offers');
+
+  try {
+    const offers = await prisma.offer.findMany({
+      include: {
+        athlete: {
+          select: {
+            name: true,
+            slug: true,
+            imageUrl: true,
+            team: true,
+            league: true
+          }
+        },
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true
           }
         },
         game: {
@@ -45,457 +465,103 @@ router.get('/', requireAdmin, async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Transform to match admin.html expected format
-    const transformed = offers.map(offer => ({
-      id: offer.id,
-      ts: new Date(offer.createdAt).getTime(),
-      status: offer.status,
-      customer: {
-        name: offer.customerName || `${offer.user.firstName} ${offer.user.lastName}`,
-        email: offer.customerEmail || offer.user.email,
-        phone: offer.customerPhone || '',
-        account: offer.userId
-      },
-      payment: {
-        offered: offer.offered || offer.amount || 0,
-        currency: 'USD',
-        method: offer.paymentMethod || 'card',
-        last4: offer.paymentLast4 || ''
-      },
-      experience: {
-        desc: offer.expDesc || offer.description || '',
-        type: offer.expType || 'Other'
-      },
-      game: {
-        desc: offer.gameDesc || (offer.game ? `${offer.athlete.team} vs ${offer.game.opponent} - ${new Date(offer.game.date).toLocaleDateString()}` : 'Game TBD')
-      },
-      athlete: {
-        id: offer.athlete.slug || offer.athlete.id,
-        name: offer.athlete.name,
-        team: offer.athlete.team,
-        league: offer.athlete.league,
-        image: offer.athlete.imageUrl || ''
-      }
-    }));
-
-    console.log(`[offers] Returning ${transformed.length} offers to admin`);
-    res.json(transformed);
-
-  } catch (error) {
-    console.error('[offers] Get all offers error:', error);
+    console.log('[offers] returning', offers.length, 'offers to admin');
+    console.log('═════════════════════════════════════════════════════════════');
+    res.json(offers);
+  } catch (err) {
+    console.error('[offers] ❌ Error fetching offers for admin:', err);
+    console.log('═════════════════════════════════════════════════════════════');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// ==================== GET SINGLE OFFER (ADMIN) ====================
-router.get('/:id', requireAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log('[offers] GET /:id', { id });
 
-    const offer = await prisma.offer.findUnique({
-      where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true
-          }
-        },
-        athlete: {
-          select: {
-            id: true,
-            slug: true,
-            name: true,
-            team: true,
-            league: true,
-            imageUrl: true
-          }
-        },
-        game: true
-      }
-    });
-
-    if (!offer) {
-      return res.status(404).json({ error: 'Offer not found' });
-    }
-
-    // Transform to match admin.html format
-    const transformed = {
-      id: offer.id,
-      ts: new Date(offer.createdAt).getTime(),
-      status: offer.status,
-      customer: {
-        name: offer.customerName || `${offer.user.firstName} ${offer.user.lastName}`,
-        email: offer.customerEmail || offer.user.email,
-        phone: offer.customerPhone || '',
-        account: offer.userId
-      },
-      payment: {
-        offered: offer.offered || offer.amount || 0,
-        currency: 'USD',
-        method: offer.paymentMethod || 'card',
-        last4: offer.paymentLast4 || ''
-      },
-      experience: {
-        desc: offer.expDesc || offer.description || '',
-        type: offer.expType || 'Other'
-      },
-      game: {
-        desc: offer.gameDesc || (offer.game ? `${offer.athlete.team} vs ${offer.game.opponent}` : 'Game TBD')
-      },
-      athlete: {
-        id: offer.athlete.slug || offer.athlete.id,
-        name: offer.athlete.name,
-        team: offer.athlete.team,
-        league: offer.athlete.league,
-        image: offer.athlete.imageUrl || ''
-      }
-    };
-
-    res.json(transformed);
-
-  } catch (error) {
-    console.error('[offers] Get offer error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// ==================== UPDATE OFFER STATUS (ADMIN) ====================
+/**
+ * ADMIN - update offer status (approve/decline/etc)
+ * PUT /api/offers/:id/status
+ * body: { status: "approved" | "declined" | ... }
+ */
 router.put('/:id/status', requireAdmin, async (req, res) => {
-  console.log('[offers] ═══════════════════════════════════════════════════════');
-  console.log('[offers] PUT /:id/status - HANDLER REACHED');
-  console.log('[offers] This means requireAdmin passed successfully');
-  
+  const { id } = req.params;
+  const { status } = req.body || {};
+
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[offers] PUT /api/offers/:id/status');
+  console.log('[offers] Offer ID:', id);
+  console.log('[offers] New status:', status);
+
   try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    console.log('[offers] PUT /:id/status', { id, status });
-
-    if (!status || !['pending', 'approved', 'declined'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
+    if (!status) {
+      console.error('[offers] ❌ Missing status in body');
+      console.log('═════════════════════════════════════════════════════════════');
+      return res.status(400).json({ error: 'Missing status' });
     }
 
-    // Update the offer
-    const offer = await prisma.offer.update({
+    const updated = await prisma.offer.update({
       where: { id },
       data: { status },
       include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true
-          }
-        },
         athlete: {
           select: {
-            id: true,
-            slug: true,
             name: true,
-            team: true,
-            league: true,
-            imageUrl: true
+            slug: true,
+            imageUrl: true,
+            team: true
           }
         },
-        game: true
+        game: {
+          select: {
+            id: true,
+            date: true,
+            opponent: true,
+            venue: true
+          }
+        }
       }
     });
 
-    console.log('[offers] Status updated:', { offerId: id, newStatus: status });
+    console.log('[offers] offer status updated successfully');
 
-    // Send email notification to customer
-    try {
-      const customerEmail = offer.customerEmail || offer.user.email;
-      if (customerEmail) {
-        await sendOfferStatusEmail(customerEmail, offer);
-        console.log('[offers] Status notification email sent to', customerEmail);
-      }
-    } catch (emailErr) {
-      console.error('[offers] Failed to send status email:', emailErr);
-    }
+    // normalize shape back to admin panel style
+    const gameId = updated.game ? updated.game.id : null;
+    const gameDate = updated.game ? updated.game.date : null;
+    const gameOpp = updated.game ? updated.game.opponent : null;
+    const gameVenue = updated.game ? updated.game.venue : null;
 
-    // Transform response to match admin.html format
-    const transformed = {
-      id: offer.id,
-      ts: new Date(offer.createdAt).getTime(),
-      status: offer.status,
-      customer: {
-        name: offer.customerName || `${offer.user.firstName} ${offer.user.lastName}`,
-        email: offer.customerEmail || offer.user.email,
-        phone: offer.customerPhone || '',
-        account: offer.userId
-      },
-      payment: {
-        offered: offer.offered || offer.amount || 0,
-        currency: 'USD',
-        method: offer.paymentMethod || 'card',
-        last4: offer.paymentLast4 || ''
-      },
-      experience: {
-        desc: offer.expDesc || offer.description || '',
-        type: offer.expType || 'Other'
-      },
+    const response = {
+      id: updated.id,
+      status: updated.status,
+      offered: updated.offered,
+      createdAt: updated.createdAt,
+      customerName: updated.customerName,
+      customerEmail: updated.customerEmail,
+      customerPhone: updated.customerPhone,
+      paymentMethod: updated.paymentMethod,
+      paymentLast4: updated.paymentLast4,
       game: {
-        desc: offer.gameDesc || (offer.game ? `${offer.athlete.team} vs ${offer.game.opponent}` : 'Game TBD')
+        id: gameId,
+        date: gameDate,
+        opponent: gameOpp,
+        venue: gameVenue,
+        desc: updated.gameDesc || 'Game TBD'
       },
+      description: updated.expDesc || updated.description || '',
+      expType: updated.expType || 'Other',
       athlete: {
-        id: offer.athlete.slug || offer.athlete.id,
-        name: offer.athlete.name,
-        team: offer.athlete.team,
-        league: offer.athlete.league,
-        image: offer.athlete.imageUrl || ''
+        name: updated.athlete?.name || '',
+        slug: updated.athlete?.slug || '',
+        imageUrl: updated.athlete?.imageUrl || '',
+        team: updated.athlete?.team || ''
       }
     };
 
-    res.json(transformed);
-
-  } catch (error) {
-    console.error('[offers] Update status error:', error);
-    
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Offer not found' });
-    }
-    
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// ==================== DELETE OFFER (ADMIN) ====================
-router.delete('/:id', requireAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log('[offers] DELETE /:id', { id });
-
-    await prisma.offer.delete({
-      where: { id }
-    });
-
-    console.log('[offers] Offer deleted:', id);
-    res.json({ message: 'Offer deleted successfully' });
-
-  } catch (error) {
-    console.error('[offers] Delete offer error:', error);
-    
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Offer not found' });
-    }
-    
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// ==================== GET ALL ATHLETES (ADMIN) ====================
-router.get('/athletes', requireAdmin, async (_req, res) => {
-  try {
-    console.log('[offers] GET /athletes - Fetching all athletes');
-    const athletes = await prisma.athlete.findMany({
-      orderBy: { name: 'asc' }
-    });
-    
-    const transformed = athletes.map(a => ({
-      id: a.slug || a.id,
-      slug: a.slug,
-      name: a.name,
-      team: a.team,
-      league: a.league,
-      image: a.imageUrl || '',
-      imageUrl: a.imageUrl || '',
-      active: a.active
-    }));
-    
-    console.log(`[offers] Returning ${transformed.length} athletes`);
-    res.json(transformed);
-  } catch (error) {
-    console.error('[offers] Error fetching athletes:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// ==================== CREATE ATHLETE (ADMIN) ====================
-router.post('/athletes', requireAdmin, async (req, res) => {
-  try {
-    const { name, team, league, imageUrl } = req.body;
-    
-    console.log('[offers] POST /athletes', { name, team, league });
-
-    if (!name || !team || !league) {
-      return res.status(400).json({ error: 'Name, team, and league required' });
-    }
-
-    // Generate slug
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-    const athlete = await prisma.athlete.create({
-      data: {
-        slug,
-        name,
-        team,
-        league,
-        imageUrl: imageUrl || null,
-        active: true
-      }
-    });
-
-    console.log('[offers] ✓ Athlete created:', athlete.id);
-    
-    // ==================== AUTO-POPULATE GAMES ====================
-    console.log('[offers] Auto-populating games for new athlete...');
-    try {
-      const gamesResult = await populateGamesForAthlete(athlete);
-      
-      if (gamesResult.success) {
-        console.log(`[offers] ✓ Successfully populated ${gamesResult.count} games for ${athlete.name}`);
-      } else {
-        console.log(`[offers] ⚠️ Could not populate games: ${gamesResult.message || 'Unknown error'}`);
-      }
-    } catch (gameError) {
-      console.error('[offers] ⚠️ Game population failed:', gameError.message);
-      // Don't fail the athlete creation if game population fails
-    }
-    // ============================================================
-    
-    // Return in admin panel format
-    res.json({
-      id: athlete.slug,
-      slug: athlete.slug,
-      name: athlete.name,
-      team: athlete.team,
-      league: athlete.league,
-      image: athlete.imageUrl || '',
-      imageUrl: athlete.imageUrl || '',
-      active: athlete.active
-    });
-
-  } catch (error) {
-    console.error('[offers] Create athlete error:', error);
-    
-    if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'Athlete with this name already exists' });
-    }
-    
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// ==================== UPDATE ATHLETE (ADMIN) ====================
-router.put('/athletes/:id', requireAdmin, async (req, res) => {
-  console.log('[offers] ═══════════════════════════════════════════════════════');
-  console.log('[offers] PUT /athletes/:id - Update athlete');
-  
-  try {
-    const { id } = req.params;
-    const { name, team, league, imageUrl, active } = req.body;
-    
-    console.log('[offers] Athlete ID:', id);
-    console.log('[offers] Update data:', { name, team, league, imageUrl, active });
-
-    const updateData = {};
-    if (name !== undefined) updateData.name = name;
-    if (team !== undefined) updateData.team = team;
-    if (league !== undefined) updateData.league = league;
-    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
-    if (active !== undefined) updateData.active = active;
-
-    console.log('[offers] Final update data:', updateData);
-
-    const athlete = await prisma.athlete.update({
-      where: { id },
-      data: updateData
-    });
-
-    console.log('[offers] ✅ Athlete updated successfully:', athlete);
-    
-    // ==================== REFRESH GAMES IF TEAM CHANGED ====================
-    if (team !== undefined) {
-      console.log('[offers] Team was updated, refreshing games schedule...');
-      try {
-        const gamesResult = await populateGamesForAthlete(athlete);
-        if (gamesResult.success) {
-          console.log(`[offers] ✓ Refreshed ${gamesResult.count} games after team update`);
-        } else {
-          console.log(`[offers] ⚠️ Could not refresh games: ${gamesResult.message}`);
-        }
-      } catch (gameError) {
-        console.error('[offers] ⚠️ Game refresh failed:', gameError.message);
-        // Don't fail the update if game refresh fails
-      }
-    }
-    // =======================================================================
-    
-    console.log('[offers] ═══════════════════════════════════════════════════════');
-    
-    // Return in admin panel format
-    res.json({
-      id: athlete.slug || athlete.id,
-      slug: athlete.slug,
-      name: athlete.name,
-      team: athlete.team,
-      league: athlete.league,
-      image: athlete.imageUrl || '',
-      imageUrl: athlete.imageUrl || '',
-      active: athlete.active
-    });
-
-  } catch (error) {
-    console.error('[offers] ═══════════════════════════════════════════════════════');
-    console.error('[offers] ❌ Update athlete error:', error);
-    console.error('[offers] Error code:', error.code);
-    console.error('[offers] Error message:', error.message);
-    console.error('[offers] ═══════════════════════════════════════════════════════');
-    
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Athlete not found' });
-    }
-    
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// ==================== DELETE ATHLETE (ADMIN) ====================
-router.delete('/athletes/:id', requireAdmin, async (req, res) => {
-  console.log('[offers] ═══════════════════════════════════════════════════════');
-  console.log('[offers] DELETE /athletes/:id');
-  
-  try {
-    const { id } = req.params;
-    console.log('[offers] Athlete ID:', id);
-
-    // ==================== DELETE GAMES FIRST ====================
-    const gamesDeleted = await prisma.game.deleteMany({
-      where: { athleteId: id }
-    });
-    console.log(`[offers] Deleted ${gamesDeleted.count} games for athlete`);
-    // ===========================================================
-
-    await prisma.athlete.delete({
-      where: { id }
-    });
-
-    console.log('[offers] ✅ Athlete deleted successfully:', id);
-    console.log('[offers] ═══════════════════════════════════════════════════════');
-    res.json({ message: 'Athlete deleted successfully' });
-
-  } catch (error) {
-    console.error('[offers] ═══════════════════════════════════════════════════════');
-    console.error('[offers] ❌ Delete athlete error:', error);
-    console.error('[offers] Error code:', error.code);
-    console.error('[offers] Error message:', error.message);
-    console.error('[offers] ═══════════════════════════════════════════════════════');
-    
-    if (error.code === 'P2003' || error.message.includes('foreign key')) {
-      return res.status(400).json({ error: 'Cannot delete athlete with existing offers. Set athlete to inactive instead.' });
-    }
-    
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Athlete not found' });
-    }
-    
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.log('[offers] Response to admin after status change:', response);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.json(response);
+  } catch (err) {
+    console.error('[offers] ❌ error updating offer status', err);
+    console.log('═════════════════════════════════════════════════════════════');
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

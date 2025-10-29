@@ -224,7 +224,8 @@ async function athletesHandler(req, res) {
         league: true,
         imageUrl: true,
         slug: true,
-        active: true
+        active: true,
+        featured: true
       },
       orderBy: { name: 'asc' }
     });
@@ -578,6 +579,20 @@ app.get('/my-offers.html', (req, res) => {
 app.get('/verify.html', (req, res) => {
   console.log('[route:/verify.html] serving verify.html');
   res.sendFile(path.join(__dirname, '..', 'verify.html'));
+});
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   NEW: NEWS PAGE ROUTES (added, nothing removed above)
+   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+app.get('/news.html', (req, res) => {
+  console.log('[route:/news.html] serving news.html');
+  res.sendFile(path.join(__dirname, '..', 'news.html'));
+});
+
+app.get('/news', (req, res) => {
+  console.log('[route:/news] redirect -> /news.html');
+  res.redirect('/news.html');
 });
 
 /* ==================== 404 & ERROR HANDLERS ==================== */

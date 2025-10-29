@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Daps — In the News</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius:12px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --muted:#6B7280;
+      --chip:#F7F8FA;
+      --chip-border:#E5E7EB;
+      --cta-a:#DAFA22;
+      --cta-b:#64FA00;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04),0 10px 20px rgba(16,24,40,.07);
+      --shadow-2:0 8px 24px rgba(16,24,40,.12);
+      --bg-page:#FFFFFF;
+      --bg-card:#FFFFFF;
+      --beta:#FF6000;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg-page);
+      color:var(--ink);
+      font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    }
+
+    /* ======= SITE HEADER (matches rest of app) ======= */
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+      box-shadow:0 2px 2px rgba(16,24,40,.04);
+      font-family:'Poppins',sans-serif;
+    }
+
+    .site-header .bar{
+      max-width:var(--container);
+      margin:0 auto;
+      padding:14px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    /* left side: brand + beta */
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+    }
+
+    .brand .logo{
+      width:28px;
+      height:28px;
+      border-radius:8px;
+      object-fit:cover;
+      background:#000; /* fallback if img fails */
+      display:block;
+    }
+
+    .brand .beta{
+      font-size:11px;
+      font-weight:800;
+      line-height:1.2;
+      padding:4px 8px;
+      border-radius:999px;
+      background:var(--beta);
+      color:#fff;
+    }
+
+    /* center nav */
+    nav#nav{
+      display:flex;
+      align-items:center;
+      gap:28px;
+      font-size:14px;
+      font-weight:600;
+      line-height:1.2;
+    }
+
+    nav#nav a{
+      text-decoration:none;
+      color:var(--ink);
+      position:relative;
+      padding-bottom:6px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav#nav a.active::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:3px;
+      background:#000;
+      border-radius:2px;
+    }
+
+    /* right side user badge / sign in */
+    .userbar{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-left:auto;
+    }
+
+    .user-badge{
+      position:relative;
+      width:auto;
+      height:34px;
+      min-width:34px;
+      border-radius:12px;
+      background:#111;
+      color:#fff;
+      font-size:13px;
+      font-weight:700;
+      line-height:34px;
+      font-family:'Poppins',sans-serif;
+      padding:0 12px;
+      cursor:pointer;
+      box-shadow:var(--shadow-1);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .user-badge span{
+      display:inline-block;
+      line-height:1.2;
+    }
+
+    .dropdown{
+      position:absolute;
+      right:0;
+      top:40px;
+      min-width:200px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      box-shadow:var(--shadow-2);
+      padding:12px;
+      display:none;
+    }
+
+    .dropdown-header{
+      border-bottom:1px solid var(--line);
+      padding-bottom:10px;
+      margin-bottom:10px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-name{
+      margin:0;
+      font-size:14px;
+      font-weight:700;
+      color:var(--ink);
+      line-height:1.3;
+    }
+
+    .dropdown-email{
+      margin:2px 0 0;
+      font-size:12px;
+      font-weight:500;
+      color:var(--muted);
+      line-height:1.4;
+      font-family:'Manrope',sans-serif;
+      word-break:break-word;
+    }
+
+    .dropdown-item{
+      width:100%;
+      text-align:left;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-family:'Poppins',sans-serif;
+      font-size:13px;
+      font-weight:700;
+      line-height:1.2;
+      padding:10px 12px;
+      cursor:pointer;
+      color:var(--ink);
+    }
+
+    .dropdown-item:hover{
+      background:#F6F7FA;
+    }
+
+    /* sign in button (ghost style from design system) */
+    .btn{
+      height:34px;
+      padding:0 12px;
+      border-radius:12px;
+      font-family:'Poppins',sans-serif;
+      font-size:13px;
+      font-weight:800;
+      line-height:34px;
+      background:#fff;
+      border:1px solid #111;
+      color:#111;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      box-shadow:var(--shadow-1);
+    }
+
+    .btn:hover{
+      background:#111;
+      color:#fff;
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(16,24,40,.07);
+    }
+
+    .btn:focus{
+      outline:2px solid #1113;
+      outline-offset:2px;
+    }
+
+    /* hamburger (mobile) */
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:5px;
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+    }
+
+    .hamburger span{
+      display:block;
+      width:18px;
+      height:2px;
+      background:#000;
+      border-radius:1px;
+    }
+
+    @media(max-width:760px){
+      nav#nav{
+        display:none;
+      }
+      .hamburger{
+        display:flex;
+      }
+      .userbar{
+        order:3;
+      }
+    }
+
+    /* ======= MAIN PAGE WRAPPER ======= */
+    .page-shell{
+      max-width:var(--container);
+      margin:0 auto;
+      padding:32px 20px 80px;
+    }
+
+    /* ---- Section Header ---- */
+    .news-head{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:32px;
+    }
+
+    .eyebrow-row{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .eyebrow-label{
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--chip);
+      color:var(--ink);
+      font-family:'Poppins',sans-serif;
+    }
+
+    .eyebrow-date{
+      font-family:'Manrope',sans-serif;
+      font-size:12px;
+      line-height:1.4;
+      font-weight:500;
+      color:var(--muted);
+    }
+
+    .headline-block h1{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      font-weight:800;
+      font-size:32px;
+      line-height:1.15;
+      letter-spacing:-0.02em;
+      text-transform:uppercase;
+      color:var(--ink);
+    }
+
+    @media(min-width:768px){
+      .headline-block h1{
+        font-size:40px;
+      }
+    }
+
+    .headline-block .subtext{
+      font-family:'Manrope',sans-serif;
+      font-size:14px;
+      line-height:1.5;
+      font-weight:500;
+      color:var(--muted);
+      max-width:720px;
+      margin-top:8px;
+    }
+
+    /* ---- Cards Grid ---- */
+    .articles-grid{
+      display:grid;
+      grid-template-columns:repeat(1,minmax(0,1fr));
+      gap:16px;
+    }
+
+    @media(min-width:760px){
+      .articles-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media(min-width:1000px){
+      .articles-grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+      }
+    }
+
+    /* ---- Individual Card ---- */
+    .news-card{
+      display:flex;
+      flex-direction:column;
+      border:1px solid var(--line);
+      border-radius:var(--radius-lg);
+      background:var(--bg-card);
+      box-shadow:var(--shadow-1);
+      padding:20px;
+      position:relative;
+      min-height:260px;
+      transition:transform .16s ease, box-shadow .16s ease;
+    }
+
+    .news-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(16,24,40,.07);
+    }
+
+    /* outlet row */
+    .card-topline{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+
+    .outlet-block{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+    }
+
+    .outlet-name{
+      font-family:'Poppins',sans-serif;
+      font-size:13px;
+      font-weight:700;
+      line-height:1.3;
+      color:var(--ink);
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      overflow:hidden;
+    }
+
+    .outlet-meta{
+      font-family:'Manrope',sans-serif;
+      font-size:12px;
+      line-height:1.4;
+      font-weight:500;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    /* optional badge for categories like "Interview", "Feature", etc. */
+    .tag-pill{
+      flex-shrink:0;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--chip);
+      font-family:'Poppins',sans-serif;
+      font-size:11px;
+      line-height:1.2;
+      font-weight:800;
+      color:var(--ink);
+    }
+
+    /* headline text */
+    .card-headline{
+      font-family:'Poppins',sans-serif;
+      font-weight:700;
+      font-size:18px;
+      line-height:1.3;
+      color:var(--ink);
+      margin:0 0 12px;
+      word-break:break-word;
+    }
+
+    @media(min-width:760px){
+      .card-headline{
+        font-size:19px;
+      }
+    }
+
+    /* blurb */
+    .card-blurb{
+      font-family:'Manrope',sans-serif;
+      font-size:14px;
+      line-height:1.5;
+      font-weight:500;
+      color:var(--ink);
+      margin:0 0 20px;
+      flex-grow:1;
+      overflow:hidden;
+    }
+
+    .card-blurb span{
+      color:var(--muted);
+      font-weight:500;
+    }
+
+    /* bottom row: date + CTA button */
+    .card-footer{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:auto;
+    }
+
+    .pubdate{
+      font-family:'Manrope',sans-serif;
+      font-size:12px;
+      line-height:1.4;
+      font-weight:500;
+      color:var(--muted);
+    }
+
+    .btn-cta{
+      height:34px;
+      padding:0 12px;
+      border-radius:12px;
+      border:0;
+      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));
+      font-family:'Poppins',sans-serif;
+      font-size:13px;
+      font-weight:800;
+      line-height:34px;
+      color:#073b0f;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      min-width:76px;
+      box-shadow:var(--shadow-1);
+    }
+
+    .btn-cta:focus{
+      outline:2px solid #073b0f33;
+      outline-offset:2px;
+    }
+
+    .btn-cta:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(16,24,40,.07);
+    }
+
+    /* ---- "view all" row ---- */
+    .foot-row{
+      display:flex;
+      justify-content:center;
+      margin-top:32px;
+    }
+
+    .btn-ghost{
+      height:34px;
+      padding:0 12px;
+      border-radius:12px;
+      font-family:'Poppins',sans-serif;
+      font-size:13px;
+      font-weight:800;
+      line-height:34px;
+      background:#fff;
+      border:1px solid #111;
+      color:#111;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      box-shadow:var(--shadow-1);
+    }
+
+    .btn-ghost:hover{
+      background:#111;
+      color:#fff;
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(16,24,40,.07);
+    }
+
+    .btn-ghost:focus{
+      outline:2px solid #1113;
+      outline-offset:2px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- header -->
+  <header class="site-header">
+    <div class="bar">
+      <div class="brand" onclick="window.location.href='/index.html'">
+        <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
+        <span class="beta">BETA</span>
+      </div>
+
+      <nav id="nav">
+        <a href="/index.html" id="nav-home">Home</a>
+        <a href="/playepage.html" id="nav-experience">Select Experience</a>
+        <a href="/news.html" id="nav-press">Press</a>
+        <a href="/faq.html" id="nav-faq">FAQ</a>
+      </nav>
+
+      <div class="userbar">
+        <div id="userBadge" class="user-badge" style="display:none" onclick="toggleDropdown()">
+          <span id="userInitials">U</span>
+          <div class="dropdown" id="userDropdown">
+            <div class="dropdown-header">
+              <p class="dropdown-name" id="dropdownName">User</p>
+              <p class="dropdown-email" id="dropdownEmail">user@example.com</p>
+            </div>
+            <button class="dropdown-item" onclick="logout()">Sign out</button>
+          </div>
+        </div>
+
+        <button id="signInBtn" class="btn" onclick="window.location.href='/user.html'">Sign in</button>
+
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+
+    <!-- Top intro section -->
+    <section class="news-head">
+      <div class="eyebrow-row">
+        <div class="eyebrow-label">IN THE NEWS</div>
+        <div class="eyebrow-date">Updated October 27, 2025</div>
+      </div>
+
+      <div class="headline-block">
+        <h1>What people are saying</h1>
+        <div class="subtext">
+          Subtext Subtext Subtext Subtext
+        </div>
+      </div>
+    </section>
+
+    <!-- Articles grid -->
+    <section class="articles-grid">
+
+
+      <!-- CARD 1 -->
+      <article class="news-card">
+        <div class="card-topline">
+          <div class="outlet-block">
+            <div class="outlet-name">Sports Business Journal</div>
+            <div class="outlet-meta">People and Pop Culture</div>
+          </div>
+          <div class="tag-pill">Launch</div>
+        </div>
+
+        <h2 class="card-headline">
+          "Daps Bounty launches with Adrian Wojnarowski collaboration"
+        </h2>
+
+        <p class="card-blurb">
+          A new demand-first marketplace offers sports fans and collectors the opportunity to ask athletes for collectibles and experiences. Former Columbia Lions guard Jake Klores launches Daps Bounty, highlighting its first partnership with former ESPN NBA insider Adrian Wojnarowski.
+          <span>"We want to be a technology platform that helps sports fans get access to items and experiences that are not listed anywhere else."</span>
+        </p>
+
+        <div class="card-footer">
+          <div class="pubdate">Feb 24, 2025</div>
+          <a class="btn-cta" href="https://www.sportsbusinessjournal.com/Articles/2025/02/24/daps-bounty-launches-with-adrian-wojnarowski-collaboration/" target="_blank" rel="noopener noreferrer">READ</a>
+        </div>
+      </article>
+
+      <!-- CARD 2 -->
+      <article class="news-card">
+        <div class="card-topline">
+          <div class="outlet-block">
+            <div class="outlet-name">cllct</div>
+            <div class="outlet-meta">Sports Collectibles / Auctions</div>
+          </div>
+          <div class="tag-pill">Auction</div>
+        </div>
+
+        <h2 class="card-headline">
+          "Longtime NBA reporter Adrian Wojnarowski to auction off his iPhones"
+        </h2>
+
+        <p class="card-blurb">
+          Adrian Wojnarowski is selling nine iPhones in an auction through Daps Bounty, with all proceeds going to the St. Bonaventure men's basketball program. The smartphones that once buzzed with texts and calls from NBA owners, agents, and coaches offering coveted scoops are now available for collectors.
+          <span>"The legendary journalist used these phones to break some of his most memorable scoops."</span>
+        </p>
+
+        <div class="card-footer">
+          <div class="pubdate">Feb 24, 2025</div>
+          <a class="btn-cta" href="https://www.cllct.com/sports-collectibles/auctions/longtime-nba-reporter-adrian-wojnarowski-to-auction-off-his-i-phones" target="_blank" rel="noopener noreferrer">READ</a>
+        </div>
+      </article>
+
+      <!-- CARD 3 -->
+      <article class="news-card">
+        <div class="card-topline">
+          <div class="outlet-block">
+            <div class="outlet-name">Sports Illustrated</div>
+            <div class="outlet-meta">Collectibles / Inside the Hobby</div>
+          </div>
+          <div class="tag-pill">Feature</div>
+        </div>
+
+        <h2 class="card-headline">
+          "Daps Bounty Connects Collectors With Athletes"
+        </h2>
+
+        <p class="card-blurb">
+          Upstart company Daps Bounty aims to bring collectors and athletes together, allowing collectors to place a bounty on any item they want. Founded by Jake Klores, the platform functions as a reverse marketplace where collectors can make offers to athletes who can accept or reject them.
+          <span>"Commerce is primarily supply-driven, but there is tons of demand for items and experiences that are not listed out there."</span>
+        </p>
+
+        <div class="card-footer">
+          <div class="pubdate">Mar 20, 2025</div>
+          <a class="btn-cta" href="https://www.si.com/collectibles/inside-the-hobby/daps-bounty-connects-collectors" target="_blank" rel="noopener noreferrer">READ</a>
+        </div>
+      </article>
+
+      <!-- CARD 4 -->
+      <article class="news-card">
+        <div class="card-topline">
+          <div class="outlet-block">
+            <div class="outlet-name">Sports Illustrated</div>
+            <div class="outlet-meta">College Basketball / NIL</div>
+          </div>
+          <div class="tag-pill">NIL</div>
+        </div>
+
+        <h2 class="card-headline">
+          "Adrian Wojnarowski Holding Unique Auction to Raise NIL Money for St. Bonaventure"
+        </h2>
+
+        <p class="card-blurb">
+          The ex-ESPN reporter is selling pieces of history through Daps Bounty. Items include the phone used to break the news of Paul George and Kawhi Leonard joining the Clippers, credentials from NBA drafts and finals, and more. The Bonnies are gambling that 2010s kids with disposable income can lift them to greater heights.
+          <span>"It's a creative way to get NIL funding for a mid-major program."</span>
+        </p>
+
+        <div class="card-footer">
+          <div class="pubdate">Feb 24, 2025</div>
+          <a class="btn-cta" href="https://www.si.com/college-basketball/adrian-wojnarowski-holding-unique-auction-raise-nil-money-st-bonaventure" target="_blank" rel="noopener noreferrer">READ</a>
+        </div>
+      </article>
+
+      <!-- CARD 5 -->
+      <article class="news-card">
+        <div class="card-topline">
+          <div class="outlet-block">
+            <div class="outlet-name">USA Today</div>
+            <div class="outlet-meta">Big Ten / NIL Innovation</div>
+          </div>
+          <div class="tag-pill">NIL</div>
+        </div>
+
+        <h2 class="card-headline">
+          "How Zach Edey, Purdue men's hoops star, is overcoming immigration law to benefit from NIL"
+        </h2>
+
+        <p class="card-blurb">
+          Purdue's 7-foot-4 star player found a creative solution to benefit from NIL despite F-1 visa restrictions. When the Boilermakers traveled to his hometown of Toronto, Edey partnered with Daps to complete NIL deals on Canadian soil, working within the constraints of U.S. immigration law.
+          <span>"Daps is a New York-based start-up that allows fans to bid live during games on game-worn items and get unique access to their favorite athletes."</span>
+        </p>
+
+        <div class="card-footer">
+          <div class="pubdate">Dec 12, 2023</div>
+          <a class="btn-cta" href="https://www.usatoday.com/story/sports/ncaab/bigten/2023/12/12/purdue-zach-edey-nil-loophole-immigration-law-rule/71882113007/" target="_blank" rel="noopener noreferrer">READ</a>
+        </div>
+      </article>
+
+      <!-- CARD 6 -->
+      <article class="news-card">
+        <div class="card-topline">
+          <div class="outlet-block">
+            <div class="outlet-name">The New York Times</div>
+            <div class="outlet-meta">Basketball / Journalism</div>
+          </div>
+          <div class="tag-pill">Profile</div>
+        </div>
+
+        <h2 class="card-headline">
+          "Once the Center of the N.B.A. News Universe, These Phones Can Now Be Yours"
+        </h2>
+
+        <p class="card-blurb">
+          Adrian Wojnarowski, the former king of the NBA scoop at ESPN, is auctioning off personal items to raise money for St. Bonaventure University where he now works as general manager. The iPhone that was used to break the news of Paul George's huge trade in 2019 and a different phone that reported the 2023 NBA draft lottery are among the items available.
+          <span>"Fund-raising for college teams has become even more important since 2021 when the NCAA eased its strict amateurism rules."</span>
+        </p>
+
+        <div class="card-footer">
+          <div class="pubdate">Feb 25, 2025</div>
+          <a class="btn-cta" href="https://www.nytimes.com/2025/02/25/sports/basketball/adrian-wojnarowski-auction-woj.html" target="_blank" rel="noopener noreferrer">READ</a>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- View all / load more -->
+    <div class="foot-row">
+      <a class="btn-ghost" href="#">View all coverage</a>
+    </div>
+
+  </main>
+
+  <script>
+    // highlight nav link for current page
+    (function() {
+      var path = window.location.pathname;
+      var file = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
+
+      var map = {
+        'index.html': 'nav-home',
+        'playepage.html': 'nav-experience',
+        'news.html': 'nav-press',
+        'faq.html': 'nav-faq'
+      };
+
+      Object.keys(map).forEach(function(fname){
+        var el = document.getElementById(map[fname]);
+        if (!el) return;
+        if (fname === file) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    })();
+
+    // dropdown toggle for signed-in user
+    function toggleDropdown(){
+      var dd = document.getElementById('userDropdown');
+      if (!dd) return;
+      dd.style.display = (dd.style.display === 'block' ? 'none' : 'block');
+    }
+
+    // sign out (placeholder – hook into your real logout)
+    function logout(){
+      // clear auth in your app, then redirect
+      window.location.href = '/user.html';
+    }
+
+    // OPTIONAL: mobile nav toggle behavior
+    (function(){
+      var burger = document.getElementById('hamburger');
+      var nav = document.getElementById('nav');
+      if(!burger || !nav) return;
+
+      burger.addEventListener('click', function(){
+        var expanded = burger.getAttribute('aria-expanded') === 'true';
+        var next = !expanded;
+        burger.setAttribute('aria-expanded', String(next));
+        // simple show/hide
+        if(next){
+          nav.style.display = 'flex';
+          nav.style.flexDirection = 'column';
+          nav.style.position = 'absolute';
+          nav.style.top = '60px';
+          nav.style.right = '20px';
+          nav.style.background = '#fff';
+          nav.style.border = '1px solid var(--line)';
+          nav.style.borderRadius = '12px';
+          nav.style.padding = '16px';
+          nav.style.boxShadow = 'var(--shadow-2)';
+          nav.style.gap = '16px';
+          nav.style.zIndex = '9999';
+        } else {
+          nav.removeAttribute('style');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

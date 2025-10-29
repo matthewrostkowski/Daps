@@ -26,8 +26,8 @@
       --shadow-1:0 2px 2px rgba(16,24,40,.04), 0 10px 20px rgba(16,24,40,.07);
       --shadow-card:0 8px 20px rgba(16,24,40,.07);
       --heroW: 1000px;
-      
-      /* Theme colors - will be overridden by JavaScript */
+
+      /* Theme colors - can be overwritten by JS */
       --theme-primary: #0A0A0B;
       --theme-secondary: #DAFA22;
       --theme-accent: #64FA00;
@@ -47,12 +47,12 @@
     .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px)}
     .hamburger.active span:nth-child(2){opacity:0}
     .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px)}
-    
+
     .nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:39;opacity:0;transition:opacity .3s}
     .nav-overlay.active{opacity:1}
 
     /* Header */
-    .site-header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
+    .site-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line)}
     .bar{max-width:var(--container);margin:auto;display:flex;align-items:center;gap:12px;padding:14px 20px}
     .brand{display:flex;align-items:center;gap:10px;cursor:pointer}
     .brand .logo{height:30px;width:auto}
@@ -86,7 +86,7 @@
       min-width:200px;background:#fff;
       border:1px solid var(--line);border-radius:12px;
       box-shadow:0 8px 24px rgba(16,24,40,.12);
-      padding:8px;display:none;z-index:100;
+      padding:8px;display:none;z-index:1000;
     }
     .dropdown.open{display:block}
     .dropdown-header{
@@ -105,160 +105,513 @@
     .dropdown-item:hover{background:#F9FAFB}
     .dropdown-divider{height:1px;background:var(--line);margin:4px 0}
 
-    /* Hero - Themed */
-    .hero{position:relative;background:var(--theme-primary);color:#fff;overflow:hidden}
-    .hero-inner{
-      max-width:var(--container); margin:auto; padding:72px 20px 116px;
-      display:grid; grid-template-columns:1.05fr .95fr; gap:24px; position:relative;
+    /* Hero */
+    .hero{
+      position:relative;
+      background:#FAFBFC;
+      overflow:visible; /* allow dropdown to show over next section */
+      border-bottom:1px solid var(--line);
+      z-index:50; /* sit above featured section */
     }
-    .hero h1{font-weight:900;font-size:68px;line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin:0 0 16px}
-    .hero .team-name{color:var(--theme-secondary);display:block;margin-bottom:8px}
-    .hero p{max-width:520px;margin:0 0 20px;color:#E7E7EA;line-height:1.6;font-size:16px}
+    .hero-inner{
+      max-width:900px; margin:auto; padding:100px 20px 120px;
+      text-align:center; position:relative;
+    }
+    .hero h1{
+      font-weight:900;font-size:68px;line-height:1.05;letter-spacing:-.02em;
+      margin:0 0 20px;color:var(--ink);
+    }
+    .hero p{
+      max-width:620px;margin:0 auto 32px;color:#6B7280;line-height:1.6;font-size:18px;
+    }
     .cta{
-      display:inline-block;border:0;padding:12px 18px;font-weight:700;border-radius:12px;cursor:pointer;
+      display:inline-block;border:0;padding:14px 24px;font-weight:700;border-radius:12px;cursor:pointer;
       background:linear-gradient(90deg,var(--theme-secondary),var(--theme-accent));
       box-shadow:0 6px 24px rgba(100,250,0,.28);
       text-decoration:none;font-size:16px;
-      color:var(--theme-primary);
+      color:var(--theme-primary);transition:all .2s;
     }
-    .hero-art{
-      position:absolute; inset:0; pointer-events:none;
-      background:
-        linear-gradient(90deg, var(--theme-primary) 0%, rgba(11,11,12,.80) 40%, rgba(11,11,12,0) 72%),
-        url("/images/211224_court_tg_ig-9820.jpg") right 48% / var(--heroW) auto no-repeat;
+    .cta:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(100,250,0,.35);
     }
 
-    /* Section */
-    .section{max-width:var(--container);margin:auto;padding:44px 20px 80px}
-    .section h2{font-weight:900;font-size:40px;letter-spacing:-.02em;margin:0 0 22px}
+    /* Prominent Search */
+    .search-hero{
+      position:relative;
+      max-width:700px;
+      margin:40px auto 0;
+      z-index:200; /* keep search + dropdown above hero copy */
+    }
+    .search-hero input{
+      width:100%;height:64px;border:2px solid var(--ink);border-radius:999px;
+      padding:0 60px 0 28px;outline:0;font-size:18px;background:#fff;
+      font-family:inherit;font-weight:500;color:var(--ink);
+      transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.06);
+    }
+    .search-hero input:focus{
+      border-color:var(--theme-primary);
+      box-shadow:0 4px 32px rgba(0,0,0,.12), 0 0 0 4px rgba(10,10,11,.05);
+    }
+    .search-hero input::placeholder{color:#9CA3AF;font-weight:400}
+    .search-icon{
+      position:absolute;right:24px;top:50%;transform:translateY(-50%);
+      width:24px;height:24px;opacity:.35;pointer-events:none;
+    }
 
-    /* Toolbar */
-    .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-    .search{position:relative;flex:1;min-width:200px}
-    .search input{width:100%;height:44px;border:1px solid var(--line);border-radius:999px;padding:0 16px;outline:0;font-size:14px;background:#fff}
+    /* Search Dropdown Results */
+    .search-results{
+      position:absolute;
+      top:calc(100% + 12px);
+      left:0;
+      right:0;
+      width:100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow:0 24px 48px rgba(0,0,0,.18);
+      max-height:420px;
+      overflow-y:auto;
+      display:none;
+      z-index:300; /* above everything else, including featured section */
+    }
+    .search-results.active{display:block}
+    .search-result-item{
+      display:flex;align-items:center;gap:16px;padding:14px 20px;
+      cursor:pointer;text-decoration:none;color:inherit;
+      border-bottom:1px solid var(--line);transition:background .15s;
+    }
+    .search-result-item:last-child{border-bottom:none}
+    .search-result-item:hover{background:#F9FAFB}
+    .search-result-thumb{
+      width:52px;height:52px;border-radius:12px;overflow:hidden;
+      flex:none;background:#eee;
+    }
+    .search-result-thumb img{width:100%;height:100%;object-fit:cover}
+    .search-result-info{flex:1;min-width:0;text-align:center}
+    .search-result-name{
+      font-weight:800;font-size:16px;margin:0 0 2px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .search-result-team{
+      font-size:13px;color:#6B7280;margin:0;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .search-no-results{
+      padding:40px 20px;text-align:center;color:#6B7280;font-size:15px;
+    }
 
-    .chip{height:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border-radius:999px;font-size:13px;
-      font-weight:600;border:1px solid var(--chip-border);background:var(--chip);cursor:pointer;user-select:none;white-space:nowrap;flex-shrink:0}
-    .chip[aria-pressed="true"]{background:var(--theme-primary);border-color:var(--theme-primary);color:#fff}
+    /* Featured Athletes */
+    .featured{
+      max-width:var(--container);margin:0 auto;padding:60px 20px 40px;
+      background:#fff;
+      position:relative;
+      z-index:1;
+    }
+    .featured h2{
+      font-weight:900;font-size:28px;letter-spacing:-.01em;
+      margin:0 0 28px;color:#111;
+    }
+    .featured-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    }
+    .featured-card{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-1);padding:24px;text-align:center;
+      transition:transform .12s,box-shadow .12s,border-color .12s;
+      text-decoration:none;color:inherit;display:block;
+    }
+    .featured-card:hover{
+      transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1);
+      border-color:#D1D5DB;
+    }
+    .featured-thumb{
+      width:120px;height:120px;border-radius:50%;overflow:hidden;
+      margin:0 auto 20px;background:#eee;border:4px solid #F3F4F6;
+    }
+    .featured-thumb img{width:100%;height:100%;object-fit:cover}
+    .featured-name{
+      font-weight:900;font-size:20px;margin:0 0 8px;color:#111;
+      letter-spacing:-.01em;
+    }
+    .featured-team{
+      font-size:14px;color:#6B7280;margin:0 0 16px;font-weight:500;
+    }
+    .featured-cta{
+      width:100%;height:38px;border:1.5px solid #111;background:#fff;
+      color:#111;font-weight:800;font-size:14px;border-radius:10px;
+      cursor:pointer;transition:all .12s;
+    }
+    .featured-cta:hover{
+      background:#111;color:#fff;transform:translateY(-1px);
+    }
 
-    /* Grid */
-    .grid{display:grid;grid-template-columns:repeat(3,var(--cardW));column-gap:var(--gap);row-gap:var(--gap);justify-content:center}
+    /* ===== Featured Articles Carousel Section ===== */
+    .articles-carousel-section{
+      max-width:var(--container);
+      margin:0 auto;
+      padding:40px 20px 60px;
+      background:#fff;
+      border-top:1px solid var(--line);
+    }
+    .articles-carousel-section h2{
+      font-weight:900;
+      font-size:32px;
+      letter-spacing:-.02em;
+      margin:0 0 28px;
+      color:#111;
+    }
 
+    .articles-carousel-shell{
+      position:relative;
+    }
+
+    /* The stage. We'll inject 3 cards per render (prev/current/next) and animate them */
+    .articles-carousel-wrapper{
+      position:relative;
+      width:100%;
+      height:340px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+
+    /* arrows */
+    .article-arrow{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:0 24px 40px rgba(16,24,40,.07);
+      color:#111;
+      font-weight:800;
+      font-size:16px;
+      line-height:44px;
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      transition:all .12s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:5;
+    }
+    .article-arrow:hover{
+      transform:translateY(-50%) translateY(-1px) scale(1.03);
+      box-shadow:0 28px 48px rgba(0,0,0,.12);
+      background:#111;
+      color:#fff;
+    }
+    .article-arrow.left{left:0;transform:translateY(-50%) translateX(-50%)}
+    .article-arrow.left:hover{transform:translateY(-50%) translateX(-50%) translateY(-1px) scale(1.03)}
+    .article-arrow.right{right:0;transform:translateY(-50%) translateX(50%)}
+    .article-arrow.right:hover{transform:translateY(-50%) translateX(50%) translateY(-1px) scale(1.03)}
+
+    /* Card shell base */
+    .article-card-shell{
+      position:absolute;
+      width:380px;
+      max-width:92vw;
+      min-height:220px;
+      border-radius:var(--radius-lg);
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow:0 30px 60px rgba(16,24,40,.12);
+      padding:24px 24px 28px;
+      color:#111;
+      text-decoration:none;
+      display:flex;
+      flex-direction:column;
+      cursor:pointer;
+      transition:
+        transform .35s cubic-bezier(.16,1,.3,1),
+        opacity .35s cubic-bezier(.16,1,.3,1),
+        box-shadow .2s;
+    }
+    .article-card-shell:hover{
+      box-shadow:0 36px 72px rgba(16,24,40,.16);
+    }
+
+    /* positions */
+    .pos-left{
+      transform:translateX(-240px) scale(.9);
+      opacity:.5;
+      z-index:2;
+    }
+    .pos-center{
+      transform:translateX(0) scale(1);
+      opacity:1;
+      z-index:3;
+    }
+    .pos-right{
+      transform:translateX(240px) scale(.9);
+      opacity:.5;
+      z-index:2;
+    }
+
+    /* during next animation, shift all left */
+    .anim-next .pos-left{
+      transform:translateX(-480px) scale(.8);
+      opacity:0;
+    }
+    .anim-next .pos-center{
+      transform:translateX(-240px) scale(.9);
+      opacity:.5;
+    }
+    .anim-next .pos-right{
+      transform:translateX(0) scale(1);
+      opacity:1;
+      z-index:3;
+    }
+
+    /* during prev animation, shift all right */
+    .anim-prev .pos-left{
+      transform:translateX(0) scale(1);
+      opacity:1;
+      z-index:3;
+    }
+    .anim-prev .pos-center{
+      transform:translateX(240px) scale(.9);
+      opacity:.5;
+    }
+    .anim-prev .pos-right{
+      transform:translateX(480px) scale(.8);
+      opacity:0;
+    }
+
+    /* Article card inner text styles */
+    .article-header-line{
+      font-weight:800;
+      font-size:15px;
+      line-height:1.45;
+      color:#111;
+      margin:0 0 10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .article-title{
+      font-weight:900;
+      font-size:20px;
+      line-height:1.3;
+      letter-spacing:-.02em;
+      color:#111;
+    }
+    .article-publication{
+      font-weight:600;
+      font-size:14px;
+      line-height:1.4;
+      color:#6B7280;
+    }
+
+    .article-meta{
+      font-size:14px;
+      line-height:1.4;
+      color:#6B7280;
+      font-weight:500;
+      margin:0 0 16px;
+    }
+
+    .article-excerpt{
+      font-size:16px;
+      line-height:1.5;
+      font-weight:500;
+      color:#111;
+      max-height:4.8em;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+    }
+
+    /* progress bar */
+    .article-progress-outer{
+      width:260px;
+      max-width:80%;
+      margin:32px auto 0;
+      display:flex;
+      justify-content:center;
+    }
+    .article-progress-wrap{
+      position:relative;
+      width:100%;
+      height:4px;
+      background:#F3F4F6;
+      border-radius:999px;
+      overflow:hidden;
+      box-shadow:inset 0 0 4px rgba(0,0,0,.03);
+    }
+    .article-progress-bar{
+      height:100%;
+      background:linear-gradient(90deg,var(--theme-secondary),var(--theme-accent));
+      width:0%;
+      transition:width linear;
+    }
+
+    /* "hidden" athletes section kept for anchors/JS compatibility */
+    .athletes{
+      max-width:var(--container);margin:0 auto;padding:20px 20px 80px;
+      background:#fff;
+      display:none;
+    }
+    .athletes h2{font-weight:900;font-size:28px;letter-spacing:-.01em;margin:0 0 20px;color:#111}
+
+    .filters{display:none}
+    .filter-search{flex:1;min-width:200px;position:relative}
+    .filter-search input{width:100%;height:42px;border:1px solid var(--line);border-radius:999px;padding:0 42px 0 16px;font-size:14px;outline:0}
+    .filter-search input:focus{border-color:#9CA3AF}
+    .filter-search svg{position:absolute;right:14px;top:50%;transform:translateY(-50%);opacity:.45;pointer-events:none}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      height:38px;display:inline-flex;align-items:center;justify-content:center;
+      padding:0 14px;border-radius:999px;border:1px solid var(--chip-border);
+      background:var(--chip);font-weight:800;cursor:pointer;font-size:14px;
+      transition:all .12s;
+    }
+    .chip[aria-pressed="true"]{background:var(--chip-active);border-color:var(--chip-active);color:#fff}
+
+    /* Cards (kept for JS compatibility) */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--gap);display:none}
     .card{
-      background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);
-      display:flex;align-items:center;gap:16px;padding:16px 20px;min-height:120px;
-      transition:transform .12s,box-shadow .12s,border-color .12s
+      display:flex;flex-direction:column;gap:16px;background:#fff;
+      border:1px solid var(--line);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-card);overflow:hidden;
+      transition:transform .12s,box-shadow .12s,border-color .12s;
     }
-    .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-card);border-color:#E6E8EE}
-    .thumb{width:80px;height:80px;border-radius:14px;overflow:hidden;flex:none;background:#eee}
-    .thumb img{width:100%;height:100%;object-fit:cover}
-    .meta{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
-    .name{margin:0;line-height:22px;font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .team{margin:0;line-height:18px;font-size:13px;color:#87909A}
+    .card:hover{
+      transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1);
+      border-color:#D1D5DB;
+    }
+    .thumb{width:100%;aspect-ratio:1;object-fit:cover;background:#eee}
+    .meta{padding:0 20px 20px}
+    .name{font-weight:900;font-size:22px;margin:0 0 6px;color:#111;letter-spacing:-.01em}
+    .team{font-size:14px;color:#6B7280;margin:0 0 14px;font-weight:500}
     .cta-ghost{
-      align-self:flex-start;margin-top:6px;background:#fff;border:1.5px solid var(--theme-primary);color:var(--theme-primary);
-      font-weight:600;font-size:14px;height:40px;padding:0 14px;border-radius:12px;white-space:nowrap;display:inline-flex;align-items:center;
-      text-decoration:none;cursor:pointer
+      display:block;width:100%;text-align:center;padding:11px 16px;
+      border:1.5px solid #111;background:#fff;color:#111;font-weight:800;
+      text-decoration:none;border-radius:10px;font-size:14px;
+      transition:all .12s;
     }
-    .cta-ghost:hover{background:var(--theme-primary);color:#fff}
+    .cta-ghost:hover{background:#111;color:#fff;transform:translateY(-1px)}
+
+    .empty-state{padding:60px 20px;text-align:center;color:#6B7280;font-size:16px}
 
     /* Footer */
     footer{border-top:1px solid var(--line);background:#FAFBFC}
-    .foot{max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px;flex-wrap:wrap}
-    .grow{margin-left:auto}
+    .foot{max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px}
     .foot a{color:inherit;text-decoration:none}
     .foot a:hover{text-decoration:underline}
 
-    .empty-state{text-align:center;padding:60px 20px;color:#6B7280}
-
-    /* Tablet breakpoint */
-    @media (max-width:1150px){
-      .grid{grid-template-columns:repeat(2,var(--cardW))}
+    /* Responsive */
+    @media (max-width:1100px){
+      .hero h1{font-size:56px}
+      .featured-grid{grid-template-columns:repeat(2,1fr)}
     }
-
-    /* Mobile breakpoint */
     @media (max-width:800px){
-      .hamburger{display:flex;order:2}
-      
-      .bar{padding:12px 16px;gap:8px;flex-wrap:nowrap}
+      .bar{padding:12px 16px}
       .brand .logo{height:26px}
-      .beta{font-size:11px;padding:2px 6px}
-      
-      nav{
-        position:fixed;top:0;right:-100%;width:280px;height:100vh;
-        background:#fff;flex-direction:column;gap:0;margin:0;padding:80px 0 20px;
-        box-shadow:-4px 0 24px rgba(0,0,0,.1);transition:right .3s;z-index:40;
-        overflow-y:auto
-      }
-      nav.active{right:0}
-      nav a{font-size:15px;padding:16px 24px;width:100%;border-left:3px solid transparent}
+      nav{display:none;position:fixed;right:0;top:59px;background:#fff;border-left:1px solid var(--line);
+          width:280px;height:calc(100vh - 59px);padding:20px;flex-direction:column;gap:12px;
+          box-shadow:-4px 0 24px rgba(0,0,0,.08);transition:transform .3s;transform:translateX(100%);z-index:40}
+      nav.active{transform:translateX(0);display:flex}
+      nav a{padding:12px 14px;border-radius:10px;font-size:16px}
       nav a:hover{background:#F9FAFB}
       nav a.active::after{display:none}
-      nav a.active{border-left-color:var(--theme-primary);background:#F9FAFB}
-      
-      .userbar{gap:8px}
-      #authButtons{display:flex;gap:8px;order:1}
-      #userProfile{order:1}
-      .btn{height:34px;padding:0 10px;font-size:13px}
-      
-      .hero-inner{grid-template-columns:1fr;padding:48px 16px 80px}
-      .hero h1{font-size:48px;line-height:1.05}
-      .hero p{font-size:15px;max-width:100%}
-      .cta{padding:10px 16px;font-size:15px}
-      .hero-art{
-        background:
-          linear-gradient(90deg, var(--theme-primary) 0%, rgba(11,11,12,.85) 60%, rgba(11,11,12,.3) 100%),
-          url("/images/211224_court_tg_ig-9820.jpg") right center / cover no-repeat;
+      .hamburger{display:flex}
+      .nav-overlay.active{display:block}
+
+      .hero-inner{padding:60px 20px 80px}
+      .hero h1{font-size:42px}
+      .hero p{font-size:16px}
+      .search-hero input{height:56px;font-size:16px;padding:0 52px 0 20px}
+      .search-icon{right:18px;width:20px;height:20px}
+
+      .featured{padding:40px 20px 20px}
+      .featured-grid{grid-template-columns:1fr;gap:16px}
+      .featured-card{padding:20px}
+      .featured-thumb{width:100px;height:100px}
+      .featured-name{font-size:18px}
+
+      .articles-carousel-section{
+        padding:32px 20px 48px;
       }
-      
-      .section{padding:32px 16px 60px}
-      .section h2{font-size:32px;margin:0 0 18px}
-      
-      .toolbar{gap:8px}
-      .search{flex:1;min-width:0}
-      .chip{height:36px;padding:0 10px;font-size:12px}
-      
-      .grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
-      .card{padding:14px 16px;min-height:100px;gap:14px}
-      .thumb{width:70px;height:70px}
-      .name{font-size:15px}
-      .team{font-size:12px}
-      .cta-ghost{height:38px;padding:0 12px;font-size:13px;margin-top:4px}
-      
-      .foot{padding:20px 16px;gap:12px;font-size:13px;justify-content:center;text-align:center}
-      .foot .grow{display:none}
-      
-      .dropdown{min-width:180px;right:0;left:auto}
-    }
+      .articles-carousel-wrapper{
+        height:340px;
+      }
+      .article-card-shell{
+        width:330px;
+        padding:20px 20px 24px;
+      }
+      .pos-left{
+        transform:translateX(-200px) scale(.9);
+      }
+      .pos-right{
+        transform:translateX(200px) scale(.9);
+      }
+      .anim-next .pos-left{
+        transform:translateX(-400px) scale(.8);
+      }
+      .anim-next .pos-center{
+        transform:translateX(-200px) scale(.9);
+      }
+      .anim-prev .pos-center{
+        transform:translateX(200px) scale(.9);
+      }
+      .anim-prev .pos-right{
+        transform:translateX(400px) scale(.8);
+      }
 
-    /* Small mobile breakpoint */
+      .article-arrow.left{left:8px;transform:translateY(-50%)}
+      .article-arrow.right{right:8px;transform:translateY(-50%)}
+
+      .article-progress-outer{
+        width:220px;
+        margin-top:28px;
+      }
+    }
     @media (max-width:480px){
-      .hero h1{font-size:38px}
-      .hero p{font-size:14px;margin:0 0 16px}
-      .hero-inner{padding:36px 16px 64px}
-      
-      .section h2{font-size:28px}
-      
-      .card{flex-direction:column;text-align:center;align-items:center;padding:16px}
-      .meta{align-items:center}
-      .name{white-space:normal;text-align:center}
-      .cta-ghost{align-self:center}
-      
-      .foot{flex-direction:column;gap:8px}
-      .foot span[aria-hidden]{display:none}
-    }
-
-    /* Landscape mobile */
-    @media (max-width:800px) and (orientation:landscape){
-      .hero-inner{padding:32px 16px 48px}
       .hero h1{font-size:36px}
-    }
+      .search-hero input{height:52px;font-size:15px}
+      .featured-thumb{width:80px;height:80px;margin-bottom:16px}
+      .featured-name{font-size:16px}
+      .name{font-size:20px}
 
-    /* Ensure touch targets are large enough */
-    @media (max-width:800px){
-      .chip{min-height:44px}
-      .btn{min-height:44px}
-      .user-badge{width:40px;height:40px}
+      .article-card-shell{
+        width:300px;
+        padding:20px;
+      }
+      .pos-left{
+        transform:translateX(-180px) scale(.9);
+      }
+      .pos-right{
+        transform:translateX(180px) scale(.9);
+      }
+      .anim-next .pos-left{
+        transform:translateX(-360px) scale(.8);
+      }
+      .anim-next .pos-center{
+        transform:translateX(-180px) scale(.9);
+      }
+      .anim-prev .pos-center{
+        transform:translateX(180px) scale(.9);
+      }
+      .anim-prev .pos-right{
+        transform:translateX(360px) scale(.8);
+      }
+
+      .article-arrow.left{left:8px;transform:translateY(-50%)}
+      .article-arrow.right{right:8px;transform:translateY(-50%)}
+
+      .article-progress-outer{
+        width:200px;
+        margin-top:24px;
+      }
     }
   </style>
 </head>
@@ -267,310 +620,625 @@
 <header class="site-header">
   <div class="bar">
     <div class="brand" onclick="window.location.href='/index.html'">
-      <img class="logo" src="/images/Daps-2 Copy.png" alt="Daps Bounty logo" id="brandLogo">
+      <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
       <span class="beta">BETA</span>
     </div>
-    
+
     <nav id="nav">
-      <a href="#experiences" class="active">At-game experiences</a>
-      <a href="/playepage.html">Make an offer</a>
-      <a href="#">Live bounties</a>
-      <a href="#">How it works</a>
-      <a href="#">Contact Daps</a>
+      <a href="/index.html" id="nav-home">Home</a>
+      <!--a href="/playepage.html" id="nav-experience">Select Experience</a-->
+      <a href="/news.html" id="nav-press">Press</a>
+      <a href="/faq.html" id="nav-faq">FAQ</a>
     </nav>
 
-    <div class="userbar" id="userbar">
-      <!-- Logged out state -->
-      <div id="authButtons">
-        <button class="btn ghost" onclick="window.location.href='/user'">Sign in</button>
-        <button class="btn" onclick="window.location.href='/user'">Create account</button>
-      </div>
-      
-      <!-- Logged in state (hidden by default) -->
-      <div id="userProfile" style="display:none;">
-        <div class="user-badge" id="userBadge" onclick="toggleDropdown()">
-          <span id="userInitials"></span>
-        </div>
+    <div class="userbar">
+      <div id="userBadge" class="user-badge" style="display:none" onclick="toggleDropdown()">
+        <span id="userInitials">U</span>
         <div class="dropdown" id="userDropdown">
           <div class="dropdown-header">
-            <p class="dropdown-name" id="dropdownName"></p>
-            <p class="dropdown-email" id="dropdownEmail"></p>
+            <p class="dropdown-name" id="dropdownName">User</p>
+            <p class="dropdown-email" id="dropdownEmail">user@example.com</p>
           </div>
-          <a href="/my-offers.html" class="dropdown-item">My Offers</a>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item" onclick="logout()">Log out</button>
+          <button class="dropdown-item" onclick="logout()">Sign out</button>
         </div>
       </div>
-      
-      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+
+      <button id="signInBtn" class="btn" onclick="window.location.href='/user'">Sign in</button>
     </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <div class="nav-overlay" id="navOverlay"></div>
 </header>
 
-<section class="hero" aria-label="At-game experiences" id="experiences">
-  <div class="hero-art" aria-hidden="true"></div>
+<script>
+  // Highlight the current page in the nav
+  (function() {
+    var path = window.location.pathname;
+    // just grab the filename, e.g. "news.html"
+    var file = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
+
+    var map = {
+      'index.html': 'nav-home',
+      'playepage.html': 'nav-experience',
+      'news.html': 'nav-press',
+      'faq.html': 'nav-faq'
+    };
+
+    Object.keys(map).forEach(function(fname){
+      var el = document.getElementById(map[fname]);
+      if (!el) return;
+      if (fname === file) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+  })();
+</script>
+
+
+<div class="nav-overlay" id="navOverlay"></div>
+
+<section class="hero">
   <div class="hero-inner">
-    <div>
-      <h1><span class="team-name" id="heroTeamName"></span>AT-GAME<br>EXPERIENCES</h1>
-      <p id="heroDescription">Bid on unique game-day access. Create an account, verify once, then submit and track your offers.</p>
-      <a class="cta" href="#athletes">Get started</a>
+    <h1>At-game experiences</h1>
+    <p>Bid on unique game-day access. Create an account, verify once, then submit and track your offers.</p>
+    <a href="#athletes" class="cta">Get started</a>
+
+    <div class="search-hero">
+      <input type="search" id="heroSearch" placeholder="Search athletes or teams..." autocomplete="off">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
+      <div class="search-results" id="searchResults"></div>
     </div>
-    <div></div>
   </div>
 </section>
 
-<main class="section" id="athletes">
-  <h2 id="sectionTitle">CHOOSE AN ATHLETE</h2>
+<section class="featured" id="featured">
+  <h2>Featured Athletes</h2>
+  <div class="featured-grid" id="featuredGrid">
+    <!-- Populated by JavaScript -->
+  </div>
+</section>
 
-  <div class="toolbar">
-    <label class="search" aria-label="Search athletes">
-      <input id="search" type="search" placeholder="Search for an athlete by name or team" />
-    </label>
-    <button class="chip" aria-pressed="true" data-filter="all" id="chipAll">All athletes</button>
-    <button class="chip" aria-pressed="false" data-filter="nba" id="chipNBA">NBA</button>
-    <button class="chip" aria-pressed="false" data-filter="ncaa" id="chipNCAA">NCAA men's basketball</button>
+<!-- ===== Featured Articles Carousel ===== -->
+<section class="articles-carousel-section" id="articlesCarouselSection">
+  <h2>Press</h2>
+
+  <div class="articles-carousel-shell">
+    <div class="article-arrow left" id="articleArrowLeft" aria-label="Previous article">❮</div>
+    <div class="article-arrow right" id="articleArrowRight" aria-label="Next article">❯</div>
+
+    <div class="articles-carousel-wrapper" id="articlesCarouselWrapper">
+      <!-- cards injected here -->
+    </div>
+
+    <div class="article-progress-outer">
+      <div class="article-progress-wrap">
+        <div class="article-progress-bar" id="articleProgressBar"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="athletes" id="athletes">
+  <h2>All Athletes</h2>
+
+  <div class="filters">
+    <div class="filter-search">
+      <input type="search" id="search" placeholder="Search athletes or teams...">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+
+    <div class="chips">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="NBA">NBA</button>
+      <button class="chip" data-filter="WNBA">WNBA</button>
+      <button class="chip" data-filter="NCAA">NCAA</button>
+    </div>
   </div>
 
   <div class="grid" id="cards">
-    <div class="empty-state">Loading athletes...</div>
+    <!-- Populated by JavaScript -->
   </div>
-</main>
+</section>
 
 <footer>
   <div class="foot">
     <span>Copyright © 2025 Daps</span>
-    <span class="grow"></span>
+    <span style="margin-left:auto"></span>
     <a href="#">Privacy policy</a><span aria-hidden="true"> · </span>
-    <a href="#">Terms of use</a><span aria-hidden="true"> · </span>
-    <a href="#">Sales &amp; refunds</a>
+    <a href="#">Terms of use</a>
   </div>
 </footer>
 
 <script>
 (function(){
-  // CRITICAL: Use relative API URL so it works with subdomains
-  var API = '/api';
-  var teamConfig = null;
-  
-  console.log('[index] Initializing...');
-  console.log('[index] Current URL:', window.location.href);
-  
-  // Fetch team config and apply theming
-  async function fetchTeamConfig() {
-    try {
-      console.log('[index] Fetching team config from:', API + '/team-config');
-      const res = await fetch(API + '/team-config');
-      console.log('[index] Team config response status:', res.status);
-      
-      if (res.ok) {
-        teamConfig = await res.json();
-        console.log('[index] ✓ Team config loaded:', teamConfig);
-        console.log('[index] - Name:', teamConfig.name);
-        console.log('[index] - League:', teamConfig.league);
-        console.log('[index] - TeamName:', teamConfig.teamName);
-        console.log('[index] - Colors:', teamConfig.primaryColor, teamConfig.secondaryColor);
-        applyTheming(teamConfig);
-        return teamConfig;
-      } else {
-        console.error('[index] Team config request failed:', res.status);
-      }
-    } catch(err) {
-      console.error('[index] Failed to load team config:', err);
+  'use strict';
+
+  var API = 'http://localhost:5175';
+  var allAthletes = [];
+  var currentUser = null;
+
+  var teamConfig = {
+    primary: '#0A0A0B',
+    secondary: '#DAFA22',
+    accent: '#64FA00'
+  };
+
+  // ===== Featured Articles Data =====
+  var articlesData = [
+    {
+      title: 'Daps Bounty launches with Adrian Wojnarowski collaboration',
+      publication: 'Sports Business Journal',
+      author: 'Irving Mejia-Hilario',
+      excerpt: 'A new demand-first marketplace offers sports fans and collectors the opportunity to ask athletes for collectibles and experiences. Former Columbia Lions guard Jake Klores launches Daps Bounty.',
+      url: 'https://www.sportsbusinessjournal.com/Articles/2025/02/24/daps-bounty-launches-with-adrian-wojnarowski-collaboration/'
+    },
+    {
+      title: 'Longtime NBA reporter Adrian Wojnarowski to auction off his iPhones',
+      publication: 'cllct',
+      author: 'Matt Liberman',
+      excerpt: 'Adrian Wojnarowski is selling nine iPhones through Daps Bounty, with all proceeds going to St. Bonaventure men\'s basketball program. The phones were used to break some of his most memorable scoops.',
+      url: 'https://www.cllct.com/sports-collectibles/auctions/longtime-nba-reporter-adrian-wojnarowski-to-auction-off-his-i-phones'
+    },
+    {
+      title: 'Daps Bounty Connects Collectors With Athletes',
+      publication: 'Sports Illustrated',
+      author: 'Horacio Ruiz',
+      excerpt: 'Upstart company Daps Bounty aims to bring collectors and athletes together, allowing collectors to place a bounty on any item they want. The platform functions as a reverse marketplace.',
+      url: 'https://www.si.com/collectibles/inside-the-hobby/daps-bounty-connects-collectors'
+    },
+    {
+      title: 'Adrian Wojnarowski Holding Unique Auction to Raise NIL Money for St. Bonaventure',
+      publication: 'Sports Illustrated',
+      author: 'Patrick Andres',
+      excerpt: 'The ex-ESPN reporter is selling pieces of history through Daps Bounty, including credentials and phones used to break major NBA news stories. All proceeds benefit St. Bonaventure basketball.',
+      url: 'https://www.si.com/college-basketball/adrian-wojnarowski-holding-unique-auction-raise-nil-money-st-bonaventure'
+    },
+    {
+      title: 'How Zach Edey, Purdue men\'s hoops star, is overcoming immigration law to benefit from NIL',
+      publication: 'USA Today',
+      author: 'Scooby Axson',
+      excerpt: 'Purdue\'s 7-foot-4 star player partnered with Daps when the Boilermakers traveled to his hometown of Toronto, completing NIL deals on Canadian soil to work within F-1 visa constraints.',
+      url: 'https://www.usatoday.com/story/sports/ncaab/bigten/2023/12/12/purdue-zach-edey-nil-loophole-immigration-law-rule/71882113007/'
+    },
+    {
+      title: 'Once the Center of the N.B.A. News Universe, These Phones Can Now Be Yours',
+      publication: 'The New York Times',
+      author: 'Victor Mather',
+      excerpt: 'Adrian Wojnarowski is auctioning off personal items including smartphones that buzzed with texts and calls from NBA owners, agents, and coaches offering coveted scoops.',
+      url: 'https://www.nytimes.com/2025/02/25/sports/basketball/adrian-wojnarowski-auction-woj.html'
     }
-    
-    // Fallback to default config
-    console.log('[index] Using default config');
-    teamConfig = {
-      name: 'Daps Bounty',
-      league: 'ALL',
-      primaryColor: '#0A0A0B',
-      secondaryColor: '#DAFA22',
-      accentColor: '#64FA00'
-    };
-    return teamConfig;
+  ];
+
+  var currentArticleIndex = 0;
+
+  var articleRotateTimer = null;
+  var articleProgressTimer = null;
+  var articleAutoplayMs = 8000;
+  var progressBarEl;
+  var lastFrameTime = null;
+  var progressElapsed = 0;
+
+  var animating = false;
+  var animDurationMs = 350; // keep in sync w/ CSS
+
+  var wrapperEl = null; // stage
+
+  function applyTeamTheme() {
+    document.documentElement.style.setProperty('--theme-primary', teamConfig.primary);
+    document.documentElement.style.setProperty('--theme-secondary', teamConfig.secondary);
+    document.documentElement.style.setProperty('--theme-accent', teamConfig.accent);
   }
-  
-  // Apply team colors and branding
-  function applyTheming(config) {
-    const root = document.documentElement;
-    
-    console.log('[index] Applying theme:', config.name);
-    console.log('[index] Primary color:', config.primaryColor);
-    
-    // Apply CSS variables
-    root.style.setProperty('--theme-primary', config.primaryColor);
-    root.style.setProperty('--theme-secondary', config.secondaryColor);
-    root.style.setProperty('--theme-accent', config.accentColor);
-    
-    // Update page title
-    if (config.league !== 'ALL') {
-      document.title = `${config.name} – At-game experiences`;
-      
-      // Update hero text
-      const heroTeamName = document.getElementById('heroTeamName');
-      if (heroTeamName) {
-        heroTeamName.textContent = config.name.toUpperCase() + ' ';
-      }
-      
-      // Update section title for team-specific pages
-      const sectionTitle = document.getElementById('sectionTitle');
-      if (sectionTitle && config.league === 'NCAA') {
-        sectionTitle.textContent = 'CHOOSE YOUR ' + config.name.split(' ')[0].toUpperCase() + ' PLAYER';
-      }
-      
-      // Hide league filter chips on team-specific pages
-      if (config.league === 'NCAA') {
-        document.getElementById('chipNBA').style.display = 'none';
-        document.getElementById('chipNCAA').style.display = 'none';
-        document.getElementById('chipAll').textContent = 'All players';
-      } else if (config.league === 'NBA') {
-        document.getElementById('chipNBA').style.display = 'none';
-        document.getElementById('chipNCAA').style.display = 'none';
-        document.getElementById('chipAll').textContent = 'All players';
-      }
-    }
-    
-    console.log('[index] ✓ Theming applied for', config.name);
+
+  function fetchTeamConfig() {
+    return fetch(API + '/api/public/config')
+      .then(function(res){ return res.ok ? res.json() : {}; })
+      .then(function(config){
+        if (config.branding) {
+          teamConfig = config.branding;
+        }
+        applyTeamTheme();
+      })
+      .catch(function(){
+        applyTeamTheme();
+      });
   }
-  
+
   // Auth functions
-  function getToken(){ return localStorage.getItem('jwt') || ''; }
-  
-  function logout(){
-    localStorage.removeItem('jwt');
-    window.location.reload();
+  function checkAuth() {
+    var token = localStorage.getItem('jwt');
+    if (!token) {
+      document.getElementById('signInBtn').style.display = 'inline-block';
+      document.getElementById('userBadge').style.display = 'none';
+      return;
+    }
+
+    fetch(API + '/api/users/me', {
+      headers: { Authorization: 'Bearer ' + token }
+    }).then(function(res){
+      if (!res.ok) throw new Error('Not authenticated');
+      return res.json();
+    }).then(function(user){
+      currentUser = user;
+      var initials = ((user.firstName || '')[0] || '') + ((user.lastName || '')[0] || '');
+      document.getElementById('userInitials').textContent = initials.toUpperCase() || 'U';
+      document.getElementById('dropdownName').textContent = (user.firstName || '') + ' ' + (user.lastName || '');
+      document.getElementById('dropdownEmail').textContent = user.email || '';
+      document.getElementById('signInBtn').style.display = 'none';
+      document.getElementById('userBadge').style.display = 'flex';
+    }).catch(function(){
+      localStorage.removeItem('jwt');
+      document.getElementById('signInBtn').style.display = 'inline-block';
+      document.getElementById('userBadge').style.display = 'none';
+    });
   }
-  window.logout = logout;
-  
-  function toggleDropdown(){
+
+  window.toggleDropdown = function() {
     var dropdown = document.getElementById('userDropdown');
     dropdown.classList.toggle('open');
-  }
-  window.toggleDropdown = toggleDropdown;
-  
-  // Close dropdown when clicking outside
+  };
+
+  window.logout = function() {
+    localStorage.removeItem('jwt');
+    currentUser = null;
+    window.location.reload();
+  };
+
   document.addEventListener('click', function(e){
     var badge = document.getElementById('userBadge');
     var dropdown = document.getElementById('userDropdown');
-    if(badge && !badge.contains(e.target) && dropdown && !dropdown.contains(e.target)){
+    if (badge && dropdown && !badge.contains(e.target)) {
       dropdown.classList.remove('open');
     }
   });
-  
-  // Check if user is logged in and update UI
-  function checkAuth(){
-    var token = getToken();
-    if(!token){
-      document.getElementById('authButtons').style.display = 'flex';
-      document.getElementById('userProfile').style.display = 'none';
-      return;
-    }
-    
-    fetch(API + '/users/me', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(function(res){
-      if(res.ok){
-        return res.json();
-      } else {
-        localStorage.removeItem('jwt');
-        throw new Error('Unauthorized');
-      }
-    }).then(function(user){
-      // Show user profile
-      document.getElementById('authButtons').style.display = 'none';
-      document.getElementById('userProfile').style.display = 'block';
-      
-      // Set initials
-      var initials = (user.firstName[0] + user.lastName[0]).toUpperCase();
-      document.getElementById('userInitials').textContent = initials;
-      
-      // Set dropdown info
-      document.getElementById('dropdownName').textContent = user.firstName + ' ' + user.lastName;
-      document.getElementById('dropdownEmail').textContent = user.email;
-    }).catch(function(err){
-      console.error('Auth check failed:', err);
-      document.getElementById('authButtons').style.display = 'flex';
-      document.getElementById('userProfile').style.display = 'none';
-    });
-  }
-  
-  // Load athletes
+
+  // Load athletes from API
   function loadAthletes(){
-    console.log('[index] ════════════════════════════════════════════');
-    console.log('[index] Loading athletes from API...');
-    console.log('[index] API URL:', API + '/athletes');
-    console.log('[index] Team config:', teamConfig);
-    
-    // Use relative URL so it goes to the same domain (stjohns.localhost or localhost)
-    fetch(API + '/athletes')
-      .then(function(res){
-        console.log('[index] Athletes API response status:', res.status);
-        if (!res.ok) {
-          throw new Error('API returned ' + res.status);
-        }
-        return res.json();
+    fetch(API + '/api/athletes')
+      .then(function(response){
+        if (!response.ok) throw new Error('API returned ' + response.status);
+        return response.json();
       })
       .then(function(athletes){
-        console.log('[index] ✓ Received ' + athletes.length + ' athletes from API');
-        console.log('[index] First few athletes:', athletes.slice(0, 3));
-        
+        allAthletes = athletes;
+        loadFeaturedAthletes();
+
         var grid = document.getElementById('cards');
-        grid.innerHTML = '';
-        
-        // Filter to only ACTIVE athletes
-        var activeAthletes = athletes.filter(function(a){ 
-          return a.active === true || a.active === undefined || a.active === null; 
-        });
-        
-        console.log('[index] ✓ Displaying ' + activeAthletes.length + ' active athletes');
-        
-        if(activeAthletes.length === 0){
-          var teamNameDisplay = teamConfig && teamConfig.league !== 'ALL' ? teamConfig.name : 'this team';
-          grid.innerHTML = '<div class="empty-state">No athletes available for ' + teamNameDisplay + '. Please check back soon!</div>';
-          return;
+        if (grid) {
+          grid.innerHTML = '';
+          if (athletes.length === 0) {
+            grid.innerHTML = '<div class="empty-state">No athletes available yet.<br>Check back soon!</div>';
+          } else {
+            athletes.forEach(function(athlete){
+              var card = document.createElement('div');
+              card.className = 'card';
+              card.setAttribute('data-name', athlete.name || '');
+              card.setAttribute('data-team', athlete.team || '');
+              card.setAttribute('data-league', athlete.league || 'NBA');
+
+              var imgSrc = athlete.imageUrl || athlete.image || '/images/Daps-2 Copy.png';
+
+              var cardHTML =
+                '<img class="thumb" ' +
+                'src="' + imgSrc + '" ' +
+                'alt="' + (athlete.name || '') + '" ' +
+                'onerror="this.src=\'/images/Daps-2 Copy.png\'">' +
+                '</div>' +
+                '<div class="meta">' +
+                '<h3 class="name">' + (athlete.name || 'Unknown') + '</h3>' +
+                '<p class="team">' + (athlete.team || '') + ' • ' + (athlete.league || 'NBA') + '</p>' +
+                '<a class="cta-ghost" href="/playepage.html?athleteId=' + (athlete.id || athlete.slug || '') + '">Select experience</a>' +
+                '</div>';
+
+              card.innerHTML = cardHTML;
+              grid.appendChild(card);
+            });
+          }
         }
-        
-        activeAthletes.forEach(function(athlete){
-          var card = document.createElement('article');
-          card.className = 'card';
-          card.setAttribute('data-name', athlete.name || '');
-          card.setAttribute('data-team', athlete.team || '');
-          card.setAttribute('data-league', (athlete.league || 'nba').toLowerCase());
-          
-          var imgSrc = athlete.imageUrl || '/images/Daps-2 Copy.png';
-          
-          var cardHTML = '<div class="thumb">' +
-            '<img src="' + imgSrc + '" ' +
-            'alt="' + (athlete.name || '') + '" ' +
-            'onerror="this.src=\'/images/Daps-2 Copy.png\'">' +
-            '</div>' +
-            '<div class="meta">' +
-            '<h3 class="name">' + (athlete.name || 'Unknown') + '</h3>' +
-            '<p class="team">' + (athlete.team || '') + ' • ' + (athlete.league || 'NBA') + '</p>' +
-            '<a class="cta-ghost" href="/playepage.html?athleteId=' + (athlete.id || athlete.slug || '') + '">Select experience</a>' +
-            '</div>';
-          
-          card.innerHTML = cardHTML;
-          grid.appendChild(card);
-        });
-        
-        console.log('[index] ════════════════════════════════════════════');
+
         applyFilters();
+
+        initArticlesCarousel();
       })
       .catch(function(err){
-        console.error('[index] ✗ Failed to load athletes from API:', err);
-        document.getElementById('cards').innerHTML = '<div class="empty-state">Failed to load athletes: ' + err.message + '<br><br>Please refresh the page or contact support.</div>';
+        var gridErr = document.getElementById('cards');
+        if (gridErr){
+          gridErr.innerHTML = '<div class="empty-state">Failed to load athletes: ' + err.message + '<br><br>Please refresh the page or contact support.</div>';
+        }
+        initArticlesCarousel();
       });
   }
-  
-  // Search and filter
-  function getAllCards(){ return Array.from(document.querySelectorAll('.card')); }
 
+  // Load featured athletes
+  function loadFeaturedAthletes(){
+    var grid = document.getElementById('featuredGrid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+
+    var featured = [];
+    allAthletes.forEach(function(a){
+      if (a.featured === true) featured.push(a);
+    });
+
+    if (featured.length === 0 && allAthletes.length > 0) {
+      featured = allAthletes.slice(0, 3);
+    }
+
+    if (featured.length === 0) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1">No featured athletes yet</div>';
+      return;
+    }
+
+    featured.forEach(function(athlete){
+      var card = document.createElement('a');
+      card.className = 'featured-card';
+      card.href = '/playepage.html?athleteId=' + (athlete.id || athlete.slug || '');
+
+      var imgSrc = athlete.imageUrl || '/images/Daps-2 Copy.png';
+
+      card.innerHTML =
+        '<div class="featured-thumb">' +
+          '<img src="' + imgSrc + '" alt="' + (athlete.name || '') + '" ' +
+          'onerror="this.src=\'/images/Daps-2 Copy.png\'">' +
+        '</div>' +
+        '<div class="featured-name">' + (athlete.name || 'Unknown') + '</div>' +
+        '<div class="featured-team">' + (athlete.team || '') + ' • ' + (athlete.league || 'NBA') + '</div>' +
+        '<button class="featured-cta">View experiences</button>';
+
+      grid.appendChild(card);
+    });
+  }
+
+  /* ======== FEATURED ARTICLES CAROUSEL (NEW LOGIC) ======== */
+
+  // utility: grab article safely by wrapped index
+  function getArticle(idx){
+    var len = articlesData.length;
+    return articlesData[(idx % len + len) % len];
+  }
+
+  // build one card element (anchor)
+  function buildArticleCardEl(article, className){
+    var el = document.createElement('a');
+    el.className = 'article-card-shell ' + className;
+    el.href = article.url || '#';
+    el.target = '_blank';
+    el.rel = 'noopener noreferrer';
+
+    el.innerHTML =
+      '<div class="article-header-line">' +
+        '<span class="article-title">' + (article.title || '') + '</span>' +
+        '<span class="article-publication">· ' + (article.publication || '') + '</span>' +
+      '</div>' +
+      '<div class="article-meta">' +
+        (article.author ? ('By ' + article.author) : '') +
+      '</div>' +
+      '<div class="article-excerpt">' + (article.excerpt || '') + '</div>';
+
+    return el;
+  }
+
+  // render the 3-card "neutral" state (prev/current/next)
+  function renderCarouselTriplet(){
+    if(!wrapperEl){
+      wrapperEl = document.getElementById('articlesCarouselWrapper');
+    }
+    if(!wrapperEl) return;
+
+    wrapperEl.classList.remove('anim-next','anim-prev');
+    wrapperEl.innerHTML = '';
+
+    var prevArticle = getArticle(currentArticleIndex - 1);
+    var curArticle  = getArticle(currentArticleIndex);
+    var nextArticle = getArticle(currentArticleIndex + 1);
+
+    var leftCard  = buildArticleCardEl(prevArticle, 'pos-left');
+    var midCard   = buildArticleCardEl(curArticle,  'pos-center');
+    var rightCard = buildArticleCardEl(nextArticle, 'pos-right');
+
+    // clicking left/right should animate carousel instead of instantly navigating
+    leftCard.addEventListener('click', function(e){
+      e.preventDefault();
+      goPrev();
+    });
+    rightCard.addEventListener('click', function(e){
+      e.preventDefault();
+      goNext();
+    });
+
+    wrapperEl.appendChild(leftCard);
+    wrapperEl.appendChild(midCard);
+    wrapperEl.appendChild(rightCard);
+  }
+
+  // animate to next: shift all cards left, then advance index and rebuild
+  function goNext(){
+    if(animating) return;
+    animating = true;
+
+    stopAutoplayTimers(); // pause autoplay while animating
+
+    wrapperEl.classList.add('anim-next');
+
+    setTimeout(function(){
+      currentArticleIndex = (currentArticleIndex + 1) % articlesData.length;
+      renderCarouselTriplet();
+      restartAutoplayTimers();
+      animating = false;
+    }, animDurationMs);
+  }
+
+  // animate to prev: shift all cards right, then advance index backward and rebuild
+  function goPrev(){
+    if(animating) return;
+    animating = true;
+
+    stopAutoplayTimers();
+
+    wrapperEl.classList.add('anim-prev');
+
+    setTimeout(function(){
+      currentArticleIndex = (currentArticleIndex - 1 + articlesData.length) % articlesData.length;
+      renderCarouselTriplet();
+      restartAutoplayTimers();
+      animating = false;
+    }, animDurationMs);
+  }
+
+  /* ===== Progress Bar + Autoplay ===== */
+
+  function startProgressBar(){
+    progressElapsed = 0;
+    lastFrameTime = performance.now();
+    if(!progressBarEl){
+      progressBarEl = document.getElementById('articleProgressBar');
+    }
+    if(progressBarEl){
+      progressBarEl.style.transition = 'none';
+      progressBarEl.style.width = '0%';
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          progressBarEl.style.transition = 'width linear';
+          progressBarEl.style.width = '100%';
+          progressBarEl.style.transitionDuration = articleAutoplayMs + 'ms';
+        });
+      });
+    }
+
+    if(articleProgressTimer){
+      cancelAnimationFrame(articleProgressTimer);
+    }
+    articleProgressTimer = requestAnimationFrame(tickProgress);
+  }
+
+  function tickProgress(ts){
+    if(!lastFrameTime) lastFrameTime = ts;
+    var dt = ts - lastFrameTime;
+    lastFrameTime = ts;
+    progressElapsed += dt;
+
+    if(progressElapsed >= articleAutoplayMs){
+      goNext();
+      return;
+    }
+    articleProgressTimer = requestAnimationFrame(tickProgress);
+  }
+
+  function stopAutoplayTimers(){
+    if(articleRotateTimer){
+      clearInterval(articleRotateTimer);
+      articleRotateTimer = null;
+    }
+    if(articleProgressTimer){
+      cancelAnimationFrame(articleProgressTimer);
+      articleProgressTimer = null;
+    }
+  }
+
+  function restartAutoplayTimers(){
+    startProgressBar();
+    if(articleRotateTimer){
+      clearInterval(articleRotateTimer);
+    }
+    articleRotateTimer = setInterval(function(){
+      goNext();
+    }, articleAutoplayMs);
+  }
+
+  function initArticlesCarousel(){
+    // wire arrows
+    var leftBtn = document.getElementById('articleArrowLeft');
+    var rightBtn = document.getElementById('articleArrowRight');
+
+    if(leftBtn){
+      leftBtn.addEventListener('click', function(){
+        goPrev();
+      });
+    }
+    if(rightBtn){
+      rightBtn.addEventListener('click', function(){
+        goNext();
+      });
+    }
+
+    renderCarouselTriplet();
+    restartAutoplayTimers();
+  }
+
+  // Hero search with dropdown
+  var heroSearchInput = document.getElementById('heroSearch');
+  var searchResults = document.getElementById('searchResults');
+  var heroSearchTimer;
+
+  heroSearchInput.addEventListener('input', function(){
+    clearTimeout(heroSearchTimer);
+    heroSearchTimer = setTimeout(function(){
+      performHeroSearch();
+    }, 200);
+  });
+
+  heroSearchInput.addEventListener('focus', function(){
+    if(heroSearchInput.value.trim()){
+      performHeroSearch();
+    }
+  });
+
+  document.addEventListener('click', function(e){
+    if(!heroSearchInput.contains(e.target) && !searchResults.contains(e.target)){
+      searchResults.classList.remove('active');
+    }
+  });
+
+  function performHeroSearch(){
+    var query = heroSearchInput.value.trim().toLowerCase();
+
+    if(!query){
+      searchResults.classList.remove('active');
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    var matches = allAthletes.filter(function(athlete){
+      var searchText = (
+        (athlete.name || '') + ' ' +
+        (athlete.team || '') + ' ' +
+        (athlete.league || '')
+      ).toLowerCase();
+      return searchText.indexOf(query) !== -1;
+    });
+
+    if(matches.length === 0){
+      searchResults.innerHTML = '<div class="search-no-results">No athletes found matching "' + query + '"</div>';
+      searchResults.classList.add('active');
+      return;
+    }
+
+    var html = '';
+    matches.slice(0, 6).forEach(function(athlete){
+      var imgSrc = athlete.imageUrl || '/images/Daps-2 Copy.png';
+      html +=
+        '<a href="/playepage.html?athleteId=' + (athlete.id || athlete.slug || '') + '" class="search-result-item">' +
+          '<div class="search-result-thumb">' +
+            '<img src="' + imgSrc + '" alt="' + (athlete.name || '') + '" ' +
+            'onerror="this.src=\'/images/Daps-2 Copy.png\'">' +
+          '</div>' +
+          '<div class="search-result-info">' +
+            '<div class="search-result-name">' + (athlete.name || 'Unknown') + '</div>' +
+            '<div class="search-result-team">' + (athlete.team || '') + ' • ' + (athlete.league || 'NBA') + '</div>' +
+          '</div>' +
+        '</a>';
+    });
+
+    searchResults.innerHTML = html;
+    searchResults.classList.add('active');
+  }
+
+  // Main grid search + filter
+  function getAllCards(){ return Array.from(document.querySelectorAll('.card')); }
   var input = document.getElementById('search');
   var chips = Array.from(document.querySelectorAll('.chip'));
 
@@ -578,7 +1246,7 @@
     var q = (input && input.value ? input.value : '').toLowerCase();
     var active = document.querySelector('.chip[aria-pressed="true"]');
     var league = active && active.getAttribute('data-filter') ? active.getAttribute('data-filter') : 'all';
-    
+
     getAllCards().forEach(function(card){
       var t = (card.getAttribute('data-name') + ' ' + card.getAttribute('data-team')).toLowerCase();
       var passQ = !q || t.indexOf(q) !== -1;
@@ -607,7 +1275,7 @@
   var hamburger = document.getElementById('hamburger');
   var nav = document.getElementById('nav');
   var navOverlay = document.getElementById('navOverlay');
-  
+
   function toggleNav(){
     var isActive = nav.classList.toggle('active');
     hamburger.classList.toggle('active');
@@ -623,16 +1291,15 @@
       document.body.style.overflow = '';
     }
   }
-  
+
   if(hamburger){
     hamburger.addEventListener('click', toggleNav);
   }
-  
+
   if(navOverlay){
     navOverlay.addEventListener('click', toggleNav);
   }
-  
-  // Close nav when clicking a link
+
   document.querySelectorAll('nav a').forEach(function(link){
     link.addEventListener('click', function(){
       if(nav.classList.contains('active')){
@@ -646,9 +1313,7 @@
     checkAuth();
     loadAthletes();
   });
-  
-  // Refresh athletes every 30 seconds to catch admin changes
-  setInterval(loadAthletes, 30000);
+
 })();
 </script>
 </body>

@@ -8,7 +8,7 @@ export function publicRouter({ prisma }) {
       const rows = await prisma.athlete.findMany({
         where: { active: true },
         orderBy: { name: 'asc' },
-        select: { id: true, name: true, team: true, league: true, imageUrl: true }
+        select: { id: true, name: true, team: true, league: true, imageUrl: true, featured: true }
       });
       res.json(rows);
     } catch (err) { next(err); }

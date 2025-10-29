@@ -18,19 +18,20 @@ router.get('/', async (_req, res) => {
     league: a.league,
     image: a.imageUrl || '',
     imageUrl: a.imageUrl || '',  // Add this for compatibility
-    active: a.active
+    active: a.active,
+    featured: a.featured || false  // Include featured status
   }));
   
   console.log('[api] /api/athletes returning ' + transformed.length + ' athletes:');
   transformed.forEach(a => {
-    console.log('[api]   - ' + a.name + ' (' + a.team + ') [id=' + a.id + ', slug=' + a.slug + ', active=' + a.active + ']');
+    console.log('[api]   - ' + a.name + ' (' + a.team + ') [id=' + a.id + ', slug=' + a.slug + ', active=' + a.active + ', featured=' + a.featured + ']');
   });
   
   res.json(transformed);
 });
 
 router.post('/', async (req, res) => {
-  const { slug, name, team, league, imageUrl, image, active } = req.body || {};
+  const { slug, name, team, league, imageUrl, image, active, featured } = req.body || {};
   if (!name || !team || !league) return res.status(400).json({ error: 'Missing fields' });
   
   // Generate slug if not provided
@@ -45,7 +46,8 @@ router.post('/', async (req, res) => {
         team, 
         league, 
         imageUrl: imageUrl || image || '', 
-        active: active ?? true 
+        active: active ?? true,
+        featured: featured ?? false  // Include featured status
       } 
     });
     
@@ -70,7 +72,8 @@ router.post('/', async (req, res) => {
       league: a.league,
       image: a.imageUrl || '',
       imageUrl: a.imageUrl || '',
-      active: a.active
+      active: a.active,
+      featured: a.featured  // Include featured status
     });
   } catch (error) {
     console.error('[api] Error creating athlete:', error);
@@ -78,11 +81,12 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.patch('/:id', async (req, res) => {
+// Handle both PATCH and PUT for updating athletes
+async function updateAthlete(req, res) {
   const { id } = req.params;
-  const { name, team, league, imageUrl, image, active } = req.body || {};
+  const { name, team, league, imageUrl, image, active, featured } = req.body || {};
   
-  console.log('[api] PATCH /api/athletes/' + id, req.body);
+  console.log('[api] UPDATE /api/athletes/' + id, req.body);
   
   // Update by slug or id
   const where = { OR: [{ slug: id }, { id }] };
@@ -93,31 +97,91 @@ router.patch('/:id', async (req, res) => {
   if (league !== undefined) updateData.league = league;
   if (imageUrl !== undefined || image !== undefined) updateData.imageUrl = imageUrl || image;
   if (active !== undefined) updateData.active = active;
+  if (featured !== undefined) updateData.featured = featured;  // Update featured status
   
-  const result = await prisma.athlete.updateMany({
-    where,
-    data: updateData
-  });
-  
-  console.log('[api] Updated', result.count, 'athlete(s)');
-  
-  // If team was updated, refresh the games schedule
-  if (team !== undefined && result.count > 0) {
-    console.log('[api] Team was updated, refreshing games schedule...');
-    try {
-      const athlete = await prisma.athlete.findFirst({ where });
-      if (athlete) {
-        const gamesResult = await populateGamesForAthlete(athlete);
+  try {
+    // First find the athlete
+    const athlete = await prisma.athlete.findFirst({ where });
+    
+    if (!athlete) {
+      return res.status(404).json({ error: 'Athlete not found' });
+    }
+    
+    // Update the athlete
+    const updated = await prisma.athlete.update({
+      where: { id: athlete.id },
+      data: updateData
+    });
+    
+    console.log('[api] Updated athlete:', updated.name);
+    
+    // If team was updated, refresh the games schedule
+    if (team !== undefined) {
+      console.log('[api] Team was updated, refreshing games schedule...');
+      try {
+        const gamesResult = await populateGamesForAthlete(updated);
         if (gamesResult.success) {
           console.log(`[api] ✓ Refreshed ${gamesResult.count} games after team update`);
         }
+      } catch (error) {
+        console.error('[api] ⚠️ Failed to refresh games:', error.message);
       }
-    } catch (error) {
-      console.error('[api] ⚠️ Failed to refresh games:', error.message);
     }
+    
+    // Return in admin panel format
+    res.json({
+      id: updated.slug || updated.id,
+      slug: updated.slug,
+      name: updated.name,
+      team: updated.team,
+      league: updated.league,
+      image: updated.imageUrl || '',
+      imageUrl: updated.imageUrl || '',
+      active: updated.active,
+      featured: updated.featured || false
+    });
+  } catch (error) {
+    console.error('[api] Error updating athlete:', error);
+    res.status(500).json({ error: 'Failed to update athlete' });
   }
+}
+
+// Support both PATCH and PUT methods
+router.patch('/:id', updateAthlete);
+router.put('/:id', updateAthlete);
+
+// DELETE endpoint
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
   
-  res.json({ ok: true, updated: result.count });
+  console.log('[api] DELETE /api/athletes/' + id);
+  
+  try {
+    // Find athlete first
+    const athlete = await prisma.athlete.findFirst({
+      where: { OR: [{ slug: id }, { id }] }
+    });
+    
+    if (!athlete) {
+      return res.status(404).json({ error: 'Athlete not found' });
+    }
+    
+    // Delete associated games first
+    await prisma.game.deleteMany({
+      where: { athleteId: athlete.id }
+    });
+    
+    // Delete athlete
+    await prisma.athlete.delete({
+      where: { id: athlete.id }
+    });
+    
+    console.log('[api] Deleted athlete:', athlete.name);
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('[api] Error deleting athlete:', error);
+    res.status(500).json({ error: 'Failed to delete athlete' });
+  }
 });
 
 export default router;

@@ -211,10 +211,11 @@
       <div class="card table-wrap" style="margin-bottom:12px">
         <table id="tblAthletes" aria-label="Athletes table">
           <colgroup>
-            <col style="width:10%">
-            <col style="width:30%">
-            <col style="width:20%">
-            <col style="width:15%">
+            <col style="width:8%">
+            <col style="width:25%">
+            <col style="width:18%">
+            <col style="width:12%">
+            <col style="width:12%">
             <col style="width:15%">
             <col style="width:10%">
           </colgroup>
@@ -224,7 +225,8 @@
               <th>Name</th>
               <th>Team</th>
               <th>League</th>
-              <th>Status</th>
+              <th>Active</th>
+              <th>Featured</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -285,6 +287,12 @@
         </div>
         <div class="field"><label>League</label><input id="athLeague" type="text" placeholder="NBA" value="NBA" readonly></div>
         <div class="field"><label>Image URL</label><input id="athImg" type="text" placeholder="./images/your-image.png"></div>
+        <div class="field">
+          <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="athFeatured">
+            <span>Mark as featured athlete</span>
+          </label>
+        </div>
         <div style="display:flex;gap:8px">
           <button id="saveAth" class="btn btn-cta">Save</button>
           <button id="cancelAth" class="btn btn-ghost">Cancel</button>
@@ -749,7 +757,7 @@ function renderAthletes(){
   
   if (!athletes.length) {
     console.log('[admin:renderAthletes] No athletes, showing empty state');
-    tbody.innerHTML = '<tr><td colspan="6" class="secondary" style="padding:16px;text-align:center">No athletes yet. Add one to get started!</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="secondary" style="padding:16px;text-align:center">No athletes yet. Add one to get started!</td></tr>';
     return;
   }
   
@@ -772,8 +780,14 @@ function renderAthletes(){
       </td>
       <td class="cell">
         <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" ${a.active ? 'checked' : ''} onchange='toggleAth("${a.id}", this.checked)'>
+          <input type="checkbox" ${a.active ? 'checked' : ''} onchange='toggleActive("${a.id}", this.checked)'>
           <span class="secondary">${a.active ? 'Active' : 'Inactive'}</span>
+        </label>
+      </td>
+      <td class="cell">
+        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" ${a.featured ? 'checked' : ''} onchange='toggleFeatured("${a.id}", this.checked)'>
+          <span class="secondary">${a.featured ? 'Featured' : 'Not featured'}</span>
         </label>
       </td>
       <td class="cell">
@@ -787,7 +801,7 @@ function renderAthletes(){
   console.log('[admin:renderAthletes] ═══════════════════════════════════════════════════════════════');
 }
 
-async function toggleAth(id, on) {
+async function toggleActive(id, on) {
   console.log('═════════════════════════════════════════════════════════════');
   console.log('[admin:toggleAth] 🔄 TOGGLE ATHLETE CALLED');
   console.log('[admin:toggleAth] Athlete ID:', id);
@@ -856,6 +870,69 @@ async function toggleAth(id, on) {
   }
 }
 
+async function toggleFeatured(id, on) {
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('[admin:toggleFeatured] 🌟 TOGGLE FEATURED CALLED');
+  console.log('[admin:toggleFeatured] Athlete ID:', id);
+  console.log('[admin:toggleFeatured] New featured state:', on);
+  
+  try {
+    const url = `${API}/api/offers/athletes/${id}`;
+    console.log('[admin:toggleFeatured] Target URL:', url);
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${TOKEN}`
+    };
+    
+    const body = JSON.stringify({ featured: on });
+    console.log('[admin:toggleFeatured] Request body:', body);
+    
+    console.log('[admin:toggleFeatured] 📡 Making fetch request...');
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: headers,
+      body: body
+    });
+    
+    console.log('[admin:toggleFeatured] Response status:', response.status);
+    console.log('[admin:toggleFeatured] Response ok:', response.ok);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[admin:toggleFeatured] ❌ Error response:', errorText);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
+    }
+    
+    console.log('[admin:toggleFeatured] ✅ Success!');
+    
+    const index = athletes.findIndex(x => x.id === id);
+    if (index >= 0) {
+      athletes[index].featured = on;
+      console.log('[admin:toggleFeatured] Updated local athletes array at index', index);
+    } else {
+      console.warn('[admin:toggleFeatured] ⚠️ Athlete not found in local array!');
+    }
+    
+    console.log('[admin:toggleFeatured] 🎨 Re-rendering athletes...');
+    renderAthletes();
+    showToast(`Athlete ${on ? 'featured' : 'unfeatured'}`);
+    
+    console.log('[admin:toggleFeatured] ✅ Complete');
+    console.log('═════════════════════════════════════════════════════════════');
+  } catch (error) {
+    console.error('═════════════════════════════════════════════════════════════');
+    console.error('[admin:toggleFeatured] ❌ FAILED:', error);
+    console.error('[admin:toggleFeatured] Error name:', error.name);
+    console.error('[admin:toggleFeatured] Error message:', error.message);
+    console.error('[admin:toggleFeatured] Error stack:', error.stack);
+    console.error('═════════════════════════════════════════════════════════════');
+    showToast('Failed to update athlete: ' + error.message);
+    renderAthletes();
+  }
+}
+
+
 async function removeAth(id) {
   console.log('═════════════════════════════════════════════════════════════');
   console.log('[admin:removeAth] 🗑️ REMOVE ATHLETE CALLED');
@@ -912,7 +989,8 @@ async function removeAth(id) {
   }
 }
 
-window.toggleAth = toggleAth;
+window.toggleActive = toggleActive;
+window.toggleFeatured = toggleFeatured;
 window.removeAth = removeAth;
 
 q('#addAthBtn').onclick = () => q('#athFormWrap').style.display = '';
@@ -925,6 +1003,7 @@ q('#saveAth').onclick = async () => {
   const team = q('#athTeam').value.trim();
   const league = q('#athLeague').value.trim();
   const imageUrl = q('#athImg').value.trim();
+  const featured = q('#athFeatured').checked;
   
   console.log('[admin:saveAth] Form data:', { name, team, league, imageUrl });
   
@@ -943,7 +1022,7 @@ q('#saveAth').onclick = async () => {
     };
     console.log('[admin:saveAth] Request headers:', JSON.stringify(headers, null, 2));
     
-    const body = JSON.stringify({ name, team, league, imageUrl });
+    const body = JSON.stringify({ name, team, league, imageUrl, featured });
     console.log('[admin:saveAth] Request body:', body);
     
     console.log('[admin:saveAth] 📡 Making POST request...');
@@ -971,6 +1050,7 @@ q('#saveAth').onclick = async () => {
     renderAthletes();
     q('#athFormWrap').style.display = 'none';
     ['athName', 'athTeam', 'athLeague', 'athImg'].forEach(id => q('#' + id).value = '');
+    q('#athFeatured').checked = false;
     showToast('Athlete added');
     
     console.log('[admin:saveAth] ✅ Complete');
@@ -1013,7 +1093,7 @@ q('#csvAth').onchange = (e) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${TOKEN}`
         },
-        body: JSON.stringify({ name, team, league, imageUrl })
+        body: JSON.stringify({ name, team, league, imageUrl, featured: false })
       }).then(response => {
         if (!response.ok) throw new Error('Failed');
         return response.json();
