@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Privacy Policy — Daps</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius:12px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --muted:#6B7280;
+      --chip:#F7F8FA;
+      --chip-border:#E5E7EB;
+      --cta-a:#DAFA22;
+      --cta-b:#64FA00;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04),0 10px 20px rgba(16,24,40,.07);
+      --shadow-2:0 8px 24px rgba(16,24,40,.12);
+      --beta:#FF6000;
+      --theme-primary:#0A0A0B;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    body{
+      margin:0;
+      background:#fff;
+      color:var(--ink);
+      font-family:'Manrope',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-size:16px;
+      line-height:1.6;
+    }
+
+    /* ======= SITE HEADER ======= */
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+    }
+
+    .bar{
+      max-width:var(--container);
+      margin:auto;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 20px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+    }
+
+    .brand .logo{
+      height:30px;
+      width:auto;
+    }
+
+    .beta{
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      background:var(--beta);
+      padding:2px 8px;
+      border-radius:6px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav{
+      margin-left:24px;
+      display:flex;
+      gap:28px;
+      flex-wrap:wrap;
+    }
+
+    nav a{
+      position:relative;
+      color:#111;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:500;
+      opacity:.9;
+      padding-bottom:8px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav a:hover{
+      opacity:1;
+    }
+
+    nav a.active{
+      font-weight:600;
+    }
+
+    nav a.active::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:3px;
+      background:var(--theme-primary);
+      border-radius:2px;
+    }
+
+    .userbar{
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      border:1.5px solid var(--theme-primary);
+      background:var(--theme-primary);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      font-size:14px;
+      white-space:nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .btn.ghost{
+      background:#fff;
+      color:var(--theme-primary);
+    }
+
+    /* User Profile Badge */
+    .user-badge{
+      position:relative;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+      border:2px solid #fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+      font-family:'Poppins',sans-serif;
+    }
+
+    .user-badge:hover{
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+
+    /* Dropdown Menu */
+    .dropdown{
+      position:absolute;
+      right:0;
+      top:calc(100% + 8px);
+      min-width:200px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(16,24,40,.12);
+      padding:8px;
+      display:none;
+      z-index:1000;
+    }
+
+    .dropdown.open{
+      display:block;
+    }
+
+    .dropdown-header{
+      padding:12px 12px 8px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:4px;
+    }
+
+    .dropdown-name{
+      font-weight:700;
+      font-size:14px;
+      margin:0 0 2px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-email{
+      font-size:12px;
+      color:#6B7280;
+      margin:0;
+    }
+
+    .dropdown-item{
+      display:block;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border:none;
+      background:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      color:#111;
+      text-decoration:none;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-item:hover{
+      background:#F9FAFB;
+    }
+
+    .dropdown-divider{
+      height:1px;
+      background:var(--line);
+      margin:4px 0;
+    }
+
+    /* hamburger (mobile) */
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:5px;
+      width:34px;
+      height:34px;
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      padding:0;
+    }
+
+    .hamburger span{
+      width:22px;
+      height:2px;
+      background:#111;
+      border-radius:2px;
+      transition:all 0.2s;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(1){
+      transform:rotate(45deg) translateY(8px);
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(2){
+      opacity:0;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(3){
+      transform:rotate(-45deg) translateY(-8px);
+    }
+
+    /* responsive styles for mobile */
+    @media (max-width:800px){
+      .hamburger{
+        display:flex;
+      }
+
+      nav{
+        display:none;
+      }
+
+      .bar{
+        padding:12px 16px;
+      }
+    }
+
+    /* ======= PRIVACY POLICY CONTENT ======= */
+
+    .policy-container{
+      max-width:800px;
+      margin:0 auto;
+      padding:60px 20px 100px;
+    }
+
+    .policy-header{
+      text-align:center;
+      margin-bottom:48px;
+      padding-bottom:32px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .policy-header h1{
+      font-family:'Poppins',sans-serif;
+      font-size:48px;
+      font-weight:900;
+      line-height:1.1;
+      letter-spacing:-0.02em;
+      margin:0 0 12px;
+      color:var(--ink);
+    }
+
+    .policy-header .effective-date{
+      font-size:14px;
+      font-weight:600;
+      color:var(--muted);
+      margin:0;
+    }
+
+    .policy-content h2{
+      font-family:'Poppins',sans-serif;
+      font-size:28px;
+      font-weight:800;
+      line-height:1.3;
+      letter-spacing:-0.01em;
+      margin:48px 0 20px;
+      color:var(--ink);
+    }
+
+    .policy-content h2:first-child{
+      margin-top:0;
+    }
+
+    .policy-content p{
+      margin:0 0 16px;
+      line-height:1.7;
+      color:var(--ink);
+    }
+
+    .policy-content ul{
+      margin:16px 0;
+      padding-left:24px;
+    }
+
+    .policy-content li{
+      margin-bottom:8px;
+      line-height:1.7;
+      color:var(--ink);
+    }
+
+    .policy-content a{
+      color:#2563EB;
+      text-decoration:none;
+      font-weight:600;
+    }
+
+    .policy-content a:hover{
+      text-decoration:underline;
+    }
+
+    .policy-content strong{
+      font-weight:700;
+      color:var(--ink);
+    }
+
+    .contact-box{
+      margin-top:48px;
+      padding:24px;
+      background:#FAFBFC;
+      border:1px solid var(--line);
+      border-radius:12px;
+      text-align:center;
+    }
+
+    .contact-box h3{
+      font-family:'Poppins',sans-serif;
+      font-size:20px;
+      font-weight:800;
+      margin:0 0 12px;
+      color:var(--ink);
+    }
+
+    .contact-box p{
+      margin:0 0 16px;
+      color:var(--muted);
+    }
+
+    .contact-box a{
+      color:#2563EB;
+      font-weight:700;
+      text-decoration:none;
+    }
+
+    .contact-box a:hover{
+      text-decoration:underline;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width:768px){
+      .policy-header h1{
+        font-size:36px;
+      }
+
+      .policy-content h2{
+        font-size:24px;
+      }
+
+      .policy-container{
+        padding:40px 20px 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="bar">
+      <div class="brand" onclick="window.location.href='/index.html'">
+        <img class="logo" src="/images/logo.png" alt="Daps logo"/>
+        <span class="beta">BETA</span>
+      </div>
+
+      <nav id="nav">
+        <a id="nav-home" href="/index.html">Home</a>
+        <a id="nav-press" href="/news.html">Press</a>
+        <a id="nav-faq" href="/faq.html">FAQ</a>
+      </nav>
+
+      <div class="userbar">
+        <div class="user-badge" id="userBadge" onclick="toggleDropdown()" style="display:none;">
+          <span id="userInitials"></span>
+          <div class="dropdown" id="userDropdown">
+            <div class="dropdown-header">
+              <p class="dropdown-name" id="dropdownName"></p>
+              <p class="dropdown-email" id="dropdownEmail"></p>
+            </div>
+            <button class="dropdown-item" onclick="logout()">Sign out</button>
+          </div>
+        </div>
+        <a class="btn ghost" id="signInBtn" href="/user.html" style="display:none;">Sign in</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- PRIVACY POLICY CONTENT -->
+  <main class="policy-container">
+    <div class="policy-header">
+      <h1>Privacy Policy</h1>
+      <p class="effective-date">Effective Date: February 20, 2025</p>
+    </div>
+
+    <div class="policy-content">
+      <p>Daps Sports, Inc. ("we", "us", or "our") provides this Privacy Policy (this "Policy") to inform you about our collection, use, disclosure, and storage of data about you that we collect via the Daps mobile app(s), website, platform, and related offerings and services (collectively, the "Platform"). Please review this Policy carefully. By registering an account for the Platform, or otherwise using the Platform or volunteering information to us, you agree to the terms and conditions of this Policy. We may update this Policy from time to time in our discretion, for example to keep up with changing laws regarding data processing. We will always keep the current version of this Policy posted on our website. By using the Platform after a new version of this Policy has been posted, you agree to the terms and conditions of such version of this Policy.</p>
+
+      <h2>Public Postings</h2>
+      <p>Please keep in mind that, notwithstanding the remainder of this Policy, certain information submitted to the Platform is publicly visible to Platform users. For example, any public posts and comments you make, and any information and content submitted on your public profile, will be viewable to other users of the Platform. Information you choose to provide in these areas will immediately be visible to the public, and other users will be able to view and potentially store or share such information.</p>
+
+      <h2>Data We Collect</h2>
+      <p><strong>"Personal Information"</strong> means information that can be used to identify you, and may include your name, email address, phone number, mailing address, photograph, etc. We collect Personal Information that you voluntarily provide us, for example when you register a user account, sign up for mailing lists or newsletters, enter into or pay for a transaction, or otherwise reach out to us. Your submission of Personal Information is voluntary, but we may be unable to provide you requested information or services if you choose not to provide necessary Personal Information.</p>
+
+      <p><strong>"Other Information"</strong> means information that does not identify you personally, and may include technical details regarding the device you use to access the Platform, IP address, operating system, browser, referral URLs, page views, location data (if location services are enabled), clicks, etc. Our systems automatically collect this kind of Other Information when you interact with the Platform. Other Information also includes information that may originally have been Personal Information but has been aggregated or anonymized such that it cannot be used to identify any individual.</p>
+
+      <h2>Cookies and Similar Technology</h2>
+      <p>We use "cookies" to obtain certain types of data when your web browser accesses our website. Cookies are alphanumeric identifiers that we transfer to your computer's hard drive through your web browser to enable our system to recognize you and your personalized settings, to better understand how you interact with the Platform, to monitor aggregate usage, and to optimize web traffic routing on our website. Most browsers have settings to disable or limit cookies, but please note that certain areas or features of the Platform may not be available or fully functional if you choose to disable cookies for our websites. We may also use pixel tags, web beacons, session logs, and similar technologies to understand how our users interact with our Platform and emails. Our website does not respond to "do not track" signals.</p>
+
+      <p>We also use third-party analytics services such as Google Analytics, which help us understand how users are finding and using our Platform. Google Analytics collects information such as how often users visit the Platform, what pages they visit when they do so, and what other sites they used prior to coming to the Platform. We use the information we get from Google Analytics to improve the Platform and our offerings and to provide more relevant advertising. To learn more about Google Analytics' privacy practices, you can visit <a href="https://support.google.com/analytics/answer/6004245?hl=en" target="_blank" rel="noopener noreferrer">https://support.google.com/analytics/answer/6004245?hl=en</a>. To opt out of Google Analytics' metrics, you can follow the instructions at <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">https://tools.google.com/dlpage/gaoptout</a>.</p>
+
+      <p>We do not control third parties' collection or use of your information to serve interest-based advertising. You may be able to opt out of receiving personalized advertisements from companies who are members of the Network Advertising Initiative or who subscribe to the Digital Advertising Alliance's Self-Regulatory Principles for Online Behavioral Advertising. For more information about this practice and to understand your options, please visit: <a href="http://www.aboutads.info" target="_blank" rel="noopener noreferrer">http://www.aboutads.info</a> and <a href="http://www.networkadvertising.org/choices/" target="_blank" rel="noopener noreferrer">http://www.networkadvertising.org/choices/</a>. You may also use TRUSTe's Preference Manager at <a href="http://preferences-mgr.truste.com" target="_blank" rel="noopener noreferrer">http://preferences-mgr.truste.com</a>.</p>
+
+      <h2>Use of Your Data</h2>
+      <p>We use your Personal Information:</p>
+      <ul>
+        <li>to verify your identity and eligibility to use the Platform as an athlete or fan;</li>
+        <li>to help you match with athletes and fans who may be of interest based on your location or preferences;</li>
+        <li>to respond to your inquiries and communications to us;</li>
+        <li>to improve, maintain, and operate the Platform;</li>
+        <li>to offer you a more personalized experience on the Platform;</li>
+        <li>to inform you about opportunities, events, or services in which you may be interested, including those offered by our affiliates;</li>
+        <li>to investigate and prevent possible fraud;</li>
+        <li>to exercise or defend our rights and comply with statutory and regulatory requirements, including responding to lawful requests for information by governmental authorities; and</li>
+        <li>in other ways that we identify when we collect the Personal Information or which you have otherwise consented to.</li>
+      </ul>
+
+      <p>You can opt out of receiving promotional or marketing emails from us at any time by clicking the unsubscribe, opt-out, or similar link at the bottom of any such emails. Please note we may still contact you in connection with your account or any transactions involving you. We may use Other Information (which does not identify you personally) for any manner we deem appropriate, including without limitation to improve, maintain, and operate the Platform.</p>
+
+      <h2>Disclosure of Your Data</h2>
+      <p>We will not sell your Personal Information for unaffiliated third-party marketing or solicitation. We may share your Personal Information with our affiliates and as needed to fulfill the purposes described in the "USE OF YOUR DATA" section above, including:</p>
+      <ul>
+        <li>with athletes or fans you seek to enter into transactions with (for purposes of fulfilling your transactions, facilitating your request for information with regards to such transactions, or for other communication between interested athletes and fans);</li>
+        <li>with our service providers, such as analytics providers, customer support providers, anti-fraud specialists, and payment processors, who are only permitted to use the data on our behalf;</li>
+        <li>with our affiliates for their internal uses or to facilitate their assisting us in providing services to you or notifying you of products, services, or offers that may be of interest to you;</li>
+        <li>as necessary to exercise or defend our rights or comply with applicable law or orders from law enforcement and other governmental authorities; and</li>
+        <li>to other third parties as disclosed when you provide the Personal Information or which you have otherwise consented to.</li>
+      </ul>
+
+      <p>Additionally, in the event of a merger, consolidation, sale, or transfer of all or substantially all of our assets or business, one of the assets that would generally be transferred is the data we have collected, which would be transferred subject to the applicable version of this Policy.</p>
+
+      <p>We may disclose Other Information (which does not identify you personally) to any parties and for any purposes we deem appropriate.</p>
+
+      <h2>Data Retention, Access, and Correction; Security</h2>
+      <p>We are based in the United States, and the platform on which the Platform operate are hosted in the United States. By using the Platform, you consent to your Personal Information being transferred to and stored in the United States.</p>
+
+      <p>We may retain your data so long as we can reasonably foresee the data may be required in connection with our business relationship with you. In some cases, we will retain the data for a longer period as necessary to comply with our legal obligations, follow records retention policies, resolve disputes, and enforce our agreements.</p>
+
+      <p>You may access and update your Personal Information by visiting your account profile. You may also request erasure of your Personal Information in certain circumstances. To request access to, correction of, or erasure of your Personal Information, please contact us as set forth at the end of this Policy.</p>
+
+      <p>We understand the importance of securing your Personal Information. Accordingly, we use industry-standard administrative, physical, and technological measures designed to protect your Personal Information from unauthorized access or use. However, no internet transmission can be guaranteed to be 100% secure from interception or other unauthorized access. Please do not provide any sensitive Personal Information (like credit card number or social security number) through unprotected methods like email correspondence.</p>
+
+      <h2>Your California Privacy Rights</h2>
+      <p>California law entitles California residents to certain additional protections regarding Personal Information. For purposes of this section alone, "Personal Information" means any information that identifies, relates to, describes, is capable of being associated with, or could reasonably be linked, directly or indirectly, with a particular California resident or household. California residents have the right to request:</p>
+      <ul>
+        <li>information regarding your Personal Information we have collected in the past 12 months (including the categories of Personal Information we have collected, the categories of sources of such information, and the purposes for which we have collected such information);</li>
+        <li>notice of whether we have disclosed your Personal Information to third parties in the past 12 months (and if so, what categories of information we have disclosed, and what categories of third parties we have disclosed it to);</li>
+        <li>a copy of your Personal Information collected by us in the past 12 months; and</li>
+        <li>that your Personal Information be deleted.</li>
+      </ul>
+
+      <p>We will not discriminate against you if you choose to exercise any of these rights. To make any of the above requests, please contact us as set forth at the end of this policy. We may require verification of your identity before further processing your request. In certain instances, we may be permitted by law to decline some or all of such request.</p>
+
+      <h2>Children</h2>
+      <p>Our Platform is not intended for users under 13 years of age, and we do not knowingly collect Personal Information from users under 13. If you are under 13, do not use or provide any information on or through Platform. If we learn we have collected or received Personal Information from a child under 13 without verification of parental consent, we will take commercially reasonable steps to promptly delete that information. If you believe that we might have any Personal Information from or about a child under 13, please contact us as set forth below.</p>
+
+      <h2>Third Party Sites</h2>
+      <p>The Platform may include hyperlinks or other references to third-party sites and services. If you visit or use such third-party sites and services (or third-party functionality such as payment processing services), please be mindful that the relevant third party (not us) controls the cookies and other technologies it uses on its sites and how it collects, uses, and shares Personal Information from you. This Policy only governs our own privacy practices; please review the applicable third-party privacy policy when visiting or using any third-party sites or services. We may receive compensation from such third parties.</p>
+
+      <div class="contact-box">
+        <h3>Contact</h3>
+        <p>For more information or for help in answering any questions, please contact us at:</p>
+        <a href="mailto:hey@getdaps.io">hey@getdaps.io</a>
+      </div>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--line);background:#FAFBFC">
+    <div style="max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px">
+      <span>Copyright © 2025 Daps</span>
+      <span style="margin-left:auto"></span>
+      <a href="/privacy-policy.html" style="color:inherit;text-decoration:none">Privacy policy</a><span aria-hidden="true"> · </span>
+      <a href="/terms-of-service.html" style="color:inherit;text-decoration:none">Terms of use</a>
+    </div>
+  </footer>
+
+  <script>
+    var API = 'http://localhost:5175';
+    var currentUser = null;
+
+    // Check authentication and update UI - matches index.html
+    function checkAuth() {
+      var token = localStorage.getItem('jwt');
+      if (!token) {
+        document.getElementById('signInBtn').style.display = 'inline-block';
+        document.getElementById('userBadge').style.display = 'none';
+        return;
+      }
+
+      fetch(API + '/api/users/me', {
+        headers: { Authorization: 'Bearer ' + token }
+      }).then(function(res){
+        if (!res.ok) throw new Error('Not authenticated');
+        return res.json();
+      }).then(function(user){
+        currentUser = user;
+        var initials = ((user.firstName || '')[0] || '') + ((user.lastName || '')[0] || '');
+        document.getElementById('userInitials').textContent = initials.toUpperCase() || 'U';
+        document.getElementById('dropdownName').textContent = (user.firstName || '') + ' ' + (user.lastName || '');
+        document.getElementById('dropdownEmail').textContent = user.email || '';
+        document.getElementById('signInBtn').style.display = 'none';
+        document.getElementById('userBadge').style.display = 'flex';
+      }).catch(function(){
+        localStorage.removeItem('jwt');
+        document.getElementById('signInBtn').style.display = 'inline-block';
+        document.getElementById('userBadge').style.display = 'none';
+      });
+    }
+
+    // Toggle dropdown
+    window.toggleDropdown = function() {
+      var dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('open');
+    };
+
+    // Logout
+    window.logout = function() {
+      localStorage.removeItem('jwt');
+      currentUser = null;
+      window.location.reload();
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e){
+      var badge = document.getElementById('userBadge');
+      var dropdown = document.getElementById('userDropdown');
+      if (badge && dropdown && !badge.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // OPTIONAL: mobile nav toggle behavior
+    (function(){
+      var burger = document.getElementById('hamburger');
+      var nav = document.getElementById('nav');
+      if(!burger || !nav) return;
+
+      burger.addEventListener('click', function(){
+        var expanded = burger.getAttribute('aria-expanded') === 'true';
+        var next = !expanded;
+        burger.setAttribute('aria-expanded', String(next));
+        // simple show/hide
+        if(next){
+          nav.style.display = 'flex';
+          nav.style.flexDirection = 'column';
+          nav.style.position = 'absolute';
+          nav.style.top = '60px';
+          nav.style.right = '20px';
+          nav.style.background = '#fff';
+          nav.style.border = '1px solid var(--line)';
+          nav.style.borderRadius = '12px';
+          nav.style.padding = '16px';
+          nav.style.boxShadow = 'var(--shadow-2)';
+          nav.style.gap = '16px';
+          nav.style.zIndex = '9999';
+        } else {
+          nav.removeAttribute('style');
+        }
+      });
+    })();
+
+    // Initialize auth check on page load
+    checkAuth();
+  </script>
+
+</body>
+</html>

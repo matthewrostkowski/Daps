@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FAQ — Daps</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius:12px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --muted:#6B7280;
+      --chip:#F7F8FA;
+      --chip-border:#E5E7EB;
+      --cta-a:#DAFA22;
+      --cta-b:#64FA00;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04),0 10px 20px rgba(16,24,40,.07);
+      --shadow-2:0 8px 24px rgba(16,24,40,.12);
+      --beta:#FF6000;
+      --theme-primary:#0A0A0B;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    body{
+      margin:0;
+      background:#fff;
+      color:var(--ink);
+      font-family:'Manrope',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-size:16px;
+      line-height:1.6;
+    }
+
+    /* ======= SITE HEADER ======= */
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+    }
+
+    .bar{
+      max-width:var(--container);
+      margin:auto;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 20px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+    }
+
+    .brand .logo{
+      height:30px;
+      width:auto;
+    }
+
+    .beta{
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      background:var(--beta);
+      padding:2px 8px;
+      border-radius:6px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav{
+      margin-left:24px;
+      display:flex;
+      gap:28px;
+      flex-wrap:wrap;
+    }
+
+    nav a{
+      position:relative;
+      color:#111;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:500;
+      opacity:.9;
+      padding-bottom:8px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav a:hover{
+      opacity:1;
+    }
+
+    nav a.active{
+      font-weight:600;
+    }
+
+    nav a.active::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:3px;
+      background:var(--theme-primary);
+      border-radius:2px;
+    }
+
+    .userbar{
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      border:1.5px solid var(--theme-primary);
+      background:var(--theme-primary);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      font-size:14px;
+      white-space:nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .btn.ghost{
+      background:#fff;
+      color:var(--theme-primary);
+    }
+
+    /* User Profile Badge */
+    .user-badge{
+      position:relative;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+      border:2px solid #fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+      font-family:'Poppins',sans-serif;
+    }
+
+    .user-badge:hover{
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+
+    /* Dropdown Menu */
+    .dropdown{
+      position:absolute;
+      right:0;
+      top:calc(100% + 8px);
+      min-width:200px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(16,24,40,.12);
+      padding:8px;
+      display:none;
+      z-index:1000;
+    }
+
+    .dropdown.open{
+      display:block;
+    }
+
+    .dropdown-header{
+      padding:12px 12px 8px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:4px;
+    }
+
+    .dropdown-name{
+      font-weight:700;
+      font-size:14px;
+      margin:0 0 2px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-email{
+      font-size:12px;
+      color:#6B7280;
+      margin:0;
+    }
+
+    .dropdown-item{
+      display:block;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border:none;
+      background:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      color:#111;
+      text-decoration:none;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-item:hover{
+      background:#F9FAFB;
+    }
+
+    /* hamburger (mobile) */
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:5px;
+      width:34px;
+      height:34px;
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      padding:0;
+    }
+
+    .hamburger span{
+      width:22px;
+      height:2px;
+      background:#111;
+      border-radius:2px;
+      transition:all 0.2s;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(1){
+      transform:rotate(45deg) translateY(8px);
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(2){
+      opacity:0;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(3){
+      transform:rotate(-45deg) translateY(-8px);
+    }
+
+    /* responsive styles for mobile */
+    @media (max-width:800px){
+      .hamburger{
+        display:flex;
+      }
+
+      nav{
+        display:none;
+      }
+
+      .bar{
+        padding:12px 16px;
+      }
+    }
+
+    /* ======= FAQ PAGE CONTENT ======= */
+
+    .faq-hero{
+      background:#FAFBFC;
+      border-bottom:1px solid var(--line);
+      padding:80px 20px;
+      text-align:center;
+    }
+
+    .faq-hero h1{
+      font-family:'Poppins',sans-serif;
+      font-size:56px;
+      font-weight:900;
+      line-height:1.1;
+      letter-spacing:-0.02em;
+      margin:0 0 16px;
+      color:var(--ink);
+    }
+
+    .faq-hero p{
+      font-size:18px;
+      color:var(--muted);
+      max-width:600px;
+      margin:0 auto;
+      line-height:1.6;
+    }
+
+    /* How Bounty's Work Section */
+    .how-it-works{
+      background:#2B2D31;
+      color:#fff;
+      padding:80px 20px;
+    }
+
+    .how-it-works-container{
+      max-width:var(--container);
+      margin:0 auto;
+    }
+
+    .how-it-works h2{
+      font-family:'Poppins',sans-serif;
+      font-size:48px;
+      font-weight:900;
+      line-height:1.1;
+      letter-spacing:-0.01em;
+      text-transform:uppercase;
+      margin:0 0 60px;
+      color:#fff;
+    }
+
+    .steps{
+      display:flex;
+      flex-direction:column;
+      gap:32px;
+    }
+
+    .step-card{
+      background:rgba(255,255,255,0.05);
+      border-radius:var(--radius-lg);
+      padding:40px;
+      display:flex;
+      gap:32px;
+      align-items:flex-start;
+      transition:all 0.2s;
+    }
+
+    .step-card:hover{
+      background:rgba(255,255,255,0.08);
+      transform:translateY(-2px);
+    }
+
+    .step-number{
+      font-family:'Poppins',sans-serif;
+      font-size:72px;
+      font-weight:900;
+      color:rgba(255,255,255,0.2);
+      line-height:1;
+      flex-shrink:0;
+      min-width:100px;
+    }
+
+    .step-content h3{
+      font-family:'Poppins',sans-serif;
+      font-size:32px;
+      font-weight:800;
+      margin:0 0 16px;
+      color:#fff;
+      line-height:1.2;
+    }
+
+    .step-content p{
+      font-size:16px;
+      line-height:1.7;
+      color:rgba(255,255,255,0.7);
+      margin:0;
+    }
+
+    /* FAQ Categories */
+    .faq-container{
+      max-width:900px;
+      margin:0 auto;
+      padding:80px 20px;
+    }
+
+    .faq-category{
+      margin-bottom:48px;
+    }
+
+    .faq-category:last-child{
+      margin-bottom:0;
+    }
+
+    .faq-category-title{
+      font-family:'Poppins',sans-serif;
+      font-size:32px;
+      font-weight:800;
+      line-height:1.3;
+      letter-spacing:-0.01em;
+      margin:0 0 24px;
+      color:var(--ink);
+      padding-bottom:16px;
+      border-bottom:2px solid var(--line);
+    }
+
+    .faq-item{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      margin-bottom:12px;
+      overflow:hidden;
+      transition:all 0.2s;
+    }
+
+    .faq-item:hover{
+      border-color:#D1D5DB;
+    }
+
+    .faq-question{
+      width:100%;
+      text-align:left;
+      padding:20px 24px;
+      background:#fff;
+      border:none;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      font-family:'Poppins',sans-serif;
+      font-size:18px;
+      font-weight:700;
+      color:var(--ink);
+      line-height:1.4;
+    }
+
+    .faq-question:hover{
+      background:#FAFBFC;
+    }
+
+    .faq-icon{
+      flex-shrink:0;
+      width:24px;
+      height:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:700;
+      color:var(--muted);
+      transition:transform 0.2s;
+    }
+
+    .faq-item.open .faq-icon{
+      transform:rotate(45deg);
+    }
+
+    .faq-answer{
+      max-height:0;
+      overflow:hidden;
+      transition:max-height 0.3s ease-out;
+      background:#FAFBFC;
+    }
+
+    .faq-item.open .faq-answer{
+      max-height:1000px;
+      transition:max-height 0.3s ease-in;
+    }
+
+    .faq-answer-content{
+      padding:0 24px 24px;
+      color:var(--ink);
+      line-height:1.7;
+    }
+
+    .faq-answer-content p{
+      margin:0 0 12px;
+    }
+
+    .faq-answer-content p:last-child{
+      margin-bottom:0;
+    }
+
+    .faq-answer-content ul{
+      margin:12px 0;
+      padding-left:24px;
+    }
+
+    .faq-answer-content li{
+      margin-bottom:8px;
+    }
+
+    .faq-answer-content strong{
+      font-weight:700;
+    }
+
+    /* Contact CTA */
+    .faq-contact{
+      margin-top:80px;
+      padding:48px;
+      background:linear-gradient(135deg,#FAFBFC,#F3F4F6);
+      border:1px solid var(--line);
+      border-radius:var(--radius-lg);
+      text-align:center;
+    }
+
+    .faq-contact h3{
+      font-family:'Poppins',sans-serif;
+      font-size:28px;
+      font-weight:800;
+      margin:0 0 12px;
+      color:var(--ink);
+    }
+
+    .faq-contact p{
+      font-size:16px;
+      color:var(--muted);
+      margin:0 0 24px;
+    }
+
+    .faq-contact a{
+      display:inline-block;
+      padding:12px 24px;
+      background:var(--theme-primary);
+      color:#fff;
+      text-decoration:none;
+      border-radius:10px;
+      font-family:'Poppins',sans-serif;
+      font-weight:700;
+      font-size:16px;
+      transition:all 0.2s;
+    }
+
+    .faq-contact a:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(10,10,11,0.15);
+    }
+
+    /* Mobile adjustments */
+    @media (max-width:768px){
+      .faq-hero h1{
+        font-size:36px;
+      }
+
+      .how-it-works h2{
+        font-size:32px;
+        margin-bottom:40px;
+      }
+
+      .step-card{
+        flex-direction:column;
+        padding:28px 24px;
+        gap:16px;
+      }
+
+      .step-number{
+        font-size:56px;
+        min-width:auto;
+      }
+
+      .step-content h3{
+        font-size:24px;
+      }
+
+      .faq-category-title{
+        font-size:24px;
+      }
+
+      .faq-question{
+        font-size:16px;
+        padding:16px 20px;
+      }
+
+      .faq-contact{
+        padding:32px 24px;
+      }
+
+      .faq-contact h3{
+        font-size:24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+<header class="site-header">
+  <div class="bar">
+    <div class="brand" onclick="window.location.href='/index.html'">
+      <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
+      <span class="beta">BETA</span>
+    </div>
+
+    <nav id="nav">
+      <a href="/index.html" id="nav-home">Home</a>
+      <!--a href="/playepage.html" id="nav-experience">Select Experience</a-->
+      <a href="/news.html" id="nav-press">Press</a>
+      <a href="/faq.html" id="nav-faq">FAQ</a>
+      <a href="/my-offers.html">My Offers</a>
+    </nav>
+
+      <div class="userbar">
+        <div class="user-badge" id="userBadge" onclick="toggleDropdown()" style="display:none;">
+          <span id="userInitials"></span>
+          <div class="dropdown" id="userDropdown">
+            <div class="dropdown-header">
+              <p class="dropdown-name" id="dropdownName"></p>
+              <p class="dropdown-email" id="dropdownEmail"></p>
+            </div>
+            <button class="dropdown-item" onclick="logout()">Sign out</button>
+          </div>
+        </div>
+        <a class="btn ghost" id="signInBtn" href="/user.html" style="display:none;">Sign in</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="faq-hero">
+    <h1>Frequently Asked Questions</h1>
+    <p>Everything you need to know about using Daps to connect with your favorite athletes and submit bounties for exclusive experiences.</p>
+  </section>
+
+  <!-- HOW BOUNTY'S WORK -->
+  <section class="how-it-works">
+    <div class="how-it-works-container">
+      <h2>How Bounty's Work</h2>
+
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h3>Submit a Bounty</h3>
+            <p>Name any athlete or sports figure. Then tell us any item or experience you want from them & your offer price (if unsure, you'll receive a price recommendation).</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h3>Athlete reviews your Bounty</h3>
+            <p>The athlete receives your request & can choose to accept it, deny it, or send you a counteroffer.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h3>You'll hear from us</h3>
+            <p>Within 14 days, you'll be notified of the athlete's response. If your Bounty is accepted, you'll receive fulfillment & payment instructions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ CONTENT -->
+  <main class="faq-container">
+
+    <!-- Getting Started -->
+    <div class="faq-category">
+      <h2 class="faq-category-title">Getting Started</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What is Daps?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Daps is a demand-first marketplace that connects fans with professional and amateur athletes. Through our platform, fans can submit "bounties" — custom requests for unique collectibles (like game-worn jerseys or autographed items) or personalized experiences (such as video calls, social media shoutouts, or in-person meetups) directly to their favorite athletes.</p>
+            <p>Unlike traditional marketplaces where athletes list items they're willing to sell, Daps flips the model: you tell us what you want, and athletes decide whether to accept your offer, deny it, or send you a counteroffer.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How do I get started?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Getting started is easy:</p>
+            <ul>
+              <li>Create a free account by signing up with your email</li>
+              <li>Browse athletes on our platform or search for your favorite sports figure</li>
+              <li>Submit a bounty by describing what you want and your offer price</li>
+              <li>Wait for the athlete to respond (within 14 days)</li>
+            </ul>
+            <p>You won't be charged anything until an athlete accepts your bounty.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Is Daps free to use?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Creating an account and browsing athletes is completely free. You only pay when an athlete accepts your bounty. Our platform charges a service fee on each transaction to keep Daps running, but 85% of the revenue goes directly to the athlete.</p>
+            <p>There are no subscription fees or hidden charges — you only pay for the experiences and collectibles you receive.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submitting Bounties -->
+    <div class="faq-category">
+      <h2 class="faq-category-title">Submitting Bounties</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What types of bounties can I submit?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>You can request almost anything from athletes, including:</p>
+            <p><strong>Collectibles:</strong></p>
+            <ul>
+              <li>Game-worn jerseys, shoes, or equipment</li>
+              <li>Autographed items (photos, memorabilia, trading cards)</li>
+              <li>Personal items from the athlete</li>
+            </ul>
+            <p><strong>Digital Experiences:</strong></p>
+            <ul>
+              <li>Video calls or FaceTime sessions</li>
+              <li>Personalized video messages</li>
+              <li>Social media shoutouts or follows</li>
+              <li>Help with fantasy sports or March Madness brackets</li>
+              <li>Virtual tours (like a sneaker closet tour)</li>
+            </ul>
+            <p><strong>In-Person Experiences:</strong></p>
+            <ul>
+              <li>Meet-and-greets before or after games</li>
+              <li>Attend a practice or training session</li>
+              <li>Play pickup basketball or workout together</li>
+              <li>Dinner or coffee meetups</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How do I know what to offer?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>If you're unsure about pricing, our platform will provide a price recommendation based on similar bounties and the athlete's typical rates. You can accept this recommendation or adjust your offer based on your budget.</p>
+            <p>Keep in mind that athletes are more likely to accept competitive offers. If your offer is too low, the athlete may send you a counteroffer with their preferred price.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Can I submit a bounty to any athlete?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>You can submit a bounty request to any athlete or sports figure, even if they're not currently on our platform. We'll do our best to reach out to them on your behalf.</p>
+            <p>However, athletes who are already registered on Daps are more likely to respond quickly since they actively monitor their bounty requests.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How long does it take to hear back?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Athletes have up to 14 days to respond to your bounty. You'll receive a notification once the athlete accepts, denies, or counteroffers your request.</p>
+            <p>Many athletes respond much faster than 14 days, but we allow this window to account for their busy schedules during the season.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment & Transactions -->
+    <div class="faq-category">
+      <h2 class="faq-category-title">Payment & Transactions</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>When will I be charged?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>You will only be charged if and when an athlete accepts your bounty. When you submit a bounty, we'll securely store your payment information, but no charges will be made until acceptance.</p>
+            <p>If the athlete denies your request or doesn't respond within 14 days, you won't be charged anything.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What payment methods do you accept?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>We accept all major credit and debit cards, including Visa, Mastercard, American Express, and Discover. All payments are processed securely through our third-party payment processor.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Are there any additional fees?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Our service fee is included in the transaction and automatically deducted before payment is sent to the athlete. There are no hidden fees, but you may be responsible for applicable taxes depending on your location.</p>
+            <p>Athletes receive 85% of the total payment, with 15% going to Daps to maintain and improve the platform.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What if I need a refund?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>All payments are generally non-refundable once an athlete has accepted your bounty and begun fulfilling it. However, if a collectible is not delivered or an experience is not completed within a reasonable timeframe, we may process a refund.</p>
+            <p>If you have concerns about your bounty fulfillment, please contact our support team at <strong>hey@getdaps.io</strong> and we'll work to resolve the issue.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What happens if the athlete sends a counteroffer?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>If an athlete believes your offer is too low or wants to negotiate terms, they can send you a counteroffer. You'll receive a notification with their proposed price or modified terms.</p>
+            <p>You can then choose to accept the counteroffer, decline it, or submit a new bounty with adjusted terms. No charges will be made until you accept a counteroffer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fulfillment & Delivery -->
+    <div class="faq-category">
+      <h2 class="faq-category-title">Fulfillment & Delivery</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How will I receive my collectible or experience?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Once an athlete accepts your bounty, you'll receive detailed instructions on fulfillment:</p>
+            <ul>
+              <li><strong>Physical collectibles</strong> will be shipped to the address you provided. You'll receive tracking information once the item ships.</li>
+              <li><strong>Digital experiences</strong> (like video calls or messages) will be coordinated directly between you and the athlete or through our platform.</li>
+              <li><strong>In-person experiences</strong> require mutual coordination on timing and location. We'll facilitate this communication.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What if my collectible arrives damaged?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>If your collectible arrives damaged or not as described, please contact us immediately at <strong>hey@getdaps.io</strong> with photos of the damage. We'll work with you and the athlete to resolve the issue, which may include a replacement, partial refund, or full refund depending on the circumstances.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How long will it take to receive my bounty?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Delivery times vary depending on the type of bounty:</p>
+            <ul>
+              <li><strong>Physical collectibles:</strong> Typically ship within 7-14 days after acceptance</li>
+              <li><strong>Digital experiences:</strong> Can be scheduled within a few days to a few weeks based on athlete availability</li>
+              <li><strong>In-person experiences:</strong> Require more coordination and may take several weeks to arrange</li>
+            </ul>
+            <p>Athletes are encouraged to fulfill bounties promptly, but their schedules (especially during the season) may affect timing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety & Trust -->
+    <div class="faq-category">
+      <h2 class="faq-category-title">Safety & Trust</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Is my personal information secure?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Yes. We take your privacy and security seriously. All payment information is encrypted and processed through secure, industry-standard payment processors. We never store your full credit card information on our servers.</p>
+            <p>Your personal information is only shared with athletes when necessary for fulfillment (such as shipping addresses for collectibles). For more details, please review our <a href="/privacy-policy.html">Privacy Policy</a>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How do I know the athlete is real?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>All athletes on Daps are verified before they can accept bounties. We confirm their identity through official channels to ensure you're connecting with the real athlete, not an impersonator.</p>
+            <p>Look for the verified badge on athlete profiles to confirm authenticity.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>What if I have a dispute with an athlete?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>If you have any concerns or disputes regarding your bounty, please contact our support team at <strong>hey@getdaps.io</strong>. We'll mediate the situation and work toward a fair resolution.</p>
+            <p>While we facilitate connections and transactions, please remember that athletes are independent and Daps is not directly party to the transaction. However, we're committed to ensuring a positive experience for all users.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Do you have age restrictions?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>You must be at least 18 years old (or the age of majority in your jurisdiction) to create an account and submit bounties. Parents or legal guardians may use the platform on behalf of minors.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- For Athletes -->
+    <div class="faq-category">
+      <h2 class="faq-category-title">For Athletes</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>I'm an athlete. How do I join Daps?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>We're excited to have you! To join Daps as an athlete, please email us at <strong>hey@getdaps.io</strong> with your name, sport, team/organization, and any relevant links (social media, team roster page, etc.).</p>
+            <p>Our team will verify your identity and help you set up your profile so you can start receiving bounty requests from fans.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>How much do athletes earn?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>Athletes receive 85% of every accepted bounty. The remaining 15% covers platform fees, payment processing, and helps us continue improving Daps.</p>
+            <p>You have full control over what bounties you accept and can set your own prices through counteroffers.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Do I have to accept every bounty?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            <p>No. You have complete freedom to accept, deny, or counteroffer any bounty request. We understand that athletes have busy schedules and varying comfort levels with different types of requests.</p>
+            <p>You can also set preferences for the types of bounties you're willing to accept to help streamline requests.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="faq-contact">
+      <h3>Still have questions?</h3>
+      <p>Can't find the answer you're looking for? Reach out to our support team.</p>
+      <a href="mailto:hey@getdaps.io">Contact Support</a>
+    </div>
+
+  </main>
+
+  <footer style="border-top:1px solid var(--line);background:#FAFBFC">
+    <div style="max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px">
+      <span>Copyright © 2025 Daps</span>
+      <span style="margin-left:auto"></span>
+      <a href="/privacy-policy.html" style="color:inherit;text-decoration:none">Privacy policy</a><span aria-hidden="true"> · </span>
+      <a href="/terms-of-service.html" style="color:inherit;text-decoration:none">Terms of use</a>
+    </div>
+  </footer>
+
+  <script>
+    var API = 'http://localhost:5175';
+    var currentUser = null;
+
+    // Toggle FAQ items
+    function toggleFAQ(button) {
+      const faqItem = button.closest('.faq-item');
+      const isOpen = faqItem.classList.contains('open');
+      
+      // Close all other items
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('open');
+      });
+      
+      // Toggle current item
+      if (!isOpen) {
+        faqItem.classList.add('open');
+      }
+    }
+
+    // Check authentication and update UI - matches index.html
+    function checkAuth() {
+      var token = localStorage.getItem('jwt');
+      if (!token) {
+        document.getElementById('signInBtn').style.display = 'inline-block';
+        document.getElementById('userBadge').style.display = 'none';
+        return;
+      }
+
+      fetch(API + '/api/users/me', {
+        headers: { Authorization: 'Bearer ' + token }
+      }).then(function(res){
+        if (!res.ok) throw new Error('Not authenticated');
+        return res.json();
+      }).then(function(user){
+        currentUser = user;
+        var initials = ((user.firstName || '')[0] || '') + ((user.lastName || '')[0] || '');
+        document.getElementById('userInitials').textContent = initials.toUpperCase() || 'U';
+        document.getElementById('dropdownName').textContent = (user.firstName || '') + ' ' + (user.lastName || '');
+        document.getElementById('dropdownEmail').textContent = user.email || '';
+        document.getElementById('signInBtn').style.display = 'none';
+        document.getElementById('userBadge').style.display = 'flex';
+      }).catch(function(){
+        localStorage.removeItem('jwt');
+        document.getElementById('signInBtn').style.display = 'inline-block';
+        document.getElementById('userBadge').style.display = 'none';
+      });
+    }
+
+    // Toggle dropdown
+    window.toggleDropdown = function() {
+      var dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('open');
+    };
+
+    // Logout
+    window.logout = function() {
+      localStorage.removeItem('jwt');
+      currentUser = null;
+      window.location.reload();
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e){
+      var badge = document.getElementById('userBadge');
+      var dropdown = document.getElementById('userDropdown');
+      if (badge && dropdown && !badge.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // Highlight active nav link
+    (function() {
+      var path = window.location.pathname;
+      var file = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
+
+      var map = {
+        'index.html': 'nav-home',
+        'news.html': 'nav-press',
+        'faq.html': 'nav-faq'
+      };
+
+      Object.keys(map).forEach(function(fname){
+        var el = document.getElementById(map[fname]);
+        if (!el) return;
+        if (fname === file) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    })();
+
+    // Mobile nav toggle
+    (function(){
+      var burger = document.getElementById('hamburger');
+      var nav = document.getElementById('nav');
+      if(!burger || !nav) return;
+
+      burger.addEventListener('click', function(){
+        var expanded = burger.getAttribute('aria-expanded') === 'true';
+        var next = !expanded;
+        burger.setAttribute('aria-expanded', String(next));
+        if(next){
+          nav.style.display = 'flex';
+          nav.style.flexDirection = 'column';
+          nav.style.position = 'absolute';
+          nav.style.top = '60px';
+          nav.style.right = '20px';
+          nav.style.background = '#fff';
+          nav.style.border = '1px solid var(--line)';
+          nav.style.borderRadius = '12px';
+          nav.style.padding = '16px';
+          nav.style.boxShadow = 'var(--shadow-2)';
+          nav.style.gap = '16px';
+          nav.style.zIndex = '9999';
+        } else {
+          nav.removeAttribute('style');
+        }
+      });
+    })();
+
+    // Initialize
+    checkAuth();
+  </script>
+
+</body>
+</html>

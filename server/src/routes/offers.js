@@ -429,25 +429,34 @@ router.post('/', requireUser, async (req, res) => {
 /**
  * ADMIN - list all offers
  * GET /api/offers
+ * Returns transformed offers in the format admin.html expects
  */
 router.get('/', requireAdmin, async (_req, res) => {
   console.log('═════════════════════════════════════════════════════════════');
-  console.log('[offers] GET /api/offers - admin list offers');
+  console.log('[offers] GET /api/offers - ADMIN FETCHING ALL OFFERS');
+  console.log('[offers] Admin user:', _req.user?.email || 'unknown');
+  console.log('[offers] Timestamp:', new Date().toISOString());
+  console.log('═════════════════════════════════════════════════════════════');
 
   try {
+    console.log('[offers] 📥 Querying database for all offers...');
+    
     const offers = await prisma.offer.findMany({
       include: {
         athlete: {
           select: {
+            id: true,
             name: true,
             slug: true,
             imageUrl: true,
             team: true,
-            league: true
+            league: true,
+            active: true
           }
         },
         user: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
             email: true
@@ -465,12 +474,74 @@ router.get('/', requireAdmin, async (_req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    console.log('[offers] returning', offers.length, 'offers to admin');
+    console.log('[offers] ✅ Retrieved', offers.length, 'offers from database');
+    console.log('───────────────────────────────────────────────────────────────');
+    
+    // Transform to admin panel format
+    console.log('[offers] 🔄 Transforming offers to admin panel format...');
+    const transformed = offers.map((offer, index) => {
+      const result = {
+        id: offer.id,
+        status: offer.status,
+        ts: new Date(offer.createdAt).getTime(),
+        customer: {
+          name: offer.customerName || `${offer.user.firstName} ${offer.user.lastName}`,
+          email: offer.customerEmail || offer.user.email,
+          phone: offer.customerPhone || ''
+        },
+        athlete: {
+          id: offer.athlete.id,
+          name: offer.athlete.name,
+          team: offer.athlete.team,
+          league: offer.athlete.league,
+          image: offer.athlete.imageUrl,
+          active: offer.athlete.active
+        },
+        payment: {
+          offered: offer.offered || offer.amount || 0,
+          method: offer.paymentMethod || 'card',
+          last4: offer.paymentLast4 || ''
+        },
+        game: {
+          id: offer.game?.id || null,
+          date: offer.game?.date || null,
+          opponent: offer.game?.opponent || null,
+          venue: offer.game?.venue || null,
+          desc: offer.gameDesc || 'Game TBD'
+        },
+        description: offer.expDesc || offer.description || '',
+        expType: offer.expType || 'Other'
+      };
+      
+      // Log first 3 offers for debugging
+      if (index < 3) {
+        console.log(`[offers] Offer ${index + 1}:`, {
+          id: result.id,
+          status: result.status,
+          customer: result.customer.name,
+          athlete: result.athlete.name,
+          amount: result.payment.offered
+        });
+      }
+      
+      return result;
+    });
+
+    console.log('[offers] ✅ Transformation complete');
+    console.log('[offers] 📤 Sending', transformed.length, 'transformed offers to admin');
     console.log('═════════════════════════════════════════════════════════════');
-    res.json(offers);
+    console.log('[offers] ✨ ADMIN OFFERS REQUEST COMPLETED SUCCESSFULLY');
+    console.log('═════════════════════════════════════════════════════════════');
+    
+    res.json(transformed);
   } catch (err) {
-    console.error('[offers] ❌ Error fetching offers for admin:', err);
-    console.log('═════════════════════════════════════════════════════════════');
+    console.error('═════════════════════════════════════════════════════════════');
+    console.error('[offers] ❌❌❌ ERROR FETCHING OFFERS FOR ADMIN ❌❌❌');
+    console.error('[offers] Error name:', err.name);
+    console.error('[offers] Error message:', err.message);
+    console.error('[offers] Error stack:');
+    console.error(err.stack);
+    console.error('═════════════════════════════════════════════════════════════');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -503,10 +574,21 @@ router.put('/:id/status', requireAdmin, async (req, res) => {
       include: {
         athlete: {
           select: {
+            id: true,
             name: true,
             slug: true,
             imageUrl: true,
-            team: true
+            team: true,
+            league: true,
+            active: true
+          }
+        },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true
           }
         },
         game: {
@@ -520,42 +602,44 @@ router.put('/:id/status', requireAdmin, async (req, res) => {
       }
     });
 
-    console.log('[offers] offer status updated successfully');
+    console.log('[offers] ✅ Offer status updated successfully');
+    console.log('[offers] 🔄 Transforming response to admin panel format...');
 
-    // normalize shape back to admin panel style
-    const gameId = updated.game ? updated.game.id : null;
-    const gameDate = updated.game ? updated.game.date : null;
-    const gameOpp = updated.game ? updated.game.opponent : null;
-    const gameVenue = updated.game ? updated.game.venue : null;
-
+    // Transform to match admin panel format
     const response = {
       id: updated.id,
       status: updated.status,
-      offered: updated.offered,
-      createdAt: updated.createdAt,
-      customerName: updated.customerName,
-      customerEmail: updated.customerEmail,
-      customerPhone: updated.customerPhone,
-      paymentMethod: updated.paymentMethod,
-      paymentLast4: updated.paymentLast4,
+      ts: new Date(updated.createdAt).getTime(),
+      customer: {
+        name: updated.customerName || `${updated.user.firstName} ${updated.user.lastName}`,
+        email: updated.customerEmail || updated.user.email,
+        phone: updated.customerPhone || ''
+      },
+      athlete: {
+        id: updated.athlete.id,
+        name: updated.athlete.name,
+        team: updated.athlete.team,
+        league: updated.athlete.league,
+        image: updated.athlete.imageUrl,
+        active: updated.athlete.active
+      },
+      payment: {
+        offered: updated.offered || updated.amount || 0,
+        method: updated.paymentMethod || 'card',
+        last4: updated.paymentLast4 || ''
+      },
       game: {
-        id: gameId,
-        date: gameDate,
-        opponent: gameOpp,
-        venue: gameVenue,
+        id: updated.game?.id || null,
+        date: updated.game?.date || null,
+        opponent: updated.game?.opponent || null,
+        venue: updated.game?.venue || null,
         desc: updated.gameDesc || 'Game TBD'
       },
       description: updated.expDesc || updated.description || '',
-      expType: updated.expType || 'Other',
-      athlete: {
-        name: updated.athlete?.name || '',
-        slug: updated.athlete?.slug || '',
-        imageUrl: updated.athlete?.imageUrl || '',
-        team: updated.athlete?.team || ''
-      }
+      expType: updated.expType || 'Other'
     };
 
-    console.log('[offers] Response to admin after status change:', response);
+    console.log('[offers] 📤 Sending transformed response to admin');
     console.log('═════════════════════════════════════════════════════════════');
     return res.json(response);
   } catch (err) {

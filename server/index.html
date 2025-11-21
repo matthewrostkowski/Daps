@@ -106,58 +106,110 @@
     .dropdown-divider{height:1px;background:var(--line);margin:4px 0}
 
     /* Hero */
-    .hero{
-      position:relative;
-      background:#FAFBFC;
-      overflow:visible; /* allow dropdown to show over next section */
-      border-bottom:1px solid var(--line);
-      z-index:50; /* sit above featured section */
-    }
-    .hero-inner{
-      max-width:900px; margin:auto; padding:100px 20px 120px;
-      text-align:center; position:relative;
-    }
-    .hero h1{
-      font-weight:900;font-size:68px;line-height:1.05;letter-spacing:-.02em;
-      margin:0 0 20px;color:var(--ink);
-    }
-    .hero p{
-      max-width:620px;margin:0 auto 32px;color:#6B7280;line-height:1.6;font-size:18px;
-    }
-    .cta{
-      display:inline-block;border:0;padding:14px 24px;font-weight:700;border-radius:12px;cursor:pointer;
-      background:linear-gradient(90deg,var(--theme-secondary),var(--theme-accent));
-      box-shadow:0 6px 24px rgba(100,250,0,.28);
-      text-decoration:none;font-size:16px;
-      color:var(--theme-primary);transition:all .2s;
-    }
-    .cta:hover{
-      transform:translateY(-2px);
-      box-shadow:0 8px 32px rgba(100,250,0,.35);
-    }
 
-    /* Prominent Search */
-    .search-hero{
-      position:relative;
-      max-width:700px;
-      margin:40px auto 0;
-      z-index:200; /* keep search + dropdown above hero copy */
-    }
-    .search-hero input{
-      width:100%;height:64px;border:2px solid var(--ink);border-radius:999px;
-      padding:0 60px 0 28px;outline:0;font-size:18px;background:#fff;
-      font-family:inherit;font-weight:500;color:var(--ink);
-      transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.06);
-    }
-    .search-hero input:focus{
-      border-color:var(--theme-primary);
-      box-shadow:0 4px 32px rgba(0,0,0,.12), 0 0 0 4px rgba(10,10,11,.05);
-    }
-    .search-hero input::placeholder{color:#9CA3AF;font-weight:400}
-    .search-icon{
-      position:absolute;right:24px;top:50%;transform:translateY(-50%);
-      width:24px;height:24px;opacity:.35;pointer-events:none;
-    }
+/* Hero */
+
+
+
+
+
+
+/* Hero with Parallax Effect and Strong Vignetting */
+.hero{
+  position:relative;
+  overflow:visible;
+  border-bottom:1px solid var(--line);
+  z-index:500;
+  min-height:900px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hero-art{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  will-change:transform;
+  transition:transform 0s linear;
+  overflow:hidden;
+}
+.hero-art::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:url("./images/Daps_hero.jpeg") center 35% / cover no-repeat;
+  transform-origin:center center;
+  will-change:transform;
+}
+.hero-art::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 70% 100% at center, transparent 0%, transparent 35%, rgba(0,0,0,0.6) 55%, rgba(0,0,0,0.9) 75%, rgba(0,0,0,1) 100%);
+  z-index:1;
+}
+.hero-inner{
+  max-width:900px; margin:auto; padding:40px 20px;
+  text-align:center; position:relative;
+  z-index:2;
+}
+.hero h1{
+  font-weight:900;font-size:68px;line-height:1.05;letter-spacing:-.02em;
+  margin:0 0 20px;
+  color:#fff;
+  text-shadow:0 2px 12px rgba(0,0,0,0.4);
+}
+.hero p{
+  max-width:620px;margin:0 auto 32px;
+  color:#f5f5f5;
+  line-height:1.6;font-size:18px;
+  text-shadow:0 1px 8px rgba(0,0,0,0.4);
+}
+.cta{
+  display:inline-block;border:0;padding:14px 24px;font-weight:700;border-radius:12px;cursor:pointer;
+  background:linear-gradient(90deg,var(--theme-secondary),var(--theme-accent));
+  box-shadow:0 6px 24px rgba(100,250,0,.28);
+  text-decoration:none;font-size:16px;
+  color:var(--theme-primary);transition:all .2s;
+}
+.cta:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(100,250,0,.35);
+}
+
+/* Prominent Search */
+.search-hero{
+  position:relative;
+  max-width:700px;
+  margin:40px auto 0;
+  z-index:9999;
+}
+.search-hero input{
+  width:100%;height:64px;border:2px solid rgba(255,255,255,0.3);border-radius:999px;
+  padding:0 60px 0 28px;outline:0;font-size:18px;background:rgba(255,255,255,0.95);
+  font-family:inherit;font-weight:500;color:var(--ink);
+  transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,.3);
+  backdrop-filter:blur(10px);
+}
+.search-hero input:focus{
+  border-color:rgba(255,255,255,0.6);
+  background:rgba(255,255,255,1);
+  box-shadow:0 6px 32px rgba(0,0,0,.4), 0 0 0 4px rgba(255,255,255,.2);
+}
+.search-hero input::placeholder{color:#6B7280;font-weight:400}
+.search-icon{
+  position:absolute;right:24px;top:50%;transform:translateY(-50%);
+  width:24px;height:24px;opacity:.4;pointer-events:none;
+}
+
+
+
+
+
+
+
+
 
     /* Search Dropdown Results */
     .search-results{
@@ -173,7 +225,7 @@
       max-height:420px;
       overflow-y:auto;
       display:none;
-      z-index:300; /* above everything else, including featured section */
+      z-index:99999; /* above everything else, including featured section */
     }
     .search-results.active{display:block}
     .search-result-item{
@@ -246,7 +298,7 @@
       background:#111;color:#fff;transform:translateY(-1px);
     }
 
-    /* ===== Featured Articles Carousel Section ===== */
+    /* ===== Featured Press Logos Carousel Section ===== */
     .articles-carousel-section{
       max-width:var(--container);
       margin:0 auto;
@@ -266,11 +318,10 @@
       position:relative;
     }
 
-    /* The stage. We'll inject 3 cards per render (prev/current/next) and animate them */
     .articles-carousel-wrapper{
       position:relative;
       width:100%;
-      height:340px;
+      height:220px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -312,22 +363,24 @@
     .article-arrow.right{right:0;transform:translateY(-50%) translateX(50%)}
     .article-arrow.right:hover{transform:translateY(-50%) translateX(50%) translateY(-1px) scale(1.03)}
 
-    /* Card shell base */
+    /* Card shell base (reused for logo cards) */
     .article-card-shell{
       position:absolute;
-      width:380px;
-      max-width:92vw;
-      min-height:220px;
+      width:220px;
+      max-width:30vw;
+      min-height:120px;
       border-radius:var(--radius-lg);
       background:#fff;
       border:1px solid var(--line);
       box-shadow:0 30px 60px rgba(16,24,40,.12);
-      padding:24px 24px 28px;
+      padding:24px;
       color:#111;
       text-decoration:none;
       display:flex;
       flex-direction:column;
-      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      cursor:default;
       transition:
         transform .35s cubic-bezier(.16,1,.3,1),
         opacity .35s cubic-bezier(.16,1,.3,1),
@@ -337,54 +390,90 @@
       box-shadow:0 36px 72px rgba(16,24,40,.16);
     }
 
+    .article-card-shell.logo-card{
+      padding:16px;
+    }
+    .article-card-shell.logo-card img{
+      max-width:100%;
+      max-height:80px;
+      object-fit:contain;
+      filter:brightness(0.7);
+      transition:filter .2s, transform .2s;
+    }
+
     /* positions */
     .pos-left{
-      transform:translateX(-240px) scale(.9);
-      opacity:.5;
+      transform:translateX(-220px) scale(.9);
+      opacity:.6;
       z-index:2;
     }
     .pos-center{
-      transform:translateX(0) scale(1);
+      transform:translateX(0) scale(1.05);
       opacity:1;
       z-index:3;
     }
     .pos-right{
-      transform:translateX(240px) scale(.9);
-      opacity:.5;
+      transform:translateX(220px) scale(.9);
+      opacity:.6;
       z-index:2;
     }
+    .pos-far-left{
+      transform:translateX(-420px) scale(.85);
+      opacity:.25;
+      z-index:1;
+    }
+    .pos-far-right{
+      transform:translateX(420px) scale(.85);
+      opacity:.25;
+      z-index:1;
+    }
 
-    /* during next animation, shift all left */
+    /* make center logo brightest, outers dimmest */
+    .article-card-shell.logo-card.pos-center img{
+      filter:brightness(1);
+      transform:scale(1.05);
+    }
+    .article-card-shell.logo-card.pos-left img,
+    .article-card-shell.logo-card.pos-right img{
+      filter:brightness(0.85);
+      transform:scale(0.97);
+    }
+    .article-card-shell.logo-card.pos-far-left img,
+    .article-card-shell.logo-card.pos-far-right img{
+      filter:brightness(0.6);
+      transform:scale(0.9);
+    }
+
+    /* during next animation, shift the three middle positions; far edges fade out/in on re-render */
     .anim-next .pos-left{
-      transform:translateX(-480px) scale(.8);
-      opacity:0;
+      transform:translateX(-420px) scale(.85);
+      opacity:.25;
     }
     .anim-next .pos-center{
-      transform:translateX(-240px) scale(.9);
-      opacity:.5;
+      transform:translateX(-220px) scale(.9);
+      opacity:.6;
     }
     .anim-next .pos-right{
-      transform:translateX(0) scale(1);
+      transform:translateX(0) scale(1.05);
       opacity:1;
       z-index:3;
     }
 
-    /* during prev animation, shift all right */
-    .anim-prev .pos-left{
-      transform:translateX(0) scale(1);
-      opacity:1;
-      z-index:3;
+    .anim-prev .pos-right{
+      transform:translateX(420px) scale(.85);
+      opacity:.25;
     }
     .anim-prev .pos-center{
-      transform:translateX(240px) scale(.9);
-      opacity:.5;
+      transform:translateX(220px) scale(.9);
+      opacity:.6;
     }
-    .anim-prev .pos-right{
-      transform:translateX(480px) scale(.8);
-      opacity:0;
+    .anim-prev .pos-left{
+      transform:translateX(0) scale(1.05);
+      opacity:1;
+      z-index:3;
     }
 
-    /* Article card inner text styles */
+    /* (legacy text styles kept in case needed elsewhere, but unused for logos) */
     .article-header-line{
       font-weight:800;
       font-size:15px;
@@ -394,6 +483,7 @@
       display:flex;
       flex-wrap:wrap;
       gap:6px;
+      display:none;
     }
     .article-title{
       font-weight:900;
@@ -401,12 +491,14 @@
       line-height:1.3;
       letter-spacing:-.02em;
       color:#111;
+      display:none;
     }
     .article-publication{
       font-weight:600;
       font-size:14px;
       line-height:1.4;
       color:#6B7280;
+      display:none;
     }
 
     .article-meta{
@@ -415,6 +507,7 @@
       color:#6B7280;
       font-weight:500;
       margin:0 0 16px;
+      display:none;
     }
 
     .article-excerpt{
@@ -425,16 +518,14 @@
       max-height:4.8em;
       overflow:hidden;
       text-overflow:ellipsis;
-      display:-webkit-box;
-      -webkit-line-clamp:3;
-      -webkit-box-orient:vertical;
+      display:none;
     }
 
     /* progress bar */
     .article-progress-outer{
       width:260px;
       max-width:80%;
-      margin:32px auto 0;
+      margin:24px auto 0;
       display:flex;
       justify-content:center;
     }
@@ -526,7 +617,7 @@
       .hamburger{display:flex}
       .nav-overlay.active{display:block}
 
-      .hero-inner{padding:60px 20px 80px}
+      .hero-inner{padding:40px 20px}
       .hero h1{font-size:42px}
       .hero p{font-size:16px}
       .search-hero input{height:56px;font-size:16px;padding:0 52px 0 20px}
@@ -542,29 +633,43 @@
         padding:32px 20px 48px;
       }
       .articles-carousel-wrapper{
-        height:340px;
+        height:220px;
       }
       .article-card-shell{
-        width:330px;
-        padding:20px 20px 24px;
+        width:200px;
+        padding:16px;
       }
       .pos-left{
-        transform:translateX(-200px) scale(.9);
+        transform:translateX(-180px) scale(.9);
       }
       .pos-right{
-        transform:translateX(200px) scale(.9);
+        transform:translateX(180px) scale(.9);
       }
+      .pos-far-left{
+        transform:translateX(-340px) scale(.85);
+      }
+      .pos-far-right{
+        transform:translateX(340px) scale(.85);
+      }
+
       .anim-next .pos-left{
-        transform:translateX(-400px) scale(.8);
+        transform:translateX(-340px) scale(.85);
       }
       .anim-next .pos-center{
-        transform:translateX(-200px) scale(.9);
+        transform:translateX(-180px) scale(.9);
+      }
+      .anim-next .pos-right{
+        transform:translateX(0) scale(1.05);
+      }
+
+      .anim-prev .pos-right{
+        transform:translateX(340px) scale(.85);
       }
       .anim-prev .pos-center{
-        transform:translateX(200px) scale(.9);
+        transform:translateX(180px) scale(.9);
       }
-      .anim-prev .pos-right{
-        transform:translateX(400px) scale(.8);
+      .anim-prev .pos-left{
+        transform:translateX(0) scale(1.05);
       }
 
       .article-arrow.left{left:8px;transform:translateY(-50%)}
@@ -583,26 +688,40 @@
       .name{font-size:20px}
 
       .article-card-shell{
-        width:300px;
-        padding:20px;
+        width:170px;
+        padding:14px;
       }
       .pos-left{
-        transform:translateX(-180px) scale(.9);
+        transform:translateX(-150px) scale(.9);
       }
       .pos-right{
-        transform:translateX(180px) scale(.9);
+        transform:translateX(150px) scale(.9);
       }
+      .pos-far-left{
+        transform:translateX(-290px) scale(.85);
+      }
+      .pos-far-right{
+        transform:translateX(290px) scale(.85);
+      }
+
       .anim-next .pos-left{
-        transform:translateX(-360px) scale(.8);
+        transform:translateX(-290px) scale(.85);
       }
       .anim-next .pos-center{
-        transform:translateX(-180px) scale(.9);
+        transform:translateX(-150px) scale(.9);
+      }
+      .anim-next .pos-right{
+        transform:translateX(0) scale(1.05);
+      }
+
+      .anim-prev .pos-right{
+        transform:translateX(290px) scale(.85);
       }
       .anim-prev .pos-center{
-        transform:translateX(180px) scale(.9);
+        transform:translateX(150px) scale(.9);
       }
-      .anim-prev .pos-right{
-        transform:translateX(360px) scale(.8);
+      .anim-prev .pos-left{
+        transform:translateX(0) scale(1.05);
       }
 
       .article-arrow.left{left:8px;transform:translateY(-50%)}
@@ -629,6 +748,7 @@
       <!--a href="/playepage.html" id="nav-experience">Select Experience</a-->
       <a href="/news.html" id="nav-press">Press</a>
       <a href="/faq.html" id="nav-faq">FAQ</a>
+      <a href="/my-offers.html">My Offers</a>
     </nav>
 
     <div class="userbar">
@@ -637,7 +757,7 @@
         <div class="dropdown" id="userDropdown">
           <div class="dropdown-header">
             <p class="dropdown-name" id="dropdownName">User</p>
-            <p class="dropdown-email" id="dropdownEmail">user@example.com</p>
+            <p class="dropdown-email" id="dropdownEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9eebedfbecdefbe6fff3eef2fbb0fdf1f3">[email&#160;protected]</a></p>
           </div>
           <button class="dropdown-item" onclick="logout()">Sign out</button>
         </div>
@@ -652,20 +772,17 @@
   </div>
 </header>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Highlight the current page in the nav
   (function() {
     var path = window.location.pathname;
-    // just grab the filename, e.g. "news.html"
     var file = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
-
     var map = {
       'index.html': 'nav-home',
       'playepage.html': 'nav-experience',
       'news.html': 'nav-press',
       'faq.html': 'nav-faq'
     };
-
     Object.keys(map).forEach(function(fname){
       var el = document.getElementById(map[fname]);
       if (!el) return;
@@ -682,6 +799,7 @@
 <div class="nav-overlay" id="navOverlay"></div>
 
 <section class="hero">
+  <div class="hero-art" id="heroArt"></div>
   <div class="hero-inner">
     <h1>At-game experiences</h1>
     <p>Bid on unique game-day access. Create an account, verify once, then submit and track your offers.</p>
@@ -702,16 +820,16 @@
   </div>
 </section>
 
-<!-- ===== Featured Articles Carousel ===== -->
+<!-- ===== Featured Press Logos Carousel ===== -->
 <section class="articles-carousel-section" id="articlesCarouselSection">
   <h2>Press</h2>
 
   <div class="articles-carousel-shell">
-    <div class="article-arrow left" id="articleArrowLeft" aria-label="Previous article">❮</div>
-    <div class="article-arrow right" id="articleArrowRight" aria-label="Next article">❯</div>
+    <div class="article-arrow left" id="articleArrowLeft" aria-label="Previous outlet">❮</div>
+    <div class="article-arrow right" id="articleArrowRight" aria-label="Next outlet">❯</div>
 
     <div class="articles-carousel-wrapper" id="articlesCarouselWrapper">
-      <!-- cards injected here -->
+      <!-- logo cards injected here -->
     </div>
 
     <div class="article-progress-outer">
@@ -748,8 +866,8 @@
   <div class="foot">
     <span>Copyright © 2025 Daps</span>
     <span style="margin-left:auto"></span>
-    <a href="#">Privacy policy</a><span aria-hidden="true"> · </span>
-    <a href="#">Terms of use</a>
+    <a href="/privacy-policy.html">Privacy policy</a><span aria-hidden="true"> · </span>
+    <a href="/terms-of-service.html">Terms of use</a>
   </div>
 </footer>
 
@@ -757,8 +875,36 @@
 (function(){
   'use strict';
 
+  // ===== Hero image diagnostics =====
+  (function heroDiagnostics(){
+    var src = './images/Daps_hero.jpeg';
+    console.group('[HERO]');
+    console.log('Attempting to load hero image:', src);
+    var img = new Image();
+    img.onload = function(){
+      console.log('✓ Hero image loaded (', img.naturalWidth + 'x' + img.naturalHeight, ')');
+      var el = document.getElementById('heroArt');
+      if (el) {
+        var style = window.getComputedStyle(el).backgroundImage;
+        console.log('Computed background-image on .hero-art:', style);
+      } else {
+        console.warn('Could not find #heroArt');
+      }
+      console.groupEnd();
+    };
+    img.onerror = function(e){
+      console.error('✗ Failed to load hero image. Check that /images/Daps_hero.jpeg is served by your static middleware.');
+      console.log('Tip: place image at <project>/server/images/Daps_hero.jpeg and ensure Express/Vite serves /images/* from that folder.');
+      console.groupEnd();
+    };
+    img.src = src;
+  })();
+
   var API = 'http://localhost:5175';
   var allAthletes = [];
+  var allNBAPlayers = [];  // ✅ NEW: All NBA players from ESPN
+  var combinedPlayers = []; // ✅ NEW: Merged list for search (DB + ESPN)
+  var playersLoaded = false; // ✅ NEW: Track if ESPN players loaded
   var currentUser = null;
 
   var teamConfig = {
@@ -767,49 +913,31 @@
     accent: '#64FA00'
   };
 
-  // ===== Featured Articles Data =====
+  // ===== Press Logos Data (replaces article snippets) =====
   var articlesData = [
     {
-      title: 'Daps Bounty launches with Adrian Wojnarowski collaboration',
-      publication: 'Sports Business Journal',
-      author: 'Irving Mejia-Hilario',
-      excerpt: 'A new demand-first marketplace offers sports fans and collectors the opportunity to ask athletes for collectibles and experiences. Former Columbia Lions guard Jake Klores launches Daps Bounty.',
-      url: 'https://www.sportsbusinessjournal.com/Articles/2025/02/24/daps-bounty-launches-with-adrian-wojnarowski-collaboration/'
+      name: 'Sports Illustrated',
+      logo: '/images/Sports_Illustrated.png'
     },
     {
-      title: 'Longtime NBA reporter Adrian Wojnarowski to auction off his iPhones',
-      publication: 'cllct',
-      author: 'Matt Liberman',
-      excerpt: 'Adrian Wojnarowski is selling nine iPhones through Daps Bounty, with all proceeds going to St. Bonaventure men\'s basketball program. The phones were used to break some of his most memorable scoops.',
-      url: 'https://www.cllct.com/sports-collectibles/auctions/longtime-nba-reporter-adrian-wojnarowski-to-auction-off-his-i-phones'
+      name: 'The New York Times',
+      logo: '/images/New_York_Times_logo.png'
     },
     {
-      title: 'Daps Bounty Connects Collectors With Athletes',
-      publication: 'Sports Illustrated',
-      author: 'Horacio Ruiz',
-      excerpt: 'Upstart company Daps Bounty aims to bring collectors and athletes together, allowing collectors to place a bounty on any item they want. The platform functions as a reverse marketplace.',
-      url: 'https://www.si.com/collectibles/inside-the-hobby/daps-bounty-connects-collectors'
+      name: 'USA Today',
+      logo: '/images/USA_Today_logo.png'
     },
     {
-      title: 'Adrian Wojnarowski Holding Unique Auction to Raise NIL Money for St. Bonaventure',
-      publication: 'Sports Illustrated',
-      author: 'Patrick Andres',
-      excerpt: 'The ex-ESPN reporter is selling pieces of history through Daps Bounty, including credentials and phones used to break major NBA news stories. All proceeds benefit St. Bonaventure basketball.',
-      url: 'https://www.si.com/college-basketball/adrian-wojnarowski-holding-unique-auction-raise-nil-money-st-bonaventure'
+      name: 'Sports Business Journal',
+      logo: '/images/SBJ.png'
     },
     {
-      title: 'How Zach Edey, Purdue men\'s hoops star, is overcoming immigration law to benefit from NIL',
-      publication: 'USA Today',
-      author: 'Scooby Axson',
-      excerpt: 'Purdue\'s 7-foot-4 star player partnered with Daps when the Boilermakers traveled to his hometown of Toronto, completing NIL deals on Canadian soil to work within F-1 visa constraints.',
-      url: 'https://www.usatoday.com/story/sports/ncaab/bigten/2023/12/12/purdue-zach-edey-nil-loophole-immigration-law-rule/71882113007/'
+      name: 'cllct',
+      logo: '/images/CLLCT.png'
     },
     {
-      title: 'Once the Center of the N.B.A. News Universe, These Phones Can Now Be Yours',
-      publication: 'The New York Times',
-      author: 'Victor Mather',
-      excerpt: 'Adrian Wojnarowski is auctioning off personal items including smartphones that buzzed with texts and calls from NBA owners, agents, and coaches offering coveted scoops.',
-      url: 'https://www.nytimes.com/2025/02/25/sports/basketball/adrian-wojnarowski-auction-woj.html'
+      name: 'Yahoo Sports',
+      logo: '/images/Yahoo_Sports_Logo.png'
     }
   ];
 
@@ -895,6 +1023,268 @@
     }
   });
 
+  // ============================================================================
+  // ✅ NEW: ENHANCED NBA PLAYER SEARCH WITH ESPN API
+  // ============================================================================
+
+  /**
+   * Fetch all NBA players from ESPN via our API
+   * This function loads 500+ players from all 30 NBA teams
+   */
+  async function loadAllNBAPlayers() {
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('[index:nba-players] 🏀 Loading all NBA players from ESPN...');
+    console.log('[index:nba-players] Timestamp:', new Date().toISOString());
+    console.log('[index:nba-players] API endpoint:', API + '/api/nba/all-players');
+    
+    try {
+      console.log('[index:nba-players] 📤 Fetching from server...');
+      const startTime = Date.now();
+      
+      const response = await fetch(API + '/api/nba/all-players');
+      
+      const duration = Date.now() - startTime;
+      console.log('[index:nba-players] Response received in', duration, 'ms');
+      console.log('[index:nba-players] Response status:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        console.error('[index:nba-players] ❌ Failed to fetch NBA players:', response.status);
+        combinedPlayers = allAthletes.map(function(a) {
+          return {
+            id: a.id,
+            slug: a.slug,
+            name: a.name,
+            team: a.team,
+            league: a.league,
+            imageUrl: a.imageUrl,
+            featured: a.featured,
+            active: a.active,
+            source: 'db',
+            inDatabase: true
+          };
+        });
+        console.log('[index:nba-players] Fallback: using only database athletes, count =', combinedPlayers.length);
+        playersLoaded = false;
+        return false;
+      }
+
+      const data = await response.json();
+      console.log('[index:nba-players] Raw response keys:', Object.keys(data || {}));
+      console.log('[index:nba-players] Cached flag:', data.cached);
+      console.log('[index:nba-players] Total ESPN players:', data.players ? data.players.length : 0);
+
+      if (!data.players || !Array.isArray(data.players)) {
+        console.warn('[index:nba-players] No players array found in response, using DB only');
+        combinedPlayers = allAthletes.map(function(a) {
+          return {
+            id: a.id,
+            slug: a.slug,
+            name: a.name,
+            team: a.team,
+            league: a.league,
+            imageUrl: a.imageUrl,
+            featured: a.featured,
+            active: a.active,
+            source: 'db',
+            inDatabase: true
+          };
+        });
+        console.log('[index:nba-players] Fallback: using only database athletes, count =', combinedPlayers.length);
+        playersLoaded = false;
+        return false;
+      }
+
+      allNBAPlayers = data.players;
+      playersLoaded = true;
+
+      // Create combined list (database athletes + ESPN players not in database)
+      combinedPlayers = allAthletes.map(function(a) {
+        return {
+          id: a.id,
+          slug: a.slug,
+          name: a.name,
+          team: a.team,
+          league: a.league,
+          imageUrl: a.imageUrl,
+          featured: a.featured,
+          active: a.active,
+          source: 'db',
+          inDatabase: true
+        };
+      });
+
+      console.log('[index:nba-players] ✅ Added', combinedPlayers.length, 'database athletes to search');
+
+      // Add ESPN players that aren't in database
+      console.log('[index:nba-players] 🔍 Checking for new ESPN players...');
+      var espnOnlyCount = 0;
+      allNBAPlayers.forEach(function(player) {
+        var exists = combinedPlayers.some(function(a) {
+          return (
+            a.name &&
+            player.name &&
+            a.name.toLowerCase() === player.name.toLowerCase() &&
+            a.team &&
+            player.team &&
+            a.team.toLowerCase() === player.team.toLowerCase()
+          );
+        });
+
+        if (!exists) {
+          combinedPlayers.push({
+            espnId: player.espnId,
+            slug: player.slug,
+            name: player.name,
+            team: player.team,
+            league: 'NBA',
+            imageUrl: player.imageUrl,
+            position: player.position,
+            jersey: player.jersey,
+            featured: false,
+            active: true,
+            source: 'espn',
+            inDatabase: false
+          });
+          espnOnlyCount++;
+        }
+      });
+
+      console.log('[index:nba-players] ✅ Added', espnOnlyCount, 'ESPN-only players to search');
+      console.log('[index:nba-players] 📊 Total searchable players:', combinedPlayers.length);
+      console.log('[index:nba-players]   - From DB:', allAthletes.length);
+      console.log('[index:nba-players]   - From ESPN only:', espnOnlyCount);
+
+      // Log sample of ESPN players for verification
+      const sampleESPN = combinedPlayers.filter(p => !p.inDatabase).slice(0, 5);
+      if (sampleESPN.length > 0) {
+        console.log('[index:nba-players] Sample ESPN players:');
+        sampleESPN.forEach(function(p, i) {
+          console.log('[index:nba-players]   ' + (i + 1) + '. ' + p.name + ' (' + p.team + ')');
+        });
+      } else {
+        console.log('[index:nba-players] ⚠️ No ESPN-only players found in combined list');
+      }
+      
+      console.log('═══════════════════════════════════════════════════════════════');
+      console.log('[index:nba-players] ✨ NBA PLAYERS LOADED SUCCESSFULLY');
+      console.log('═══════════════════════════════════════════════════════════════');
+      
+      return true;
+      
+    } catch (error) {
+      console.error('═══════════════════════════════════════════════════════════════');
+      console.error('[index:nba-players] ❌ ERROR LOADING NBA PLAYERS');
+      console.error('[index:nba-players] Error name:', error.name);
+      console.error('[index:nba-players] Error message:', error.message);
+      console.error('[index:nba-players] Error stack:', error.stack);
+      console.error('═══════════════════════════════════════════════════════════════');
+      
+      // Fallback to DB-only if ESPN fetch fails
+      combinedPlayers = allAthletes.map(function(a) {
+        return {
+          id: a.id,
+          slug: a.slug,
+          name: a.name,
+          team: a.team,
+          league: a.league,
+          imageUrl: a.imageUrl,
+          featured: a.featured,
+          active: a.active,
+          source: 'db',
+          inDatabase: true
+        };
+      });
+      console.log('[index:nba-players] Fallback: using only database athletes, count =', combinedPlayers.length);
+      playersLoaded = false;
+      return false;
+    }
+  }
+
+  /**
+   * Handle clicking on an ESPN player not in database
+   * Creates the athlete dynamically then redirects to their page
+   */
+  window.handleESPNPlayerClick = async function(espnId, name, team, imageUrl) {
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('[index:espn-click] 🎯 ESPN player clicked');
+    console.log('[index:espn-click] Player:', name);
+    console.log('[index:espn-click] Team:', team);
+    console.log('[index:espn-click] ESPN ID:', espnId);
+    
+    try {
+      const token = localStorage.getItem('jwt');
+      console.log('[index:espn-click] JWT token present:', !!token);
+      
+      if (!token) {
+        console.warn('[index:espn-click] No JWT token found, redirecting to /user (login)');
+        alert('Please log in or create an account first. You\'ll be redirected to the login page.');
+        window.location.href = '/user';
+        return;
+      }
+
+      var searchResults = document.getElementById('searchResults');
+      if (searchResults) {
+        searchResults.innerHTML =
+          '<div class="search-no-results">' +
+            'Creating player profile for <strong>' + (name || 'this player') + '</strong>...<br>' +
+            '<small style="color:#6B7280;">This may take a few seconds while we sync with the NBA schedule.</small>' +
+          '</div>';
+      }
+
+      console.log('[index:espn-click] 📤 Sending create-from-espn request...');
+
+      const requestBody = {
+        espnId: espnId,
+        name: name,
+        team: team,
+        imageUrl: imageUrl
+      };
+      
+      console.log('[index:espn-click] Request body:', JSON.stringify(requestBody, null, 2));
+      
+      const response = await fetch(API + '/api/athletes/create-from-espn', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      console.log('[index:espn-click] Response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[index:espn-click] ❌ Failed to create athlete:', errorText);
+        alert('We had trouble creating this player. Please try again or contact support.');
+        return;
+      }
+
+      const data = await response.json();
+      console.log('[index:espn-click] ✅ Athlete created/found:', data);
+
+      const athlete = data.athlete || data;
+      if (!athlete || !athlete.id) {
+        console.error('[index:espn-click] ❌ No athlete ID returned from server');
+        alert('We created the player, but could not load their profile. Please refresh and try again.');
+        return;
+      }
+
+      console.log('[index:espn-click] Athlete ID:', athlete.id);
+      console.log('[index:espn-click] 🔄 Redirecting to player page...');
+      window.location.href = '/playepage.html?athleteId=' + encodeURIComponent(athlete.id);
+      
+    } catch (error) {
+      console.error('═══════════════════════════════════════════════════════════════');
+      console.error('[index:espn-click] ❌ ERROR HANDLING ESPN CLICK');
+      console.error('[index:espn-click] Error name:', error.name);
+      console.error('[index:espn-click] Error message:', error.message);
+      console.error('[index:espn-click] Error stack:', error.stack);
+      console.error('═══════════════════════════════════════════════════════════════');
+      alert('Something went wrong while creating this player. Please try again.');
+    }
+  };
+
   // Load athletes from API
   function loadAthletes(){
     fetch(API + '/api/athletes')
@@ -942,6 +1332,10 @@
         applyFilters();
 
         initArticlesCarousel();
+        
+        // ✅ NEW: Initialize ESPN player loading
+        console.log('[index:init] Initializing enhanced NBA player search...');
+        loadAllNBAPlayers();
       })
       .catch(function(err){
         var gridErr = document.getElementById('cards');
@@ -993,36 +1387,23 @@
     });
   }
 
-  /* ======== FEATURED ARTICLES CAROUSEL (NEW LOGIC) ======== */
+  /* ======== PRESS LOGO CAROUSEL LOGIC ======== */
 
-  // utility: grab article safely by wrapped index
   function getArticle(idx){
     var len = articlesData.length;
     return articlesData[(idx % len + len) % len];
   }
 
-  // build one card element (anchor)
-  function buildArticleCardEl(article, className){
-    var el = document.createElement('a');
-    el.className = 'article-card-shell ' + className;
-    el.href = article.url || '#';
-    el.target = '_blank';
-    el.rel = 'noopener noreferrer';
-
+  function buildArticleCardEl(outlet, className){
+    var el = document.createElement('div');
+    el.className = 'article-card-shell logo-card ' + className;
+    el.setAttribute('aria-label', outlet.name || 'Press outlet');
     el.innerHTML =
-      '<div class="article-header-line">' +
-        '<span class="article-title">' + (article.title || '') + '</span>' +
-        '<span class="article-publication">· ' + (article.publication || '') + '</span>' +
-      '</div>' +
-      '<div class="article-meta">' +
-        (article.author ? ('By ' + article.author) : '') +
-      '</div>' +
-      '<div class="article-excerpt">' + (article.excerpt || '') + '</div>';
-
+      '<img src="' + (outlet.logo || '') + '" alt="' + (outlet.name || "Press logo") + '" ' +
+      'onerror="this.style.visibility=\'hidden\'">';
     return el;
   }
 
-  // render the 3-card "neutral" state (prev/current/next)
   function renderCarouselTriplet(){
     if(!wrapperEl){
       wrapperEl = document.getElementById('articlesCarouselWrapper');
@@ -1032,38 +1413,36 @@
     wrapperEl.classList.remove('anim-next','anim-prev');
     wrapperEl.innerHTML = '';
 
-    var prevArticle = getArticle(currentArticleIndex - 1);
-    var curArticle  = getArticle(currentArticleIndex);
-    var nextArticle = getArticle(currentArticleIndex + 1);
+    var farLeftOutlet  = getArticle(currentArticleIndex - 2);
+    var leftOutlet     = getArticle(currentArticleIndex - 1);
+    var centerOutlet   = getArticle(currentArticleIndex);
+    var rightOutlet    = getArticle(currentArticleIndex + 1);
+    var farRightOutlet = getArticle(currentArticleIndex + 2);
 
-    var leftCard  = buildArticleCardEl(prevArticle, 'pos-left');
-    var midCard   = buildArticleCardEl(curArticle,  'pos-center');
-    var rightCard = buildArticleCardEl(nextArticle, 'pos-right');
+    var farLeftCard  = buildArticleCardEl(farLeftOutlet,  'pos-far-left');
+    var leftCard     = buildArticleCardEl(leftOutlet,     'pos-left');
+    var centerCard   = buildArticleCardEl(centerOutlet,   'pos-center');
+    var rightCard    = buildArticleCardEl(rightOutlet,    'pos-right');
+    var farRightCard = buildArticleCardEl(farRightOutlet, 'pos-far-right');
 
-    // clicking left/right should animate carousel instead of instantly navigating
-    leftCard.addEventListener('click', function(e){
-      e.preventDefault();
-      goPrev();
-    });
-    rightCard.addEventListener('click', function(e){
-      e.preventDefault();
-      goNext();
-    });
-
+    wrapperEl.appendChild(farLeftCard);
     wrapperEl.appendChild(leftCard);
-    wrapperEl.appendChild(midCard);
+    wrapperEl.appendChild(centerCard);
     wrapperEl.appendChild(rightCard);
+    wrapperEl.appendChild(farRightCard);
   }
 
-  // animate to next: shift all cards left, then advance index and rebuild
   function goNext(){
     if(animating) return;
+    if(!articlesData || articlesData.length === 0) return;
     animating = true;
-
-    stopAutoplayTimers(); // pause autoplay while animating
-
-    wrapperEl.classList.add('anim-next');
-
+    stopAutoplayTimers();
+    if(!wrapperEl){
+      wrapperEl = document.getElementById('articlesCarouselWrapper');
+    }
+    if(wrapperEl){
+      wrapperEl.classList.add('anim-next');
+    }
     setTimeout(function(){
       currentArticleIndex = (currentArticleIndex + 1) % articlesData.length;
       renderCarouselTriplet();
@@ -1072,15 +1451,17 @@
     }, animDurationMs);
   }
 
-  // animate to prev: shift all cards right, then advance index backward and rebuild
   function goPrev(){
     if(animating) return;
+    if(!articlesData || articlesData.length === 0) return;
     animating = true;
-
     stopAutoplayTimers();
-
-    wrapperEl.classList.add('anim-prev');
-
+    if(!wrapperEl){
+      wrapperEl = document.getElementById('articlesCarouselWrapper');
+    }
+    if(wrapperEl){
+      wrapperEl.classList.add('anim-prev');
+    }
     setTimeout(function(){
       currentArticleIndex = (currentArticleIndex - 1 + articlesData.length) % articlesData.length;
       renderCarouselTriplet();
@@ -1088,8 +1469,6 @@
       animating = false;
     }, animDurationMs);
   }
-
-  /* ===== Progress Bar + Autoplay ===== */
 
   function startProgressBar(){
     progressElapsed = 0;
@@ -1108,7 +1487,6 @@
         });
       });
     }
-
     if(articleProgressTimer){
       cancelAnimationFrame(articleProgressTimer);
     }
@@ -1120,7 +1498,6 @@
     var dt = ts - lastFrameTime;
     lastFrameTime = ts;
     progressElapsed += dt;
-
     if(progressElapsed >= articleAutoplayMs){
       goNext();
       return;
@@ -1140,6 +1517,7 @@
   }
 
   function restartAutoplayTimers(){
+    if(!articlesData || articlesData.length === 0) return;
     startProgressBar();
     if(articleRotateTimer){
       clearInterval(articleRotateTimer);
@@ -1150,26 +1528,29 @@
   }
 
   function initArticlesCarousel(){
-    // wire arrows
-    var leftBtn = document.getElementById('articleArrowLeft');
-    var rightBtn = document.getElementById('articleArrowRight');
+    wrapperEl = document.getElementById('articlesCarouselWrapper');
+    progressBarEl = document.getElementById('articleProgressBar');
+    var leftEl = document.getElementById('articleArrowLeft');
+    var rightEl = document.getElementById('articleArrowRight');
+    var section = document.getElementById('articlesCarouselSection');
 
-    if(leftBtn){
-      leftBtn.addEventListener('click', function(){
-        goPrev();
-      });
+    if(!wrapperEl || !leftEl || !rightEl || !articlesData || articlesData.length === 0){
+      if(section){
+        section.style.display = 'none';
+      }
+      return;
     }
-    if(rightBtn){
-      rightBtn.addEventListener('click', function(){
-        goNext();
-      });
-    }
+
+    leftEl.addEventListener('click', goPrev);
+    rightEl.addEventListener('click', goNext);
 
     renderCarouselTriplet();
     restartAutoplayTimers();
   }
 
-  // Hero search with dropdown
+  // ============================================================================
+  // ✅ MODIFIED: Hero search now uses combinedPlayers (DB + ESPN)
+  // ============================================================================
   var heroSearchInput = document.getElementById('heroSearch');
   var searchResults = document.getElementById('searchResults');
   var heroSearchTimer;
@@ -1202,11 +1583,13 @@
       return;
     }
 
-    var matches = allAthletes.filter(function(athlete){
+    // ✅ MODIFIED: Search through combinedPlayers instead of allAthletes
+    var matches = combinedPlayers.filter(function(player){
       var searchText = (
-        (athlete.name || '') + ' ' +
-        (athlete.team || '') + ' ' +
-        (athlete.league || '')
+        (player.name || '') + ' ' +
+        (player.team || '') + ' ' +
+        (player.league || '') + ' ' +
+        (player.position || '')
       ).toLowerCase();
       return searchText.indexOf(query) !== -1;
     });
@@ -1218,17 +1601,36 @@
     }
 
     var html = '';
-    matches.slice(0, 6).forEach(function(athlete){
-      var imgSrc = athlete.imageUrl || '/images/Daps-2 Copy.png';
+    matches.slice(0, 6).forEach(function(player){
+      var imgSrc = player.imageUrl || '/images/Daps-2 Copy.png';
+      var sourceTag = player.inDatabase ? '' : '<span style="font-size:10px;color:#999;font-weight:normal;"> (ESPN)</span>';
+      
+      // ✅ NEW: For database players, use normal link. For ESPN-only players, use special onclick handler
+      var clickHandler;
+      if(player.inDatabase){
+        clickHandler = 'href="/playepage.html?athleteId=' + (player.id || player.slug) + '"';
+      } else {
+        // Escape quotes in player data for onclick
+        var escapedName = (player.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        var escapedTeam = (player.team || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        var escapedImage = (player.imageUrl || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        
+        clickHandler = 'href="#" onclick="handleESPNPlayerClick(\'' + 
+                      player.espnId + '\', \'' + 
+                      escapedName + '\', \'' + 
+                      escapedTeam + '\', \'' + 
+                      escapedImage + '\'); return false;"';
+      }
+      
       html +=
-        '<a href="/playepage.html?athleteId=' + (athlete.id || athlete.slug || '') + '" class="search-result-item">' +
+        '<a ' + clickHandler + ' class="search-result-item">' +
           '<div class="search-result-thumb">' +
-            '<img src="' + imgSrc + '" alt="' + (athlete.name || '') + '" ' +
+            '<img src="' + imgSrc + '" alt="' + (player.name || '') + '" ' +
             'onerror="this.src=\'/images/Daps-2 Copy.png\'">' +
           '</div>' +
           '<div class="search-result-info">' +
-            '<div class="search-result-name">' + (athlete.name || 'Unknown') + '</div>' +
-            '<div class="search-result-team">' + (athlete.team || '') + ' • ' + (athlete.league || 'NBA') + '</div>' +
+            '<div class="search-result-name">' + (player.name || 'Unknown') + sourceTag + '</div>' +
+            '<div class="search-result-team">' + (player.team || '') + ' • ' + (player.league || 'NBA') + '</div>' +
           '</div>' +
         '</a>';
     });
@@ -1308,12 +1710,10 @@
     });
   });
 
-  // Initialize
-  fetchTeamConfig().then(function() {
-    checkAuth();
-    loadAthletes();
-  });
-
+  // Initialize on page load
+  checkAuth();
+  loadAthletes();
+  initArticlesCarousel();
 })();
 </script>
 </body>

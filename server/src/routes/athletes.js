@@ -6,28 +6,38 @@ import { populateGamesForAthlete } from '../app.js';
 const router = Router();
 
 router.get('/', async (_req, res) => {
-  console.log('[api] GET /api/athletes - Fetching all athletes');
-  const list = await prisma.athlete.findMany({ orderBy: { name: 'asc' } });
+  console.log('═══════════════════════════════════════════════');
+  console.log('[api:athletes] GET /api/athletes - Fetching all athletes');
   
-  // Transform to match admin panel format - return BOTH image and imageUrl
-  const transformed = list.map(a => ({
-    id: a.slug || a.id,
-    slug: a.slug,
-    name: a.name,
-    team: a.team,
-    league: a.league,
-    image: a.imageUrl || '',
-    imageUrl: a.imageUrl || '',  // Add this for compatibility
-    active: a.active,
-    featured: a.featured || false  // Include featured status
-  }));
-  
-  console.log('[api] /api/athletes returning ' + transformed.length + ' athletes:');
-  transformed.forEach(a => {
-    console.log('[api]   - ' + a.name + ' (' + a.team + ') [id=' + a.id + ', slug=' + a.slug + ', active=' + a.active + ', featured=' + a.featured + ']');
-  });
-  
-  res.json(transformed);
+  try {
+    const list = await prisma.athlete.findMany({ orderBy: { name: 'asc' } });
+    console.log('[api:athletes] ✅ Found', list.length, 'athletes in database');
+    
+    // Transform to match admin panel format - return BOTH image and imageUrl
+    const transformed = list.map(a => ({
+      id: a.slug || a.id,
+      slug: a.slug,
+      name: a.name,
+      team: a.team,
+      league: a.league,
+      image: a.imageUrl || '',
+      imageUrl: a.imageUrl || '',  // Add this for compatibility
+      active: a.active,
+      featured: a.featured || false  // Include featured status
+    }));
+    
+    console.log('[api:athletes] /api/athletes returning ' + transformed.length + ' athletes:');
+    transformed.forEach(a => {
+      console.log('[api:athletes]   - ' + a.name + ' (' + a.team + ') [id=' + a.id + ', slug=' + a.slug + ', active=' + a.active + ', featured=' + a.featured + ']');
+    });
+    
+    console.log('═══════════════════════════════════════════════');
+    res.json(transformed);
+  } catch (error) {
+    console.error('[api:athletes] ❌ Error fetching athletes:', error);
+    console.log('═══════════════════════════════════════════════');
+    res.status(500).json({ error: 'Failed to fetch athletes' });
+  }
 });
 
 router.post('/', async (req, res) => {

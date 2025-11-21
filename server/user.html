@@ -274,69 +274,70 @@
       <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
       <span class="beta">BETA</span>
     </div>
-  </div>
 </header>
 
 <main class="main">
-  <h1>My Account</h1>
-  <p class="subtitle">Create an account or sign in to submit offers</p>
+  <h1>Join <span style="white-space:nowrap;">Daps 🏀</span></h1>
+  <p class="subtitle">
+    The #1 platform for bidding on exclusive game-day experiences<br>
+    with your favorite NBA athletes.
+  </p>
 
   <section class="auth-shell">
-    <!-- tab header -->
+
+    <!-- TABS -->
     <div class="auth-tabs">
-      <button class="auth-tab-btn active" data-tab="create">Create Account</button>
-      <button class="auth-tab-btn" data-tab="signin">Sign In</button>
+      <button class="auth-tab-btn active" data-tab="create">Sign Up</button>
+      <button class="auth-tab-btn" data-tab="signin">Log In</button>
     </div>
 
     <!-- CREATE ACCOUNT PANEL -->
     <div class="auth-body" id="panel-create">
-      <h2 class="panel-title">Sign Up</h2>
-      <p class="panel-subtitle">New to Daps? Get started here</p>
+      <h2 class="panel-title">Create Account</h2>
+      <p class="panel-subtitle">Get started with Daps</p>
 
       <form id="registerForm" autocomplete="on">
         <div class="form-field">
-          <label class="form-label" for="firstName">First Name<span style="color:#EF4444">*</span></label>
+          <label class="form-label" for="firstName">First Name</label>
           <div class="input-wrap">
-            <input name="firstName" id="firstName" autocomplete="given-name" required>
+            <input name="firstName" id="firstName" type="text" autocomplete="given-name">
           </div>
         </div>
 
         <div class="form-field">
-          <label class="form-label" for="lastName">Last Name<span style="color:#EF4444">*</span></label>
+          <label class="form-label" for="lastName">Last Name</label>
           <div class="input-wrap">
-            <input name="lastName" id="lastName" autocomplete="family-name" required>
+            <input name="lastName" id="lastName" type="text" autocomplete="family-name">
           </div>
         </div>
 
         <div class="form-field">
-          <label class="form-label" for="regEmail">Email Address<span style="color:#EF4444">*</span></label>
+          <label class="form-label" for="email">Email Address<span style="color:#EF4444">*</span></label>
           <div class="input-wrap">
-            <input name="email" id="regEmail" type="email" autocomplete="email" required>
+            <input name="email" id="email" type="email" autocomplete="email" required>
           </div>
         </div>
 
         <div class="form-field">
-          <label class="form-label" for="regPass">Password<span style="color:#EF4444">*</span></label>
+          <label class="form-label" for="password">Password<span style="color:#EF4444">*</span></label>
           <div class="input-wrap">
-            <input name="password" id="regPass" type="password" autocomplete="new-password" required>
+            <input name="password" id="password" type="password" autocomplete="new-password" required>
           </div>
         </div>
 
-        <div class="helper">At least 8 characters, 1 uppercase letter, 1 number &amp; 1 symbol</div>
-
         <div class="form-field">
-          <label class="form-label" for="regPass2">Confirm Password<span style="color:#EF4444">*</span></label>
+          <label class="form-label" for="passwordConfirm">Confirm Password<span style="color:#EF4444">*</span></label>
           <div class="input-wrap">
-            <input name="passwordConfirm" id="regPass2" type="password" autocomplete="new-password" required>
+            <input name="passwordConfirm" id="passwordConfirm" type="password" autocomplete="new-password" required>
           </div>
         </div>
 
         <div class="agree-row">
-          <input type="checkbox" id="agreeTerms">
-          <label for="agreeTerms" style="font-weight:400;cursor:pointer;">
+          <input type="checkbox" id="termsCheck" required>
+          <label for="termsCheck" style="color:var(--muted);margin:0;">
             I have read and agree to the
-            <a href="#">Terms and Conditions</a> and
-            <a href="#">Privacy Policy</a>.
+            <a href="terms.html">Terms and Conditions</a> and
+            <a href="playepage.html.backup">Privacy Policy</a>.
           </label>
         </div>
 
@@ -378,8 +379,8 @@
 
         <div class="tos-copy">
           By logging in, you agree to the
-          <a href="#">Terms of Service</a> and
-          <a href="#">Privacy Policy</a>.
+          <a href="terms.html">Terms of Service</a> and
+          <a href="playepage.html.backup">Privacy Policy</a>.
         </div>
 
         <!-- Social / OR removed intentionally -->
@@ -400,9 +401,9 @@
   <div class="foot">
     <span>Copyright © 2025 Daps</span>
     <span class="foot-spacer"></span>
-    <a href="#">Privacy policy</a>
+    <a href="playepage.html.backup">Privacy policy</a>
     <span aria-hidden="true"> · </span>
-    <a href="#">Terms of use</a>
+    <a href="terms.html">Terms of use</a>
   </div>
 </footer>
 

@@ -10,233 +10,482 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --container:1160px;
-      --radius-lg:14px;
-      --line:#EDEEF1;
-      --ink:#0A0A0B;
-      --beta:#FF6000;
-      --cta-a:#DAFA22;
-      --cta-b:#64FA00;
+    :root {
+      --container: 1160px;
+      --radius-lg: 14px;
+      --line: #EDEEF1;
+      --ink: #111827;
+
+      --beta: #FF6000;
+      --cta-a: #DAFA22;
+      --cta-b: #64FA00;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;overflow-x:hidden}
-    body{
-      margin:0; font-family:Poppins,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--ink); background:#FAFBFC;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: Poppins, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: #FAFBFC;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* Hamburger Menu */
-    .hamburger{display:none;width:32px;height:32px;border:none;background:none;cursor:pointer;padding:4px;flex-direction:column;justify-content:center;gap:5px;position:relative;z-index:50}
-    .hamburger span{display:block;width:100%;height:3px;background:#111;border-radius:2px;transition:all .3s}
-    .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px)}
-    .hamburger.active span:nth-child(2){opacity:0}
-    .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px)}
-    
-    .nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:39;opacity:0;transition:opacity .3s}
-    .nav-overlay.active{opacity:1}
+    .hamburger {
+      display: none;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: none;
+      padding: 0;
+      margin-left: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      position: relative;
+      z-index: 50;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: #111;
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 39;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .nav-overlay.active {
+      opacity: 1;
+    }
 
     /* Header */
-    .site-header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
-    .bar{max-width:var(--container);margin:auto;display:flex;align-items:center;gap:12px;padding:14px 20px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand .logo{height:30px;width:auto}
-    .beta{font-size:12px;font-weight:700;color:#fff;background:var(--beta);padding:2px 8px;border-radius:6px}
-    nav{margin-left:24px;display:flex;gap:28px;flex-wrap:wrap}
-    nav a{color:#111;text-decoration:none;font-size:14px;font-weight:500;opacity:.9}
-    nav a:hover{opacity:1}
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
 
-    .userbar{margin-left:auto;display:flex;gap:10px;align-items:center}
-    .user-badge{
-      width:36px;height:36px;border-radius:50%;
-      background:linear-gradient(135deg,#6366f1,#8b5cf6);
-      display:flex;align-items:center;justify-content:center;
-      color:#fff;font-weight:700;font-size:14px;cursor:pointer;
-      border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.1);position:relative;
+    .bar {
+      max-width: var(--container);
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
     }
-    .dropdown{
-      position:absolute;right:0;top:calc(100% + 8px);
-      min-width:200px;background:#fff;border:1px solid var(--line);
-      border-radius:12px;box-shadow:0 8px 24px rgba(16,24,40,.12);
-      padding:8px;display:none;z-index:100;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
     }
-    .dropdown.open{display:block}
-    .dropdown-header{padding:12px 12px 8px;border-bottom:1px solid var(--line);margin-bottom:4px}
-    .dropdown-name{font-weight:700;font-size:14px;margin:0 0 2px}
-    .dropdown-email{font-size:12px;color:#6B7280;margin:0}
-    .dropdown-item{
-      display:block;width:100%;text-align:left;padding:10px 12px;
-      border:none;background:none;border-radius:8px;cursor:pointer;
-      font-weight:600;font-size:14px;color:#111;text-decoration:none;
+
+    .brand .logo {
+      height: 30px;
+      width: auto;
     }
-    .dropdown-item:hover{background:#F9FAFB}
-    .dropdown-divider{height:1px;background:var(--line);margin:4px 0}
+
+    .beta {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--beta);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    nav {
+      margin-left: 24px;
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #111;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: .9;
+    }
+
+    nav a:hover {
+      opacity: 1;
+    }
+
+    .userbar {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .user-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+      position: relative;
+    }
+
+    .dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      min-width: 200px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(16, 24, 40, .12);
+      padding: 8px;
+      display: none;
+      z-index: 100;
+    }
+
+    .dropdown.open {
+      display: block;
+    }
+
+    .dropdown-header {
+      padding: 12px 12px 8px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 4px;
+    }
+
+    .dropdown-name {
+      font-weight: 700;
+      font-size: 14px;
+      margin: 0 0 2px;
+    }
+
+    .dropdown-email {
+      font-size: 12px;
+      color: #6B7280;
+      margin: 0;
+    }
+
+    .dropdown-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border: none;
+      background: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .dropdown-item:hover {
+      background: #F9FAFB;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 4px 0;
+    }
 
     /* Experience Hero */
-    .xp-hero{position:relative;background:#FAFBFC;color:var(--ink);min-height:100vh;padding:40px 20px}
-    .xp-wrap{max-width:1000px;margin:auto;display:grid;grid-template-columns:300px 1fr;gap:32px;padding-top:40px}
-
-    .head-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;height:fit-content;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-    .back{display:inline-flex;align-items:center;gap:8px;color:#6B7280;text-decoration:none;font-size:14px;font-weight:600;margin-bottom:20px}
-    .back:hover{color:#111}
-    .avatar{width:120px;height:120px;border-radius:16px;overflow:hidden;background:#F3F4F6;margin-bottom:16px}
-    .avatar img{width:100%;height:100%;object-fit:cover}
-    .player-name{font-weight:900;font-size:32px;line-height:1.1;margin:0 0 8px;color:#111}
-    .player-team{color:#6B7280;font-size:14px;margin:0}
-
-    .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-    .panel h2{font-weight:900;font-size:24px;letter-spacing:-.01em;margin:0 0 24px;color:#111}
-
-    .field{margin:18px 0}
-    .label{display:block;font-weight:700;margin:0 0 8px;font-size:14px;color:#374151}
-    .input, .select, .textarea{
-      width:100%;height:44px;border:1px solid var(--line);border-radius:10px;
-      background:#fff;padding:0 14px;color:#111;
-      font-family:inherit;font-size:14px;outline:0;
+    .xp-hero {
+      position: relative;
+      background: #FAFBFC;
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 40px 20px;
     }
-    .input::placeholder, .textarea::placeholder{color:#9CA3AF}
-    .input:focus, .select:focus, .textarea:focus{border-color:#6366f1;background:#fff;box-shadow:0 0 0 3px rgba(99,102,241,.1)}
-    .textarea{height:80px;padding:10px 14px;resize:vertical}
-    .select{
-      appearance:none;
+
+    .xp-wrap {
+      max-width: 1000px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 32px;
+      padding-top: 40px;
+    }
+
+    .head-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #6B7280;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .back:hover {
+      color: #111;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #F3F4F6;
+      margin-bottom: 16px;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .player-name {
+      font-weight: 900;
+      font-size: 32px;
+      line-height: 1.1;
+      margin: 0 0 8px;
+      color: #111;
+    }
+
+    .player-team {
+      color: #6B7280;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+    }
+
+    .panel h2 {
+      font-weight: 900;
+      font-size: 24px;
+      letter-spacing: -.01em;
+      margin: 0 0 24px;
+      color: #111;
+    }
+
+    .field {
+      margin: 18px 0;
+    }
+
+    .label {
+      display: block;
+      font-weight: 700;
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 0 14px;
+      color: #111;
+      font-family: inherit;
+      font-size: 14px;
+      outline: 0;
+    }
+
+    .textarea {
+      height: 80px;
+      padding: 10px 14px;
+      resize: vertical;
+    }
+
+    .select {
+      appearance: none;
       background-image:
         linear-gradient(45deg, transparent 50%, #111 50%),
         linear-gradient(135deg, #111 50%, transparent 50%);
-      background-position:calc(100% - 18px) 18px, calc(100% - 12px) 18px;
-      background-size:6px 6px, 6px 6px;
-      background-repeat:no-repeat;
+      background-position: calc(100% - 18px) 18px, calc(100% - 12px) 18px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
     }
 
-    .game-option-past{color:#6B7280}
-    .game-option-upcoming{color:#111;font-weight:500}
-    
-    .loading-games{
-      padding:12px;background:#F9FAFB;border-radius:8px;
-      text-align:center;color:#6B7280;font-size:14px;
-    }
-    
-    .no-games{
-      padding:12px;background:#FEF2F2;border:1px solid #FEE2E2;
-      border-radius:8px;color:#DC2626;font-size:14px;
-    }
-
-    .cta{
-      display:inline-block;border:0;padding:12px 24px;font-weight:700;
-      border-radius:12px;cursor:pointer;color:#0B3810;font-size:16px;
-      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));
-      box-shadow:0 6px 24px rgba(100,250,0,.28);
-      transition:transform .12s;width:100%;
-    }
-    .cta:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(100,250,0,.35)}
-    .cta:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-    /* Toast */
-    .toast{
-      position:fixed;bottom:24px;right:24px;
-      background:#111;color:#fff;padding:14px 18px;
-      border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.2);
-      display:none;max-width:400px;z-index:1000;
-    }
-    .toast.show{display:block}
-
-    /* Modal for alert */
-    .modal-overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.5);
-      display:none;align-items:center;justify-content:center;z-index:2000;
-    }
-    .modal-overlay.show{display:flex}
-    .modal{
-      background:#fff;border-radius:16px;padding:32px;
-      max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);
-    }
-    .modal h3{margin:0 0 16px;font-size:20px;font-weight:900}
-    .modal p{margin:0 0 24px;color:#6B7280;line-height:1.6}
-    .modal-actions{display:flex;gap:12px;justify-content:flex-end}
-    .modal-btn{
-      padding:10px 20px;border-radius:10px;font-weight:700;
-      border:none;cursor:pointer;font-size:14px;
-    }
-    .modal-btn-primary{
-      background:linear-gradient(90deg,var(--cta-a),var(--cta-b));
-      color:#0B3810;
-    }
-    .modal-btn-secondary{
-      background:#F3F4F6;color:#111;
+    .cta {
+      display: inline-block;
+      border: 0;
+      padding: 12px 24px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      color: #0B3810;
+      font-size: 16px;
+      background: linear-gradient(90deg, var(--cta-a), var(--cta-b));
+      box-shadow: 0 6px 24px rgba(100, 250, 0, .28);
+      transition: transform .12s;
+      width: 100%;
     }
 
-    /* Tablet breakpoint */
-    @media (max-width:900px){
-      .xp-wrap{grid-template-columns:1fr}
-      .head-card{margin-bottom:0}
+    .cta:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    /* Mobile breakpoint */
-    @media (max-width:800px){
-      .hamburger{display:flex;order:2}
-      
-      .bar{padding:12px 16px;gap:8px;flex-wrap:nowrap}
-      .brand .logo{height:26px}
-      .beta{font-size:11px;padding:2px 6px}
-      
-      nav{
-        position:fixed;top:0;right:-100%;width:280px;height:100vh;
-        background:#fff;flex-direction:column;gap:0;margin:0;padding:80px 0 20px;
-        box-shadow:-4px 0 24px rgba(0,0,0,.1);transition:right .3s;z-index:40;
-        overflow-y:auto
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #111;
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      display: none;
+      max-width: 400px;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .xp-wrap {
+        grid-template-columns: 1fr;
       }
-      nav.active{right:0}
-      nav a{font-size:15px;padding:16px 24px;width:100%;border-left:3px solid transparent}
-      nav a:hover{background:#F9FAFB}
-      
-      .userbar{gap:8px;order:1}
-      .user-badge{width:40px;height:40px}
-      
-      .xp-hero{padding:24px 16px;min-height:auto}
-      .xp-wrap{padding-top:20px;gap:20px}
-      
-      .head-card{padding:20px}
-      .back{font-size:13px;margin-bottom:16px}
-      .avatar{width:100px;height:100px;margin-bottom:12px}
-      .player-name{font-size:26px}
-      .player-team{font-size:13px}
-      
-      .panel{padding:24px 20px}
-      .panel h2{font-size:20px;margin:0 0 20px}
-      
-      .field{margin:14px 0}
-      .label{font-size:13px;margin:0 0 6px}
-      .input, .select, .textarea{height:48px;font-size:16px;padding:0 12px}
-      .textarea{height:100px;padding:12px}
-      
-      .cta{padding:14px 24px;font-size:16px;min-height:48px}
-      
-      .toast{bottom:16px;right:16px;left:16px;max-width:none}
-      
-      .dropdown{min-width:180px;right:0;left:auto}
-      
-      .modal{padding:24px}
-      .modal h3{font-size:18px}
+
+      .head-card {
+        margin-bottom: 0;
+      }
     }
 
-    /* Small mobile breakpoint */
-    @media (max-width:480px){
-      .xp-hero{padding:20px 12px}
-      .xp-wrap{padding-top:16px;gap:16px}
-      
-      .head-card{padding:16px}
-      .avatar{width:80px;height:80px}
-      .player-name{font-size:22px}
-      
-      .panel{padding:20px 16px}
-      .panel h2{font-size:18px}
-      
-      .field{margin:12px 0}
-    }
+    @media (max-width: 800px) {
+      .site-header .bar {
+        padding: 12px 16px;
+      }
 
-    /* Ensure touch targets */
-    @media (max-width:800px){
-      .back{min-height:44px;display:inline-flex}
+      .xp-hero {
+        padding: 24px 16px;
+        min-height: auto;
+      }
+
+      .xp-wrap {
+        padding-top: 20px;
+        gap: 20px;
+      }
+
+      .head-card {
+        padding: 20px;
+      }
+
+      .avatar {
+        width: 100px;
+        height: 100px;
+      }
+
+      .player-name {
+        font-size: 26px;
+      }
+
+      .panel {
+        padding: 24px 20px;
+      }
+
+      .panel h2 {
+        font-size: 20px;
+      }
+
+      .field {
+        margin: 14px 0;
+      }
+
+      .label {
+        font-size: 13px;
+        margin: 0 0 6px;
+      }
+
+      .input,
+      .select,
+      .textarea {
+        height: 48px;
+        font-size: 16px;
+        padding: 0 12px;
+      }
+
+      .textarea {
+        height: 100px;
+        padding: 12px;
+      }
+
+      .cta {
+        padding: 14px 24px;
+        font-size: 16px;
+        min-height: 48px;
+      }
+
+      .toast {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        max-width: none;
+      }
     }
   </style>
 </head>
@@ -244,36 +493,37 @@
 
 <header class="site-header">
   <div class="bar">
-    <div class="brand">
-      <img src="/images/Daps-2 Copy.png" alt="Daps" class="logo" onerror="this.style.display='none'">
+    <div class="brand" onclick="window.location.href='/index.html'">
+      <img class="logo" src="./images/Daps-2 Copy.png" alt="Daps Bounty logo">
       <span class="beta">BETA</span>
     </div>
-    
-    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    
     <nav id="nav">
-      <a href="/index.html">Browse</a>
+      <a href="/index.html" id="nav-home">Home</a>
+      <!--a href="/playepage.html" id="nav-experience">Select Experience</a-->
+      <a href="/news.html" id="nav-press">Press</a>
+      <a href="/faq.html" id="nav-faq">FAQ</a>
       <a href="/my-offers.html">My Offers</a>
     </nav>
-    
     <div class="userbar">
-      <div class="user-badge" id="userBadge">
-        <span id="userInitials">?</span>
+      <div id="userProfile">
+        <div class="user-badge" id="userBadge" title="Profile">
+          <span id="userInitials">U</span>
+        </div>
         <div class="dropdown" id="userDropdown">
           <div class="dropdown-header">
-            <div class="dropdown-name" id="dropdownName">User</div>
-            <div class="dropdown-email" id="dropdownEmail">user@example.com</div>
+            <p class="dropdown-name" id="dropdownName"></p>
+            <p class="dropdown-email" id="dropdownEmail"></p>
           </div>
-          <button class="dropdown-item" onclick="window.location.href='/my-offers.html'">My Offers</button>
+          <a href="/my-offers.html" class="dropdown-item">My Offers</a>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item" onclick="localStorage.removeItem('jwt'); window.location.href='/user'">Sign Out</button>
+          <button class="dropdown-item" id="logoutBtn" type="button">Log out</button>
         </div>
       </div>
     </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Open navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
@@ -281,453 +531,531 @@
 
 <section class="xp-hero">
   <div class="xp-wrap">
+    <!-- Left: Player card -->
     <div class="head-card">
-      <a href="/index.html" class="back">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <a class="back" href="/index.html" aria-label="Back to athletes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        Back
+        Back to athletes
       </a>
+
       <div class="avatar">
-        <img id="athleteImage" src="/images/Daps-2 Copy.png" alt="Athlete" />
+        <img id="athleteImage" src="/images/Daps-2 Copy.png" alt="Athlete">
       </div>
+
       <h1 class="player-name" id="athleteName">Loading...</h1>
-      <p class="player-team" id="athleteTeam">Team • League</p>
+      <p class="player-team" id="athleteTeam">-</p>
     </div>
 
+    <!-- Right: Form panel -->
     <div class="panel">
-      <h2>Submit an offer</h2>
+      <h2>SELECT AN EXPERIENCE</h2>
+
       <form id="offerForm">
         <div class="field">
-          <label class="label">Your Name</label>
-          <input type="text" class="input" id="customerName" name="customerName" required placeholder="John Doe" />
-        </div>
-        
-        <div class="field">
-          <label class="label">Your Email</label>
-          <input type="email" class="input" id="customerEmail" name="customerEmail" required placeholder="john@example.com" />
-        </div>
-        
-        <div class="field">
-          <label class="label">Your Phone (optional)</label>
-          <input type="tel" class="input" id="customerPhone" name="customerPhone" placeholder="(555) 123-4567" />
+          <label class="label" for="customerName">Your Name</label>
+          <input id="customerName" name="customerName" class="input" type="text" required>
         </div>
 
         <div class="field">
-          <label class="label">Select Game</label>
-          <div id="gameSelectContainer">
-            <div class="loading-games">Loading games...</div>
-          </div>
+          <label class="label" for="customerEmail">Your Email</label>
+          <input id="customerEmail" name="customerEmail" class="input" type="email" required>
         </div>
 
         <div class="field">
-          <label class="label">Experience Type</label>
-          <select class="select" name="expType" required>
-            <option value="">Select experience type</option>
-            <option value="Meet & Greet">Meet & Greet</option>
-            <option value="VIP Seats">VIP Seats</option>
-            <option value="Signed Merch">Signed Merchandise</option>
-            <option value="Pre-game Access">Pre-game Access</option>
-            <option value="Other">Other</option>
+          <label class="label" for="customerPhone">Your Phone</label>
+          <input id="customerPhone" name="customerPhone" class="input" type="tel" placeholder="+1 (555) 123-4567">
+        </div>
+
+        <!-- NEW: season + game dropdowns -->
+
+
+        <div class="field">
+          <label class="label" for="gameSelect">Which game are you attending?</label>
+          <select id="gameSelect" class="select" disabled>
+            <option value="">Select a season first…</option>
+          </select>
+        </div>
+        <!-- /NEW -->
+
+
+
+        <div class="field">
+          <label class="label" for="expDesc">Describe your experience</label>
+          <textarea id="expDesc" name="expDesc" class="textarea"
+                    placeholder="Ex: Meet &amp; greet, courtside warm-ups, etc. (optional)"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="label" for="expType">Experience Type</label>
+          <select id="expType" name="expType" class="select">
+            <option value="Meet & Greet">Meet &amp; Greet</option>
+            <option value="Warm-ups">Warm-ups</option>
+            <option value="Autograph">Autograph</option>
+            <option value="Other" selected>Other</option>
           </select>
         </div>
 
         <div class="field">
-          <label class="label">Experience Details (optional)</label>
-          <textarea class="textarea" name="expDesc" placeholder="Describe what you're looking for..."></textarea>
+          <label class="label" for="offered">Offer Amount (USD)</label>
+          <input id="offered" name="offered" class="input" type="number" min="0" step="1" placeholder="100">
         </div>
 
-        <div class="field">
-          <label class="label">Your Offer ($)</label>
-          <input type="number" class="input" name="offered" min="1" required placeholder="250" />
-        </div>
 
-        <div class="field">
-          <label class="label">Payment Method</label>
-          <select class="select" name="paymentMethod" required>
-            <option value="card">Credit/Debit Card</option>
-            <option value="paypal">PayPal</option>
-            <option value="venmo">Venmo</option>
-            <option value="crypto">Cryptocurrency</option>
-          </select>
-        </div>
 
-        <div class="field">
-          <label class="label">Last 4 Digits of Payment (optional)</label>
-          <input type="text" class="input" name="paymentLast4" maxlength="4" placeholder="1234" />
-        </div>
 
-        <button type="submit" class="cta">Submit offer</button>
+
+        <button class="cta" type="submit">Submit offer</button>
       </form>
     </div>
   </div>
 </section>
 
-<!-- Alert Modal -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal">
-    <h3>Account Required</h3>
-    <p>You need to create an account or sign in before you can submit an offer. Creating an account is quick and free!</p>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-secondary" onclick="closeAuthModal()">Cancel</button>
-      <button class="modal-btn modal-btn-primary" onclick="goToSignIn()">Sign In / Sign Up</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-(function(){
-  const API = 'http://localhost:5175/api';
-  const params = new URLSearchParams(window.location.search);
-  
-  // ✅ FIX: Accept BOTH athleteId and athleteid parameters
-  const athleteId = params.get('athleteId') || params.get('athleteid') || params.get('id');
-  
-  console.log('[playepage] URL params:', window.location.search);
-  console.log('[playepage] Extracted athleteId:', athleteId);
-  
-  let gamesData = [];
-  let selectedGameId = null;
-  
-  if(!athleteId){
-    alert('No athlete ID provided');
-    window.location.href = '/index.html';
-    return;
-  }
-  
-  function getToken(){
-    return localStorage.getItem('jwt');
-  }
-  
-  function showToast(msg){
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-  
-  // Modal functions
-  function showAuthModal(){
-    document.getElementById('authModal').classList.add('show');
-  }
-  
-  function closeAuthModal(){
-    document.getElementById('authModal').classList.remove('show');
-  }
-  
-  function goToSignIn(){
-    closeAuthModal();
-    window.location.href = '/user';
-  }
-  
-  // Make functions global
-  window.closeAuthModal = closeAuthModal;
-  window.goToSignIn = goToSignIn;
-  
-  // User dropdown
-  document.getElementById('userBadge').addEventListener('click', function(e){
-    e.stopPropagation();
-    document.getElementById('userDropdown').classList.toggle('open');
-  });
-  
-  document.addEventListener('click', function(){
-    document.getElementById('userDropdown').classList.remove('open');
-  });
-  
-  // Format date
-  function formatDate(dateStr){
-    const d = new Date(dateStr);
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${month}/${day}`;
-  }
-  
-  // Load games
-  async function loadGames(){
-    try{
-      console.log('[playepage] Loading games for athleteId:', athleteId);
-      const res = await fetch(`${API}/games?athleteId=${athleteId}`);
-      const games = await res.json();
+  (function () {
+    const API = 'http://localhost:5175';
+
+    // ===== Load games from database =====
+    let currentAthleteData = null;
+
+    async function loadGamesFromDatabase() {
+      console.log('[PLAYEPAGE:GAMES] 📥 Loading games from database...');
       
-      console.log('[playepage] Received games:', games);
-      
-      if(!games || !games.length){
-        const container = document.getElementById('gameSelectContainer');
-        container.innerHTML = '<div class="no-games">No games available for this athlete yet. Check back soon!</div>';
+      if (!currentAthleteData || !currentAthleteData.id) {
+        console.warn('[PLAYEPAGE:GAMES] ⚠️ No athlete data available yet');
         return;
       }
       
-      gamesData = games;
-      
-      // Separate upcoming and past games
-      const now = new Date();
-      const upcomingGames = games.filter(g => new Date(g.date) >= now);
-      const pastGames = games.filter(g => new Date(g.date) < now);
-      
-      // Create select element
-      const select = document.createElement('select');
-      select.className = 'select';
-      select.required = true;
-      select.name = 'gameId';
-      
-      // Add default option
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = 'Select a game';
-      select.appendChild(defaultOption);
-      
-      // Add upcoming games
-      if (upcomingGames.length > 0) {
-        const upcomingGroup = document.createElement('optgroup');
-        upcomingGroup.label = '📅 Upcoming Games';
+      try {
+        const url = `${API}/api/games?athleteId=${currentAthleteData.id}`;
+        console.log('[PLAYEPAGE:GAMES] 🔍 Fetching from:', url);
         
-        upcomingGames.forEach(game => {
-          const option = document.createElement('option');
-          option.value = game.id;
-          option.className = 'game-option-upcoming';
-          const dateStr = formatDate(game.date);
-          option.textContent = `${dateStr} vs ${game.opponent} @ ${game.venue}`;
-          upcomingGroup.appendChild(option);
-        });
+        const sel = document.getElementById('gameSelect');
+        sel.disabled = true;
+        sel.innerHTML = `<option>Loading games...</option>`;
         
-        select.appendChild(upcomingGroup);
+        const res = await fetch(url);
+        console.log('[PLAYEPAGE:GAMES] Response status:', res.status);
+        
+        if (!res.ok) {
+          throw new Error(`Games API returned ${res.status}`);
+        }
+        
+        const games = await res.json();
+        console.log('[PLAYEPAGE:GAMES] ✅ Received', games.length, 'games');
+        
+        if (games.length > 0) {
+          console.log('[PLAYEPAGE:GAMES] Sample games (first 3):');
+          games.slice(0, 3).forEach((g, i) => {
+            console.log(`[PLAYEPAGE:GAMES]   ${i + 1}. ${g.date} vs ${g.opponent} at ${g.venue}`);
+          });
+        }
+        
+        renderGamesDropdownFromDB(games);
+      } catch (e) {
+        console.error('[PLAYEPAGE:GAMES] ❌ Failed to load games:', e);
+        console.error('[PLAYEPAGE:GAMES] Error details:', e.message);
+        const sel = document.getElementById('gameSelect');
+        sel.disabled = true;
+        sel.innerHTML = `<option value="">Failed to load games</option>`;
+      }
+    }
+
+    function renderGamesDropdownFromDB(games) {
+      console.log('[PLAYEPAGE:GAMES] 🎮 Rendering games dropdown...');
+      const sel = document.getElementById('gameSelect');
+      if (!sel) {
+        console.error('[PLAYEPAGE:GAMES] ❌ gameSelect element not found');
+        return;
       }
       
-      // Add past games
-      if (pastGames.length > 0) {
-        const pastGroup = document.createElement('optgroup');
-        pastGroup.label = '🕐 Past Games';
-        
-        pastGames.reverse().forEach(game => {
-          const option = document.createElement('option');
-          option.value = game.id;
-          option.className = 'game-option-past';
-          const dateStr = formatDate(game.date);
-          option.textContent = `${dateStr} vs ${game.opponent} @ ${game.venue}`;
-          pastGroup.appendChild(option);
-        });
-        
-        select.appendChild(pastGroup);
+      if (!Array.isArray(games) || games.length === 0) {
+        console.warn('[PLAYEPAGE:GAMES] ⚠️ No games to display');
+        sel.innerHTML = `<option value="">No games available</option>`;
+        sel.disabled = true;
+        return;
       }
       
-      // Handle selection
-      select.addEventListener('change', function() {
-        selectedGameId = this.value;
-        console.log('[playepage] Selected game ID:', selectedGameId);
-      });
-      
-      const container = document.getElementById('gameSelectContainer');
-      container.innerHTML = '';
-      container.appendChild(select);
-      
-      console.log(`[playepage] Loaded ${games.length} games (${upcomingGames.length} upcoming, ${pastGames.length} past)`);
-      
-    } catch (err) {
-      console.error('[playepage] Failed to load games:', err);
-      const container = document.getElementById('gameSelectContainer');
-      container.innerHTML = '<div class="no-games">Failed to load games. Please try again.</div>';
-    }
-  }
-  
-  // Check auth and load user
-  async function checkAuth(){
-    const token = getToken();
-    if(!token){
-      // Don't redirect immediately, allow them to see the page
-      // They'll get an alert when they try to submit
-      return null;
-    }
-    
-    try{
-      const res = await fetch(`${API}/users/me`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if(res.ok){
-        const user = await res.json();
-        // Update UI
-        const initials = (user.firstName[0] + user.lastName[0]).toUpperCase();
-        document.getElementById('userInitials').textContent = initials;
-        document.getElementById('dropdownName').textContent = `${user.firstName} ${user.lastName}`;
-        document.getElementById('dropdownEmail').textContent = user.email;
-        
-        // Pre-fill form
-        document.getElementById('customerName').value = `${user.firstName} ${user.lastName}`;
-        document.getElementById('customerEmail').value = user.email;
-        
-        return user;
-      } else {
-        localStorage.removeItem('jwt');
-        return null;
-      }
-    } catch(err){
-      console.error('[playepage] Auth check failed:', err);
-      return null;
-    }
-  }
-  
-  // Load athlete details
-  async function loadAthlete(){
-    try{
-      console.log('[playepage] Loading athlete details for:', athleteId);
-      const res = await fetch(`${API}/users/athletes`);
-      const athletes = await res.json();
-      
-      console.log('[playepage] All athletes:', athletes);
-      
-      // Try to find by id OR slug
-      const athlete = athletes.find(a => 
-        a.id === athleteId || 
-        a.slug === athleteId ||
-        (a.slug && a.slug.toLowerCase() === athleteId.toLowerCase())
+      // Sort games by date
+      const sortedGames = [...games].sort((a, b) => 
+        new Date(a.date) - new Date(b.date)
       );
       
-      console.log('[playepage] Found athlete:', athlete);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
       
-      if(athlete){
-        document.getElementById('athleteName').textContent = athlete.name;
-        document.getElementById('athleteTeam').textContent = `${athlete.team} • ${athlete.league}`;
-        document.getElementById('athleteImage').src = athlete.imageUrl || '/images/Daps-2 Copy.png';
-        document.getElementById('athleteImage').onerror = function(){ this.src = '/images/Daps-2 Copy.png'; };
+      const opts = sortedGames.map(g => {
+        const gameDate = new Date(g.date);
+        const isPast = gameDate < today;
         
-        // Load games after athlete is loaded
-        await loadGames();
-      } else {
-        showToast('Athlete not found');
-        console.error('[playepage] Could not find athlete with id:', athleteId);
-        setTimeout(() => window.location.href = '/index.html', 2000);
-      }
-    } catch(err){
-      console.error('[playepage] Failed to load athlete:', err);
-      showToast('Failed to load athlete');
-    }
-  }
-  
-  // Handle form submission
-  document.getElementById('offerForm').addEventListener('submit', async function(e){
-    e.preventDefault();
-    
-    const token = getToken();
-    if(!token){
-      // Show modal instead of just redirecting
-      showAuthModal();
-      return;
-    }
-    
-    if(!selectedGameId){
-      showToast('Please select a game');
-      return;
-    }
-    
-    // Find the selected game details
-    const selectedGame = gamesData.find(g => g.id === selectedGameId);
-    if(!selectedGame){
-      showToast('Selected game not found');
-      return;
-    }
-    
-    const formData = new FormData(e.target);
-    
-    // Create game description from selected game
-    const gameDesc = `${formatDate(selectedGame.date)} vs ${selectedGame.opponent} @ ${selectedGame.venue}`;
-    
-    const data = {
-      athleteId: athleteId,
-      gameId: selectedGameId,
-      customerName: formData.get('customerName'),
-      customerEmail: formData.get('customerEmail'),
-      customerPhone: formData.get('customerPhone') || null,
-      gameDesc: gameDesc,
-      expDesc: formData.get('expDesc') || null,
-      expType: formData.get('expType') || 'Other',
-      offered: parseInt(formData.get('offered')) || 0,
-      paymentMethod: formData.get('paymentMethod') || 'card',
-      paymentLast4: formData.get('paymentLast4') || null
-    };
-    
-    try{
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
-      
-      const res = await fetch(`${API}/users/offers`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
+        const dateStr = gameDate.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+        
+        const description = `${dateStr} vs ${g.opponent} - ${g.venue}`;
+        const displayText = isPast ? `${description} (Past)` : description;
+        
+        return `<option value="${g.id}" ${isPast ? 'disabled' : ''} data-description="${description}">${displayText}</option>`;
       });
       
-      if(res.ok){
-        showToast('Offer submitted successfully!');
-        setTimeout(() => window.location.href = '/my-offers.html', 1500);
-      } else {
-        const error = await res.json();
+      sel.innerHTML = `<option value="">Select a game…</option>` + opts.join('');
+      sel.disabled = false;
+      
+      console.log('[PLAYEPAGE:GAMES] ✅ Dropdown populated with', sortedGames.length, 'games');
+    }
+
+    function wireGameSelectToText() {
+      console.log('[PLAYEPAGE:GAMES] 🔗 Wiring game select to description field...');
+      const gameSel = document.getElementById('gameSelect');
+      const gameDesc = document.getElementById('gameDesc');
+      if (!gameSel || !gameDesc) {
+        console.error('[PLAYEPAGE:GAMES] ❌ Missing gameSelect or gameDesc element');
+        return;
+      }
+      
+      gameSel.addEventListener('change', () => {
+        const opt = gameSel.options[gameSel.selectedIndex];
+        console.log('[PLAYEPAGE:GAMES] Game selected:', opt.value);
         
-        // Check if it's an authentication error
-        if (res.status === 401 || res.status === 403) {
-          showAuthModal();
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit offer';
+        if (!opt || !opt.value) {
+          gameDesc.value = '';
+          return;
+        }
+        
+        const description = opt.getAttribute('data-description') || opt.textContent;
+        console.log('[PLAYEPAGE:GAMES] Setting game description:', description);
+        gameDesc.value = description;
+      });
+      
+      console.log('[PLAYEPAGE:GAMES] ✅ Game select wired successfully');
+    }
+
+    function initGamesUI() {
+      console.log('[PLAYEPAGE:GAMES] 🎮 Initializing games UI...');
+      wireGameSelectToText();
+      // Load games will be called after athlete is loaded
+    }
+
+    function getToken() { return localStorage.getItem('jwt') || ''; }
+
+    function logout() {
+      localStorage.removeItem('jwt');
+      window.location.href = '/user';
+    }
+    window.logout = logout;
+
+    function toggleDropdown() {
+      document.getElementById('userDropdown').classList.toggle('open');
+    }
+    window.toggleDropdown = toggleDropdown;
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    // Mobile nav
+    const nav = document.getElementById('nav');
+    const hamburger = document.getElementById('hamburger');
+    const navOverlay = document.getElementById('navOverlay');
+
+    function toggleNav() {
+      const isOpen = nav.classList.toggle('active');
+      hamburger.classList.toggle('active', isOpen);
+      navOverlay.style.display = isOpen ? 'block' : 'none';
+      requestAnimationFrame(() => { navOverlay.classList.toggle('active', isOpen); });
+      hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    hamburger.addEventListener('click', toggleNav);
+    navOverlay.addEventListener('click', toggleNav);
+
+    // Read ?athleteId= from URL
+    const params = new URLSearchParams(window.location.search);
+    const athleteId = params.get('athleteId') || '';
+    
+    console.log('═══════════════════════════════════════════════');
+    console.log('[PLAYEPAGE] Page loaded');
+    console.log('[PLAYEPAGE] Current URL:', window.location.href);
+    console.log('[PLAYEPAGE] Search params:', window.location.search);
+    console.log('[PLAYEPAGE] Extracted athleteId:', athleteId);
+    console.log('[PLAYEPAGE] athleteId type:', typeof athleteId);
+    
+    if (!athleteId) {
+      console.error('[PLAYEPAGE] ❌ No athleteId in URL');
+      showToast('No athlete selected');
+      setTimeout(() => window.location.href = '/index.html', 2000);
+    }
+    console.log('═══════════════════════════════════════════════');
+
+    async function checkAuth() {
+      console.log('[PLAYEPAGE:AUTH] 🔐 Checking authentication...');
+      try {
+        const token = getToken();
+        console.log('[PLAYEPAGE:AUTH] JWT token:', token ? 'present (length: ' + token.length + ')' : 'MISSING');
+        
+        if (!token) {
+          console.warn('[PLAYEPAGE:AUTH] ⚠️ No token found - redirecting to login');
+          window.location.href = '/user';
+          return null;
+        }
+        
+        console.log('[PLAYEPAGE:AUTH] 📤 Fetching user info from:', `${API}/api/users/me`);
+        const res = await fetch(`${API}/api/users/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        console.log('[PLAYEPAGE:AUTH] Response status:', res.status);
+        
+        if (res.ok) {
+          const me = await res.json();
+          console.log('[PLAYEPAGE:AUTH] ✅ User authenticated:', me.email);
+          
+          const firstName = me.firstName || me.name || 'U';
+          const lastName = me.lastName || '';
+          const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
+          
+          document.getElementById('userInitials').textContent = initials;
+          document.getElementById('dropdownName').textContent = `${firstName} ${lastName}`.trim() || 'User';
+          document.getElementById('dropdownEmail').textContent = me.email || '';
+          
+          return me;
         } else {
-          showToast(error.error || 'Failed to submit offer');
+          console.error('[PLAYEPAGE:AUTH] ❌ Auth failed with status:', res.status);
+          const errorText = await res.text();
+          console.error('[PLAYEPAGE:AUTH] Error response:', errorText);
+          window.location.href = '/user';
+          return null;
+        }
+      } catch (err) {
+        console.error('[PLAYEPAGE:AUTH] ❌ Auth check failed:', err);
+        console.error('[PLAYEPAGE:AUTH] Error details:', err.message);
+        window.location.href = '/user';
+        return null;
+      }
+    }
+
+    // Load athlete details
+    async function loadAthlete() {
+      console.log('[PLAYEPAGE:ATHLETE] 📥 Loading athlete data...');
+      console.log('[PLAYEPAGE:ATHLETE] Looking for athleteId:', athleteId);
+      
+      try {
+        const url = `${API}/api/athletes`;
+        console.log('[PLAYEPAGE:ATHLETE] 🔍 Fetching from:', url);
+        
+        const res = await fetch(url);
+        console.log('[PLAYEPAGE:ATHLETE] Response status:', res.status);
+        
+        if (!res.ok) {
+          throw new Error(`API returned ${res.status}`);
+        }
+        
+        const athletes = await res.json();
+        console.log('[PLAYEPAGE:ATHLETE] ✅ Received', athletes.length, 'athletes');
+        
+        // Find athlete by slug OR id
+        const athlete = athletes.find(a => 
+          a.slug === athleteId || 
+          a.id === athleteId || 
+          String(a.id) === athleteId
+        );
+        
+        console.log('[PLAYEPAGE:ATHLETE] Search result:', athlete ? 'FOUND' : 'NOT FOUND');
+        
+        if (athlete) {
+          console.log('[PLAYEPAGE:ATHLETE] ✅ Athlete found:', athlete.name);
+          console.log('[PLAYEPAGE:ATHLETE] Athlete data:', {
+            id: athlete.id,
+            slug: athlete.slug,
+            name: athlete.name,
+            team: athlete.team,
+            league: athlete.league
+          });
+          
+          // Store athlete data globally
+          currentAthleteData = athlete;
+          
+          document.getElementById('athleteName').textContent = athlete.name;
+          document.getElementById('athleteTeam').textContent = `${athlete.team} • ${athlete.league}`;
+          const img = document.getElementById('athleteImage');
+          img.src = athlete.imageUrl || '/images/Daps-2 Copy.png';
+          img.onerror = function () { 
+            console.warn('[PLAYEPAGE:ATHLETE] ⚠️ Image failed to load, using fallback');
+            this.src = '/images/Daps-2 Copy.png'; 
+          };
+          
+          // Now load games for this athlete
+          console.log('[PLAYEPAGE:ATHLETE] Triggering games load...');
+          await loadGamesFromDatabase();
+          
+        } else {
+          console.error('[PLAYEPAGE:ATHLETE] ❌ Athlete not found with id:', athleteId);
+          console.error('[PLAYEPAGE:ATHLETE] Available athlete IDs:', athletes.map(a => ({ id: a.id, slug: a.slug })));
+          showToast('Athlete not found');
+          setTimeout(() => window.location.href = '/index.html', 2000);
+        }
+      } catch (err) {
+        console.error('[PLAYEPAGE:ATHLETE] ❌ Failed to load athlete:', err);
+        console.error('[PLAYEPAGE:ATHLETE] Error details:', err.message);
+        showToast('Failed to load athlete');
+      }
+    }
+
+    // Handle form submission
+    document.getElementById('offerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      console.log('[PLAYEPAGE:SUBMIT] 📤 Form submitted');
+
+      const token = getToken();
+      console.log('[PLAYEPAGE:SUBMIT] JWT token:', token ? 'present' : 'MISSING');
+      
+      if (!token) {
+        console.error('[PLAYEPAGE:SUBMIT] ❌ No token - user not logged in');
+        showToast('Please sign in first');
+        window.location.href = '/user';
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      const data = {
+        athleteId: athleteId,
+        customerName: formData.get('customerName'),
+        customerEmail: formData.get('customerEmail'),
+        customerPhone: formData.get('customerPhone') || null,
+        gameDesc: formData.get('gameDesc'),
+        expDesc: formData.get('expDesc') || null,
+        expType: formData.get('expType') || 'Other',
+        offered: parseInt(formData.get('offered'), 10) || 0,
+        paymentMethod: formData.get('paymentMethod') || 'card',
+        paymentLast4: formData.get('paymentLast4') || null,
+        selectedGame: formData.get('selectedGame') || null
+      };
+
+      console.log('═══════════════════════════════════════════════════════════════');
+      console.log('[PLAYEPAGE:SUBMIT] 📝 Form submission started');
+      console.log('[PLAYEPAGE:SUBMIT] Form data prepared:', JSON.stringify(data, null, 2));
+      console.log('[PLAYEPAGE:SUBMIT] Token present:', !!token);
+      console.log('[PLAYEPAGE:SUBMIT] Token length:', token ? token.length : 0);
+      console.log('═══════════════════════════════════════════════════════════════');
+
+      try {
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        // FIXED: Changed from /api/user/offers to /api/users/offers (plural)
+        const url = `${API}/api/users/offers`;
+        console.log('[PLAYEPAGE:SUBMIT] 📤 Sending POST request to:', url);
+        console.log('[PLAYEPAGE:SUBMIT] Request method: POST');
+        console.log('[PLAYEPAGE:SUBMIT] Request headers:', {
+          'Content-Type': 'application/json',
+          'Authorization': token ? 'Bearer [PRESENT]' : '[MISSING]'
+        });
+        console.log('[PLAYEPAGE:SUBMIT] Request body:', JSON.stringify(data, null, 2));
+        
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        console.log('═══════════════════════════════════════════════════════════════');
+        console.log('[PLAYEPAGE:SUBMIT] ✨ Response received');
+        console.log('[PLAYEPAGE:SUBMIT] Response status:', res.status);
+        console.log('[PLAYEPAGE:SUBMIT] Response status text:', res.statusText);
+        console.log('[PLAYEPAGE:SUBMIT] Response headers:', Object.fromEntries(res.headers.entries()));
+        
+        const responseText = await res.text();
+        console.log('[PLAYEPAGE:SUBMIT] Response body (raw):', responseText);
+        
+        let responseData;
+        try {
+          responseData = JSON.parse(responseText);
+          console.log('[PLAYEPAGE:SUBMIT] Response body (parsed):', JSON.stringify(responseData, null, 2));
+        } catch (parseErr) {
+          console.warn('[PLAYEPAGE:SUBMIT] ⚠️ Could not parse response as JSON');
+          responseData = { rawText: responseText };
+        }
+        console.log('═══════════════════════════════════════════════════════════════');
+
+        if (res.ok) {
+          console.log('[PLAYEPAGE:SUBMIT] ✅ Offer submitted successfully!');
+          console.log('[PLAYEPAGE:SUBMIT] Offer ID:', responseData?.id);
+          console.log('[PLAYEPAGE:SUBMIT] Redirecting to My Offers page in 800ms...');
+          showToast('Offer submitted!');
+          setTimeout(() => {
+            console.log('[PLAYEPAGE:SUBMIT] 🔄 Redirecting now...');
+            window.location.href = '/my-offers.html';
+          }, 800);
+        } else {
+          console.error('═══════════════════════════════════════════════════════════════');
+          console.error('[PLAYEPAGE:SUBMIT] ❌ Submission failed');
+          console.error('[PLAYEPAGE:SUBMIT] Status code:', res.status);
+          console.error('[PLAYEPAGE:SUBMIT] Status text:', res.statusText);
+          
+          let err;
+          try {
+            err = responseData;
+          } catch {
+            err = { message: 'Request failed', status: res.status };
+          }
+          
+          console.error('[PLAYEPAGE:SUBMIT] Error details:', JSON.stringify(err, null, 2));
+          console.error('═══════════════════════════════════════════════════════════════');
+          
+          showToast(err.message || err.error || `Failed to submit (${res.status})`);
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit offer';
         }
-      }
-    } catch(err){
-      console.error('[playepage] Failed to submit offer:', err);
-      showToast('Network error. Please try again.');
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit offer';
-    }
-  });
-  
-  // Hamburger menu
-  const hamburger = document.getElementById('hamburger');
-  const nav = document.getElementById('nav');
-  const navOverlay = document.getElementById('navOverlay');
-  
-  function toggleNav(){
-    const isActive = nav.classList.toggle('active');
-    hamburger.classList.toggle('active');
-    navOverlay.classList.toggle('active');
-    hamburger.setAttribute('aria-expanded', isActive);
-    if(isActive){
-      navOverlay.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-    } else {
-      setTimeout(() => {
-        navOverlay.style.display = 'none';
-      }, 300);
-      document.body.style.overflow = '';
-    }
-  }
-  
-  if(hamburger){
-    hamburger.addEventListener('click', toggleNav);
-  }
-  
-  if(navOverlay){
-    navOverlay.addEventListener('click', toggleNav);
-  }
-  
-  // Close nav when clicking a link
-  document.querySelectorAll('nav a').forEach(link => {
-    link.addEventListener('click', () => {
-      if(nav.classList.contains('active')){
-        toggleNav();
+      } catch (err) {
+        console.error('═══════════════════════════════════════════════════════════════');
+        console.error('[PLAYEPAGE:SUBMIT] ❌ Network error or exception occurred');
+        console.error('[PLAYEPAGE:SUBMIT] Error name:', err.name);
+        console.error('[PLAYEPAGE:SUBMIT] Error message:', err.message);
+        console.error('[PLAYEPAGE:SUBMIT] Error stack:', err.stack);
+        console.error('═══════════════════════════════════════════════════════════════');
+        showToast('Network error');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit offer';
       }
     });
-  });
-  
-  // Initialize
-  checkAuth().then(() => loadAthlete());
-})();
+
+    // Profile dropdown
+    document.getElementById('userBadge').addEventListener('click', () => {
+      document.getElementById('userDropdown').classList.toggle('open');
+    });
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    // Close nav when clicking a link
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (nav.classList.contains('active')) {
+          toggleNav();
+        }
+      });
+    });
+
+    // Initialize
+    console.log('[PLAYEPAGE] 🚀 Starting initialization...');
+    initGamesUI();
+    checkAuth().then(() => {
+      console.log('[PLAYEPAGE] Auth complete, loading athlete...');
+      loadAthlete();
+    });
+  })();
 </script>
 </body>
 </html>

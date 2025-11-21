@@ -13,6 +13,7 @@ import { requireAdmin } from './auth.js';
 
 import usersRouter from './routes/users.js';
 import offersRouter from './routes/offers.js';
+import gamesRouter from './routes/games.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 5175;
@@ -211,6 +212,395 @@ async function populateGamesForAthlete(athlete) {
   }
 }
 
+// ============================================================================
+// ESPN NBA ALL PLAYERS API ENDPOINT
+// ============================================================================
+
+// Cache for ESPN players (refreshed every 24 hours)
+let espnPlayersCache = null;
+let espnPlayersCacheTime = null;
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
+ * Fetch all NBA players from ESPN API
+ * This endpoint aggregates rosters from all 30 NBA teams
+ */
+app.get('/api/nba/all-players', async (req, res) => {
+  console.log('═══════════════════════════════════════════════════════════════');
+  console.log('[nba:all-players] GET /api/nba/all-players - Fetch all NBA players');
+  console.log('[nba:all-players] Timestamp:', new Date().toISOString());
+  
+  try {
+    // Check cache first
+    const now = Date.now();
+    if (espnPlayersCache && espnPlayersCacheTime && (now - espnPlayersCacheTime < CACHE_DURATION)) {
+      console.log('[nba:all-players] ✅ Returning cached data');
+      console.log('[nba:all-players] Cache age:', Math.round((now - espnPlayersCacheTime) / 1000 / 60), 'minutes');
+      console.log('[nba:all-players] Players in cache:', espnPlayersCache.length);
+      console.log('═══════════════════════════════════════════════════════════════');
+      return res.json({ 
+        players: espnPlayersCache, 
+        cached: true,
+        cacheAge: now - espnPlayersCacheTime
+      });
+    }
+
+    console.log('[nba:all-players] 🔄 Cache miss or expired, fetching from ESPN...');
+    console.log('[nba:all-players] Fetching rosters from 30 NBA teams...');
+    
+    const allPlayers = [];
+    let successCount = 0;
+    let failCount = 0;
+
+    // Fetch rosters for all 30 teams
+    for (const [teamName, teamId] of Object.entries(ESPN_TEAM_IDS)) {
+      try {
+        console.log(`[nba:all-players] 📥 Fetching roster for ${teamName} (ID: ${teamId})...`);
+        
+        const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/roster`;
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          console.log(`[nba:all-players] ⚠️ Failed to fetch ${teamName}: ${response.status}`);
+          failCount++;
+          continue;
+        }
+
+        const data = await response.json();
+        
+        // Debug: Log the structure we received
+        console.log(`[nba:all-players] 🔍 ${teamName} response keys:`, Object.keys(data));
+        
+        if (!data.athletes || !Array.isArray(data.athletes)) {
+          console.log(`[nba:all-players] ⚠️ No athletes array for ${teamName}`);
+          console.log(`[nba:all-players] Data type:`, typeof data.athletes);
+          failCount++;
+          continue;
+        }
+
+        console.log(`[nba:all-players] 📊 ${teamName} athletes array length:`, data.athletes.length);
+        
+        // Check structure of first athlete if any
+        if (data.athletes.length > 0) {
+          console.log(`[nba:all-players] 🔍 First athlete keys:`, Object.keys(data.athletes[0]));
+          if (data.athletes[0].items) {
+            console.log(`[nba:all-players] Items length:`, data.athletes[0].items.length);
+          }
+        }
+
+        let teamPlayerCount = 0;
+
+        // Process each player - handle multiple possible structures
+        data.athletes.forEach((athlete, athleteIdx) => {
+          // Structure 1: athlete.items is an array of players
+          if (athlete.items && Array.isArray(athlete.items)) {
+            athlete.items.forEach(player => {
+              if (!player || !player.id || !player.fullName) return;
+              
+              // Create player object
+              const playerData = {
+                espnId: player.id,
+                name: player.fullName,
+                displayName: player.displayName || player.fullName,
+                shortName: player.shortName || player.fullName,
+                team: teamName,
+                teamId: teamId,
+                league: 'NBA',
+                position: player.position?.abbreviation || player.position?.name || '',
+                jersey: player.jersey || '',
+                age: player.age || null,
+                height: player.height || '',
+                weight: player.weight || '',
+                imageUrl: player.headshot?.href || player.headshot?.alt || '',
+                slug: (player.fullName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                source: 'espn'
+              };
+              
+              allPlayers.push(playerData);
+              teamPlayerCount++;
+            });
+          }
+          // Structure 2: athlete object IS the player
+          else if (athlete.id && athlete.fullName) {
+            const playerData = {
+              espnId: athlete.id,
+              name: athlete.fullName,
+              displayName: athlete.displayName || athlete.fullName,
+              shortName: athlete.shortName || athlete.fullName,
+              team: teamName,
+              teamId: teamId,
+              league: 'NBA',
+              position: athlete.position?.abbreviation || athlete.position?.name || '',
+              jersey: athlete.jersey || '',
+              age: athlete.age || null,
+              height: athlete.height || '',
+              weight: athlete.weight || '',
+              imageUrl: athlete.headshot?.href || athlete.headshot?.alt || '',
+              slug: (athlete.fullName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+              source: 'espn'
+            };
+            
+            allPlayers.push(playerData);
+            teamPlayerCount++;
+          }
+          // Structure 3: Log unknown structure
+          else {
+            if (athleteIdx === 0) {
+              console.log(`[nba:all-players] ⚠️ Unknown athlete structure for ${teamName}:`, 
+                JSON.stringify(athlete).substring(0, 200));
+            }
+          }
+        });
+
+        if (teamPlayerCount > 0) {
+          successCount++;
+          console.log(`[nba:all-players] ✅ ${teamName}: Added ${teamPlayerCount} players`);
+        } else {
+          failCount++;
+          console.log(`[nba:all-players] ⚠️ ${teamName}: Found 0 players (structure mismatch)`);
+        }
+        
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+      } catch (error) {
+        console.error(`[nba:all-players] ❌ Error fetching ${teamName}:`, error.message);
+        failCount++;
+      }
+    }
+
+    console.log('───────────────────────────────────────────────────────────────');
+    console.log('[nba:all-players] 📊 Fetch Summary:');
+    console.log('[nba:all-players]   - Teams fetched successfully:', successCount);
+    console.log('[nba:all-players]   - Teams failed:', failCount);
+    console.log('[nba:all-players]   - Total players collected:', allPlayers.length);
+    console.log('───────────────────────────────────────────────────────────────');
+
+    // If ESPN failed completely, try balldontlie.io as fallback
+    if (allPlayers.length === 0) {
+      console.log('[nba:all-players] ⚠️ ESPN returned 0 players, trying balldontlie.io API as fallback...');
+      
+      try {
+        // balldontlie.io provides a simple /players endpoint
+        const ballDontLieUrl = 'https://api.balldontlie.io/v1/players?per_page=100';
+        console.log('[nba:all-players] 📥 Fetching from balldontlie.io...');
+        
+        // Fetch multiple pages to get all players
+        for (let page = 1; page <= 5; page++) {
+          const url = `${ballDontLieUrl}&page=${page}`;
+          const response = await fetch(url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0',
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            console.log(`[nba:all-players] ⚠️ balldontlie.io page ${page} failed:`, response.status);
+            continue;
+          }
+          
+          const data = await response.json();
+          
+          if (!data.data || !Array.isArray(data.data)) {
+            console.log('[nba:all-players] ⚠️ Invalid balldontlie.io response structure');
+            break;
+          }
+          
+          console.log(`[nba:all-players] 📊 balldontlie.io page ${page}: ${data.data.length} players`);
+          
+          // Process players
+          data.data.forEach(player => {
+            if (!player || !player.id || !player.first_name || !player.last_name) return;
+            
+            const fullName = `${player.first_name} ${player.last_name}`;
+            const teamName = player.team?.full_name?.split(' ').pop() || 'Free Agent'; // Get team name
+            
+            const playerData = {
+              espnId: `bdl-${player.id}`, // Prefix to indicate source
+              name: fullName,
+              displayName: fullName,
+              shortName: player.last_name,
+              team: teamName,
+              teamId: player.team?.id || 0,
+              league: 'NBA',
+              position: player.position || '',
+              jersey: player.jersey_number || '',
+              age: null,
+              height: player.height || '',
+              weight: player.weight || '',
+              imageUrl: '', // balldontlie doesn't provide images
+              slug: fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+              source: 'balldontlie'
+            };
+            
+            allPlayers.push(playerData);
+          });
+          
+          // If we got less than 100, we're done
+          if (data.data.length < 100) break;
+          
+          // Small delay between pages
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
+        console.log(`[nba:all-players] ✅ Fallback API collected ${allPlayers.length} players`);
+        
+      } catch (error) {
+        console.error('[nba:all-players] ❌ Fallback API also failed:', error.message);
+      }
+    }
+
+    console.log('───────────────────────────────────────────────────────────────');
+    console.log('[nba:all-players] 📊 Final Summary:');
+    console.log('[nba:all-players]   - Total players collected:', allPlayers.length);
+    console.log('───────────────────────────────────────────────────────────────');
+
+    // Remove duplicates (some players might appear in multiple team rosters during trades)
+    const uniquePlayers = Array.from(
+      new Map(allPlayers.map(p => [p.espnId, p])).values()
+    );
+
+    console.log('[nba:all-players] ✅ Unique players after deduplication:', uniquePlayers.length);
+
+    // Update cache
+    espnPlayersCache = uniquePlayers;
+    espnPlayersCacheTime = Date.now();
+
+    console.log('[nba:all-players] 💾 Cache updated successfully');
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('[nba:all-players] ✨ REQUEST COMPLETED SUCCESSFULLY');
+    console.log('═══════════════════════════════════════════════════════════════');
+
+    res.json({ 
+      players: uniquePlayers,
+      cached: false,
+      fetchedAt: new Date().toISOString(),
+      stats: {
+        teamsSuccess: successCount,
+        teamsFailed: failCount,
+        totalPlayers: uniquePlayers.length
+      }
+    });
+
+  } catch (error) {
+    console.error('═══════════════════════════════════════════════════════════════');
+    console.error('[nba:all-players] ❌❌❌ ERROR FETCHING NBA PLAYERS ❌❌❌');
+    console.error('[nba:all-players] Error name:', error.name);
+    console.error('[nba:all-players] Error message:', error.message);
+    console.error('[nba:all-players] Error stack:');
+    console.error(error.stack);
+    console.error('═══════════════════════════════════════════════════════════════');
+    
+    res.status(500).json({ 
+      error: 'Failed to fetch NBA players',
+      message: error.message 
+    });
+  }
+});
+
+/**
+ * Create athlete dynamically from ESPN data
+ * Used when user clicks on an ESPN player not yet in database
+ */
+app.post('/api/athletes/create-from-espn', requireUser, async (req, res) => {
+  console.log('═══════════════════════════════════════════════════════════════');
+  console.log('[athletes:create-espn] POST /api/athletes/create-from-espn');
+  console.log('[athletes:create-espn] User:', req.user.email);
+  console.log('[athletes:create-espn] Request body:', JSON.stringify(req.body, null, 2));
+  
+  try {
+    const { espnId, name, team, imageUrl, position } = req.body;
+
+    if (!espnId || !name || !team) {
+      console.error('[athletes:create-espn] ❌ Missing required fields');
+      return res.status(400).json({ error: 'espnId, name, and team are required' });
+    }
+
+    console.log('[athletes:create-espn] 🔍 Checking if athlete already exists...');
+    
+    // Check if athlete already exists
+    const existing = await prisma.athlete.findFirst({
+      where: {
+        OR: [
+          { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
+          { name: name }
+        ]
+      }
+    });
+
+    if (existing) {
+      console.log('[athletes:create-espn] ✅ Athlete already exists:', existing.name);
+      console.log('[athletes:create-espn] Returning existing athlete ID:', existing.id);
+      console.log('═══════════════════════════════════════════════════════════════');
+      return res.json({ 
+        athlete: existing,
+        alreadyExists: true 
+      });
+    }
+
+    console.log('[athletes:create-espn] 💾 Creating new athlete in database...');
+
+    // Create new athlete
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const athlete = await prisma.athlete.create({
+      data: {
+        slug: slug,
+        name: name,
+        team: team,
+        league: 'NBA',
+        imageUrl: imageUrl || '',
+        active: true,
+        featured: false
+      }
+    });
+
+    console.log('[athletes:create-espn] ✅ Athlete created successfully');
+    console.log('[athletes:create-espn]   - ID:', athlete.id);
+    console.log('[athletes:create-espn]   - Slug:', athlete.slug);
+    console.log('[athletes:create-espn]   - Name:', athlete.name);
+    console.log('[athletes:create-espn]   - Team:', athlete.team);
+
+    // Try to populate games for the athlete
+    console.log('[athletes:create-espn] 🎮 Attempting to populate games...');
+    try {
+      const gamesResult = await populateGamesForAthlete(athlete);
+      if (gamesResult.success) {
+        console.log(`[athletes:create-espn] ✅ Populated ${gamesResult.count} games`);
+      } else {
+        console.log(`[athletes:create-espn] ⚠️ Could not populate games: ${gamesResult.message}`);
+      }
+    } catch (err) {
+      console.error('[athletes:create-espn] ⚠️ Error populating games:', err.message);
+    }
+
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('[athletes:create-espn] ✨ ATHLETE CREATED SUCCESSFULLY');
+    console.log('═══════════════════════════════════════════════════════════════');
+
+    res.json({ 
+      athlete: athlete,
+      alreadyExists: false 
+    });
+
+  } catch (error) {
+    console.error('═══════════════════════════════════════════════════════════════');
+    console.error('[athletes:create-espn] ❌❌❌ ERROR CREATING ATHLETE ❌❌❌');
+    console.error('[athletes:create-espn] Error:', error);
+    console.error('═══════════════════════════════════════════════════════════════');
+    
+    res.status(500).json({ 
+      error: 'Failed to create athlete',
+      message: error.message 
+    });
+  }
+});
+
 /* ==================== API ROUTES ==================== */
 // Shared athletes handler (used by both endpoints)
 async function athletesHandler(req, res) {
@@ -237,139 +627,120 @@ async function athletesHandler(req, res) {
   }
 }
 app.get('/api/athletes', athletesHandler);
-app.get('/api/users/athletes', athletesHandler);
+app.get('/api/public/athletes', athletesHandler);
 
-// Games endpoint - Dynamic ESPN API with smart caching
-app.get('/api/games', async (req, res) => {
+// Get single athlete by slug with games
+app.get('/api/athletes/:slug', async (req, res) => {
   try {
-    const { athleteId } = req.query;
-    console.log('[api] ═══════════════════════════════════════════');
-    console.log('[api] GET /api/games - athleteId:', athleteId);
-    
-    if (!athleteId) {
-      return res.status(400).json({ error: 'athleteId query parameter required' });
-    }
+    const { slug } = req.params;
+    console.log('[api] GET /api/athletes/:slug', { slug });
 
-    // STEP 1: Find athlete by slug OR id
     const athlete = await prisma.athlete.findFirst({
       where: {
         OR: [
-          { id: String(athleteId) },
-          { slug: String(athleteId) }
+          { slug: slug },
+          { id: slug }
+        ]
+      },
+      include: {
+        games: {
+          orderBy: { date: 'asc' }
+        }
+      }
+    });
+
+    if (!athlete) {
+      console.log('[api] Athlete not found:', slug);
+      return res.status(404).json({ error: 'Athlete not found' });
+    }
+
+    console.log(`[api] Found athlete: ${athlete.name} with ${athlete.games.length} games`);
+    res.json(athlete);
+  } catch (error) {
+    console.error('[api] ERROR in /api/athletes/:slug:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Populate games for athlete using ESPN API
+app.post('/api/athletes/:slug/populate-games', requireAdmin, async (req, res) => {
+  try {
+    const { slug } = req.params;
+    console.log('[api] POST /api/athletes/:slug/populate-games', { slug });
+
+    const athlete = await prisma.athlete.findFirst({
+      where: {
+        OR: [
+          { slug: slug },
+          { id: slug }
         ]
       }
     });
 
     if (!athlete) {
-      console.log('[api] ✗ Athlete not found:', athleteId);
+      console.log('[api] Athlete not found:', slug);
       return res.status(404).json({ error: 'Athlete not found' });
     }
 
-    console.log('[api] ✓ Found:', athlete.name, '(' + athlete.team + ')');
-
-    // STEP 2: Check database for games
-    let games = await prisma.game.findMany({
-      where: { athleteId: athlete.id },
-      orderBy: { date: 'asc' },
-      select: {
-        id: true,
-        date: true,
-        opponent: true,
-        venue: true,
-        athleteId: true
-      }
-    });
-
-    console.log(`[api] Database has ${games.length} games`);
-
-    // STEP 3: If less than 70 games, fetch from ESPN (full season is 82)
-    if (games.length < 70) {
-      console.log('[api] Fetching full schedule from ESPN API...');
-      
-      const espnGames = await fetchESPNSchedule(athlete.team);
-
-      if (espnGames.length > 0) {
-        console.log(`[api] ✓ ESPN returned ${espnGames.length} games`);
-        
-        // Clear old games and insert new ones
-        console.log('[api] Clearing old games...');
-        await prisma.game.deleteMany({
-          where: { athleteId: athlete.id }
-        });
-
-        const gameData = espnGames.map(g => ({
-          athleteId: athlete.id,
-          date: g.date,
-          opponent: g.opponent,
-          venue: g.venue
-        }));
-
-        console.log('[api] Inserting', gameData.length, 'new games...');
-        const result = await prisma.game.createMany({
-          data: gameData,
-          skipDuplicates: true
-        });
-
-        console.log(`[api] ✓ Inserted ${result.count} games`);
-
-        // Re-fetch from database
-        games = await prisma.game.findMany({
-          where: { athleteId: athlete.id },
-          orderBy: { date: 'asc' },
-          select: {
-            id: true,
-            date: true,
-            opponent: true,
-            venue: true,
-            athleteId: true
-          }
-        });
-
-        console.log(`[api] ✓ Refreshed: now ${games.length} games in database`);
-      } else {
-        console.log('[api] ⚠️ ESPN returned 0 games');
-      }
+    const result = await populateGamesForAthlete(athlete);
+    
+    if (result.success) {
+      res.json({ 
+        success: true, 
+        message: `Successfully populated ${result.count} games for ${athlete.name}`,
+        count: result.count 
+      });
     } else {
-      console.log('[api] ✓ Using cached games from database');
+      res.status(400).json({ 
+        success: false, 
+        message: result.message,
+        count: 0 
+      });
     }
-
-    console.log('[api] ✓ Returning', games.length, 'games');
-    console.log('[api] ═══════════════════════════════════════════');
-    return res.json(games);
-
   } catch (error) {
-    console.error('[api] ✗ Error in /api/games:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('[api] ERROR in populate-games:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-/* ==================== MOUNTED ROUTERS ==================== */
-// These handle most user & offer routes
+/* ==================== AUTH ROUTES ==================== */
 app.use('/api/users', usersRouter);
 app.use('/api/offers', offersRouter);
+app.use('/api/games', gamesRouter);
 
 /* ==================== EMAIL VERIFICATION ==================== */
-app.get('/api/email/verify', async (req, res) => {
-  const log = (event, obj = {}) => {
-    const ms = Date.now() - t0;
-    console.log(`[verify-email] [${ms}ms] ${event}`, obj);
-  };
+app.get('/verify', async (req, res) => {
+  const { token } = req.query;
   const t0 = Date.now();
-  try {
-    const { token } = req.query;
-    log('start', { token });
 
-    const rec = await prisma.emailVerification.findUnique({ where: { token } });
+  function log(step, data = {}) {
+    console.log(`[verify] ${step}`, { token: token?.slice(0, 8), elapsed: Date.now() - t0, ...data });
+  }
+
+  try {
+    log('start');
+    if (!token) {
+      log('no_token');
+      return res.redirect('/verify.html?status=error&reason=no_token');
+    }
+
+    log('lookup_token');
+    const rec = await prisma.emailVerification.findUnique({
+      where: { token },
+      include: { user: true }
+    });
+
     if (!rec) {
       log('invalid_token', { token });
       return res.redirect('/verify.html?status=error&reason=invalid_token');
     }
-    log('token_found', { userId: rec.userId, expiresAt: rec.expiresAt?.toISOString?.() });
 
-    if (rec.expiresAt && rec.expiresAt.getTime() < Date.now()) {
-      log('expired_token', { token, expiresAt: rec.expiresAt.toISOString() });
+    if (rec.expiresAt < new Date()) {
+      log('expired', { expiresAt: rec.expiresAt });
       return res.redirect('/verify.html?status=error&reason=expired');
     }
+
+    log('valid_token', { userId: rec.userId, userEmail: rec.user.email });
 
     let updated = false;
     try {
@@ -378,7 +749,7 @@ app.get('/api/email/verify', async (req, res) => {
         data: { emailVerifiedAt: new Date() }
       });
       updated = true;
-      log('user_marked_verified_emailVerifiedAt', { userId: rec.userId });
+      log('user_verified', { userId: rec.userId });
     } catch (e1) {
       try {
         await prisma.user.update({
@@ -430,6 +801,12 @@ app.get('/api/users/my-offers', requireUser, async (req, res) => {
 
 /* ==================== ADMIN ENDPOINTS ==================== */
 
+// NOTE: The GET /api/offers endpoint is now handled by the offers.js router
+// mounted at line 319: app.use('/api/offers', offersRouter)
+// This duplicate route below is commented out to avoid confusion.
+// The router intercepts the request first, so this code was never being executed.
+
+/* COMMENTED OUT - Duplicate route (handled by offers.js router instead)
 // Get all offers (admin only)
 app.get('/api/offers', requireAdmin, async (_req, res) => {
   try {
@@ -482,7 +859,9 @@ app.get('/api/offers', requireAdmin, async (_req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+END OF COMMENTED OUT DUPLICATE ROUTE */
 
+/* COMMENTED OUT - Duplicate route (handled by offers.js router instead)
 // Update offer status (admin only)
 app.put('/api/offers/:id/status', requireAdmin, async (req, res) => {
   try {
@@ -544,6 +923,7 @@ app.put('/api/offers/:id/status', requireAdmin, async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+END OF COMMENTED OUT DUPLICATE ROUTE */
 
 /* ==================== HTML ROUTES ==================== */
 app.get('/', (req, res) => {
@@ -567,8 +947,27 @@ app.get('/index.html', (req, res) => {
 });
 
 app.get('/playepage.html', (req, res) => {
-  console.log('[route:/playepage.html] serving playepage.html');
-  res.sendFile(path.join(__dirname, '..', 'playepage.html'));
+  console.log('═══════════════════════════════════════════════');
+  console.log('[route:/playepage.html] REQUEST RECEIVED');
+  console.log('[route:/playepage.html] Query params:', req.query);
+  console.log('[route:/playepage.html] athleteId:', req.query.athleteId);
+  console.log('[route:/playepage.html] Full URL:', req.url);
+  
+  const filePath = path.join(__dirname, '..', 'playepage.html');
+  console.log('[route:/playepage.html] Attempting to serve file from:', filePath);
+  console.log('[route:/playepage.html] __dirname:', __dirname);
+  console.log('[route:/playepage.html] File exists:', fs.existsSync(filePath));
+  
+  if (!fs.existsSync(filePath)) {
+    console.error('[route:/playepage.html] ❌ FILE NOT FOUND:', filePath);
+    console.error('[route:/playepage.html] Current directory:', process.cwd());
+    console.error('[route:/playepage.html] Directory contents:', fs.readdirSync(path.join(__dirname, '..')));
+    return res.status(404).send('playepage.html not found');
+  }
+  
+  console.log('[route:/playepage.html] ✅ Serving playepage.html');
+  console.log('═══════════════════════════════════════════════');
+  res.sendFile(filePath);
 });
 
 app.get('/my-offers.html', (req, res) => {
@@ -582,7 +981,7 @@ app.get('/verify.html', (req, res) => {
 });
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   NEW: NEWS PAGE ROUTES (added, nothing removed above)
+   NEWS PAGE ROUTES
    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 app.get('/news.html', (req, res) => {
@@ -593,6 +992,63 @@ app.get('/news.html', (req, res) => {
 app.get('/news', (req, res) => {
   console.log('[route:/news] redirect -> /news.html');
   res.redirect('/news.html');
+});
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   FAQ PAGE ROUTES (ADDED)
+   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+app.get('/faq.html', (req, res) => {
+  console.log('[route:/faq.html] serving faq.html');
+  res.sendFile(path.join(__dirname, '..', 'faq.html'));
+});
+
+app.get('/faq', (req, res) => {
+  console.log('[route:/faq] redirect -> /faq.html');
+  res.redirect('/faq.html');
+});
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   PRIVACY POLICY PAGE ROUTES
+   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+app.get('/privacy-policy.html', (req, res) => {
+  console.log('[route:/privacy-policy.html] serving privacy-policy.html');
+  res.sendFile(path.join(__dirname, '..', 'privacy-policy.html'));
+});
+
+app.get('/privacy-policy', (req, res) => {
+  console.log('[route:/privacy-policy] redirect -> /privacy-policy.html');
+  res.redirect('/privacy-policy.html');
+});
+
+app.get('/privacy', (req, res) => {
+  console.log('[route:/privacy] redirect -> /privacy-policy.html');
+  res.redirect('/privacy-policy.html');
+});
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   TERMS PAGE ROUTES
+   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+app.get('/terms.html', (req, res) => {
+  console.log('[route:/terms.html] serving terms.html');
+  res.sendFile(path.join(__dirname, '..', 'terms.html'));
+});
+
+app.get('/terms-of-service.html', (req, res) => {
+  console.log('[route:/terms-of-service.html] serving terms.html');
+  res.sendFile(path.join(__dirname, '..', 'terms.html'));
+});
+
+app.get('/terms', (req, res) => {
+  console.log('[route:/terms] redirect -> /terms.html');
+  res.redirect('/terms.html');
+});
+
+app.get('/terms-of-service', (req, res) => {
+  console.log('[route:/terms-of-service] redirect -> /terms.html');
+  res.redirect('/terms.html');
 });
 
 /* ==================== 404 & ERROR HANDLERS ==================== */

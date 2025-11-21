@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Terms of Service — Daps</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --container:1160px;
+      --radius:12px;
+      --radius-lg:14px;
+      --line:#EDEEF1;
+      --ink:#0A0A0B;
+      --muted:#6B7280;
+      --chip:#F7F8FA;
+      --chip-border:#E5E7EB;
+      --cta-a:#DAFA22;
+      --cta-b:#64FA00;
+      --shadow-1:0 2px 2px rgba(16,24,40,.04),0 10px 20px rgba(16,24,40,.07);
+      --shadow-2:0 8px 24px rgba(16,24,40,.12);
+      --beta:#FF6000;
+      --theme-primary:#0A0A0B;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    body{
+      margin:0;
+      background:#fff;
+      color:var(--ink);
+      font-family:'Manrope',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-size:16px;
+      line-height:1.6;
+    }
+
+    /* ======= SITE HEADER ======= */
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+    }
+
+    .bar{
+      max-width:var(--container);
+      margin:auto;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 20px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+    }
+
+    .brand .logo{
+      height:30px;
+      width:auto;
+    }
+
+    .beta{
+      font-size:12px;
+      font-weight:700;
+      color:#fff;
+      background:var(--beta);
+      padding:2px 8px;
+      border-radius:6px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav{
+      margin-left:24px;
+      display:flex;
+      gap:28px;
+      flex-wrap:wrap;
+    }
+
+    nav a{
+      position:relative;
+      color:#111;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:500;
+      opacity:.9;
+      padding-bottom:8px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    nav a:hover{
+      opacity:1;
+    }
+
+    nav a.active{
+      font-weight:600;
+    }
+
+    nav a.active::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:3px;
+      background:var(--theme-primary);
+      border-radius:2px;
+    }
+
+    .userbar{
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:10px;
+      border:1.5px solid var(--theme-primary);
+      background:var(--theme-primary);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      font-size:14px;
+      white-space:nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .btn.ghost{
+      background:#fff;
+      color:var(--theme-primary);
+    }
+
+    /* User Profile Badge */
+    .user-badge{
+      position:relative;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+      border:2px solid #fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+      font-family:'Poppins',sans-serif;
+    }
+
+    .user-badge:hover{
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+
+    /* Dropdown Menu */
+    .dropdown{
+      position:absolute;
+      right:0;
+      top:calc(100% + 8px);
+      min-width:200px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(16,24,40,.12);
+      padding:8px;
+      display:none;
+      z-index:1000;
+    }
+
+    .dropdown.open{
+      display:block;
+    }
+
+    .dropdown-header{
+      padding:12px 12px 8px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:4px;
+    }
+
+    .dropdown-name{
+      font-weight:700;
+      font-size:14px;
+      margin:0 0 2px;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-email{
+      font-size:12px;
+      color:#6B7280;
+      margin:0;
+    }
+
+    .dropdown-item{
+      display:block;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border:none;
+      background:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      color:#111;
+      text-decoration:none;
+      font-family:'Poppins',sans-serif;
+    }
+
+    .dropdown-item:hover{
+      background:#F9FAFB;
+    }
+
+    .dropdown-divider{
+      height:1px;
+      background:var(--line);
+      margin:4px 0;
+    }
+
+    /* hamburger (mobile) */
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:5px;
+      width:34px;
+      height:34px;
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      padding:0;
+    }
+
+    .hamburger span{
+      width:22px;
+      height:2px;
+      background:#111;
+      border-radius:2px;
+      transition:all 0.2s;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(1){
+      transform:rotate(45deg) translateY(8px);
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(2){
+      opacity:0;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(3){
+      transform:rotate(-45deg) translateY(-8px);
+    }
+
+    /* responsive styles for mobile */
+    @media (max-width:800px){
+      .hamburger{
+        display:flex;
+      }
+
+      nav{
+        display:none;
+      }
+
+      .bar{
+        padding:12px 16px;
+      }
+    }
+
+    /* ======= TERMS CONTENT ======= */
+
+    .terms-container{
+      max-width:800px;
+      margin:0 auto;
+      padding:60px 20px 100px;
+    }
+
+    .terms-header{
+      text-align:center;
+      margin-bottom:32px;
+      padding-bottom:32px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .terms-header h1{
+      font-family:'Poppins',sans-serif;
+      font-size:48px;
+      font-weight:900;
+      line-height:1.1;
+      letter-spacing:-0.02em;
+      margin:0 0 12px;
+      color:var(--ink);
+    }
+
+    .terms-header .effective-date{
+      font-size:14px;
+      font-weight:600;
+      color:var(--muted);
+      margin:0 0 20px;
+    }
+
+    .terms-notice{
+      padding:20px 24px;
+      background:#FEF3C7;
+      border:1px solid #FDE68A;
+      border-radius:12px;
+      margin-bottom:32px;
+      font-size:15px;
+      font-weight:600;
+      color:#92400E;
+      text-align:center;
+      line-height:1.6;
+    }
+
+    .terms-content h2{
+      font-family:'Poppins',sans-serif;
+      font-size:28px;
+      font-weight:800;
+      line-height:1.3;
+      letter-spacing:-0.01em;
+      margin:48px 0 20px;
+      color:var(--ink);
+      text-transform:uppercase;
+    }
+
+    .terms-content h2:first-child{
+      margin-top:0;
+    }
+
+    .terms-content p{
+      margin:0 0 16px;
+      line-height:1.7;
+      color:var(--ink);
+    }
+
+    .terms-content ul{
+      margin:16px 0;
+      padding-left:24px;
+    }
+
+    .terms-content li{
+      margin-bottom:8px;
+      line-height:1.7;
+      color:var(--ink);
+    }
+
+    .terms-content a{
+      color:#2563EB;
+      text-decoration:none;
+      font-weight:600;
+    }
+
+    .terms-content a:hover{
+      text-decoration:underline;
+    }
+
+    .terms-content strong{
+      font-weight:700;
+      color:var(--ink);
+    }
+
+    .terms-content em{
+      font-style:italic;
+    }
+
+    .contact-box{
+      margin-top:48px;
+      padding:24px;
+      background:#FAFBFC;
+      border:1px solid var(--line);
+      border-radius:12px;
+      text-align:center;
+    }
+
+    .contact-box h3{
+      font-family:'Poppins',sans-serif;
+      font-size:20px;
+      font-weight:800;
+      margin:0 0 12px;
+      color:var(--ink);
+    }
+
+    .contact-box p{
+      margin:0 0 16px;
+      color:var(--muted);
+    }
+
+    .contact-box a{
+      color:#2563EB;
+      font-weight:700;
+      text-decoration:none;
+    }
+
+    .contact-box a:hover{
+      text-decoration:underline;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width:768px){
+      .terms-header h1{
+        font-size:36px;
+      }
+
+      .terms-content h2{
+        font-size:24px;
+      }
+
+      .terms-container{
+        padding:40px 20px 80px;
+      }
+
+      .terms-notice{
+        font-size:14px;
+        padding:16px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="bar">
+      <div class="brand" onclick="window.location.href='/index.html'">
+        <img class="logo" src="/images/logo.png" alt="Daps logo"/>
+        <span class="beta">BETA</span>
+      </div>
+
+      <nav id="nav">
+        <a id="nav-home" href="/index.html">Home</a>
+        <a id="nav-press" href="/news.html">Press</a>
+        <a id="nav-faq" href="/faq.html">FAQ</a>
+      </nav>
+
+      <div class="userbar">
+        <div class="user-badge" id="userBadge" onclick="toggleDropdown()" style="display:none;">
+          <span id="userInitials"></span>
+          <div class="dropdown" id="userDropdown">
+            <div class="dropdown-header">
+              <p class="dropdown-name" id="dropdownName"></p>
+              <p class="dropdown-email" id="dropdownEmail"></p>
+            </div>
+            <button class="dropdown-item" onclick="logout()">Sign out</button>
+          </div>
+        </div>
+        <a class="btn ghost" id="signInBtn" href="/user.html" style="display:none;">Sign in</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- TERMS CONTENT -->
+  <main class="terms-container">
+    <div class="terms-header">
+      <h1>Terms of Service</h1>
+      <p class="effective-date">Effective Date: February 20, 2025</p>
+      <div class="terms-notice">
+        PLEASE REVIEW THESE TERMS CAREFULLY AS THEY AFFECT YOUR LEGAL RIGHTS AND CONTAIN A MANDATORY ARBITRATION PROVISION AND A WAIVER OF CLASS ACTION REMEDIES.
+      </div>
+    </div>
+
+    <div class="terms-content">
+      <p>These Terms of Service (these "Terms") form a binding legal agreement between Daps Sports, Inc. ("we", "us", or "our") and you regarding the use of the Daps mobile app(s), website, platform, and related offerings and services (collectively, the "Platform").</p>
+
+      <p>By registering an account or otherwise accessing or using the Platform, you agree to be bound by these Terms. We may update these Terms from time to time in our discretion. We will always keep the current version of these Terms posted on this website. By using the Platform after a new version of these Terms have been posted, you agree to the terms and conditions of such version of these Terms. If you do not agree to these Terms, you must immediately cease your use of the Platform.</p>
+
+      <p>The Platform is intended to facilitate connections between professional or amateur athletes and sports figures ("Athletes") and fans and other users (collectively, "Fans"). The Platform lets Fans make bids to purchase a collectible (for example, a game-worn jersey or autographed item) (a "Collectible") or one-off digital and/or in-person experiences (for example, social media shout-outs, video calls, meeting after a game) (an "Experience") or co. from Athletes. Collectibles and Experiences are both referred to in these Terms as "Transactions".</p>
+
+      <h2>Payment</h2>
+      <p>The price for each Collectible or Experience purchased from an Athlete will be determined by the Athlete accepting the Fan's bid amount. Fans will not be charged unless an Athlete accepts their bid. When you place a bid, you are committing to purchase the Collectible or Experience as soon as the Athlete accepts your bid.</p>
+
+      <p>In order to allow us to operate the Platform, we charge a fixed or percentage-based fee for each Transaction, along with any other fees described on the Platform (collectively, the "Fees"). Our Fees are withheld from the applicable payment made to the Athlete.</p>
+
+      <p>By providing us a payment card or other payment method information, you authorize us to automatically charge you for the designated amount should your bid be accepted by an Athlete.</p>
+
+      <p>You acknowledge and agree that we may use one or more third-party payment processors to facilitate payments made through the Platform, and that such payment processors will receive sufficient information regarding you and your payment method as needed to process such payments. We may impose a reasonable hold period on paid amounts, for funding confirmation and anti-fraud purposes. All payments are non-refundable unless otherwise expressly stated.</p>
+
+      <p>The Fees are exclusive of taxes, and any taxes incurred by us based on our provision of the Platform or processing of any Transactions will be charged to Fans in addition to the Fees. Athletes are responsible for any taxes they may incur in connection with their use of the Platform or amounts received in connection with such use.</p>
+
+      <p>We will pay Athletes amounts received from Fans for applicable Transactions, less our Fees and any third-party processing fees and charges (for example, charges we incur from our payment processor to transfer payment to the Athlete). We will make such payments in arrears.</p>
+
+      <p>We may hold payments for Collectibles and Experiences until the applicable Athlete and/or Fan have confirmed the Collectible was delivered or the Experience was completed. We may process a refund if a Collectible is not delivered or an Experience has not been completed within a reasonable period of time, or if the Athlete cancels the Experience or is unable to ship the Collectible. If the Athlete and Fan disagree over whether the Collectible was delivered or the Experience was completed: (i) we may seek to facilitate a resolution but are under no obligation to do so; and (ii) we may in our discretion choose to either refund the amounts paid by the Fan and/or pay the applicable amount to the Athlete (or allow the Athlete to retain amounts paid); and (iii) you agree that if you have any further dispute with the counterparty to such Transaction (either the Fan or the Athlete, as applicable) your claim is against them, not us.</p>
+
+      <h2>Acknowledgments and Responsibilities</h2>
+      <p>You agree and acknowledge the following:</p>
+
+      <p><strong>Information and Accounts:</strong> You will be required to provide certain information (including personal information) to register your account on the Platform, and you will be required to provide additional information, including payment information, to complete a Transaction. You are responsible for ensuring you provide complete and accurate information and keep such information up to date, and you are responsible for any liability or damages arising from false, fraudulent, or incomplete information. Such information may be shared as described in our privacy policy. You are responsible for maintaining the security of your account and your login credentials, and you will be responsible for any actions taken using your account credentials. Even though we may endeavor to provide you with reasonable records or receipts of your transactions, you are ultimately responsible for keeping your own records and making appropriate backups – we will not be responsible for any loss of data in our possession or control.</p>
+
+      <p><strong>Transactions:</strong> You must be at least 18 years old (or the applicable age of majority in your legal jurisdiction) to enter into any Transactions. Parents or legal guardians may use the Platform on behalf of a child under such age. You are responsible for Transactions you enter into, including: (i) identifying an appropriate Athlete or Fan to work with; (ii) negotiating and clearly defining the agreed scope of the Transaction (e.g., what services or deliverables are expected and the amount and timing of payment); and (iii) fulfilling your obligations under any Transaction you have entered into. You are solely responsible for selecting the Athletes or Fans you wish to work with – we provide a platform to facilitate these connections, but do not endorse any Athletes or Fans. WE ARE NOT PARTY TO ANY TRANSACTIONS YOU ENTER INTO WITH ANY ATHLETE OR FAN, AND WE ARE NOT RESPONSIBLE FOR ANY ATHLETE'S OR FAN'S FULFILLMENT OF ANY TRANSACTION.</p>
+
+      <p><strong>Electronic Signatures:</strong> You consent to the use of electronic signatures in connection with the Platform, including your acceptance of these Terms and our other policies and the entry into any Transactions through the Platform. Your electronic signature (which may include checking boxes, clicking "I accept", spelling out your name, or otherwise taking actions intended to indicate acceptance) will be as valid and binding as a handwritten signature.</p>
+
+      <p><strong>Compliance:</strong> You are responsible for your own compliance with applicable laws, rules, and regulations. Without limiting the generality of the foregoing, you are responsible for compliance with: (i) any rules or policies promulgated by applicable institutions, including without limitation the Athlete's educational institution, athletic conference, the NCAA, or any similar governing bodies; and (ii) advertising, sponsorship, and consumer protection rules and guidelines promulgated by the FTC or any other governing body.</p>
+
+      <h2>Community Standards</h2>
+      <p>We are not responsible for the conduct of any Platform users. You will act in a professional, respectful, ethical, and lawful manner when using the Platform. Without limiting the foregoing, you represent, warrant, and agree that you will not, directly or indirectly: (i) remove any trademark or copyright notices or watermarks contained in the Platform or any information, data, text, software, music, sound, photographs, graphics, video, messages, or other material or content that are displayed, used, or otherwise incorporated into the Platform (collectively, "Content"); (ii) reproduce, modify, publish, distribute, transmit, disseminate, transfer, license, sell, lease, create derivative works based upon, or in any way commercially exploit the Platform or Content outside of the Platform, including seeking to extract or copy any Content (other than sharing it through the Platform's built-in sharing functionality, if any); (iii) use manual or automated means to trawl, mine, scrape, frame, or mirror the Platform or Content; (iv) disassemble, decompile or reverse engineer the Platform or Content; (v) attempt to hack, defeat, or overcome any encryption technology or security measures regarding the Platform or our other systems or those of any third party, or gain any unauthorized access to any systems or accounts; (vi) interfere with or disrupt the operation of the Platform or any other systems or otherwise interrupt or interfere with any other user's use or enjoyment of the Platform; (vii) promote illegal activity or violate any applicable local, state, national or international law; (viii) post or transmit any Content, submit any request, or otherwise behave in any manner, that is discriminatory, unlawful, defamatory, abusive, harassing, threatening, indecent, pornographic, obscene, fraudulent or otherwise inappropriate or infringes any intellectual property or privacy or other rights of any person; (ix) send unsolicited advertisements; (x) impersonate any person or misrepresent your identity or affiliation; (xi) use the Platform in a way that is not for its intended purposes or that will adversely affect us or reflect negatively on us, any of our goodwill, name or reputation; (xii) provide any false or misleading information or any information that you do not have the right to provide; or (xiii) otherwise violate any of our published rules, policies, or guidelines.</p>
+
+      <h2>Content; Ownership and License</h2>
+      <p>"Content" means all information, data, text, software, music, sound, photographs, graphics, video, messages, or other material or content that are displayed, used, or otherwise incorporated into the Platform.</p>
+
+      <p>All Content other than Your Content (as defined below) is owned by us or our third-party licensors and is protected by applicable copyright, trademark, and/or other intellectual property laws. Nothing contained on the Platform should be construed as granting any license or right to use any of the Content without our written permission. Subject to your continued compliance with these Terms, we hereby grant you a personal, non-exclusive, revocable, non-transferable and non-sublicensable license to access and use the Platform and Content for your personal use. Any use of the Content (including our names, logos, and trademarks) will inure to our benefit.</p>
+
+      <p>If you believe that any Content infringes your copyrights or that your intellectual property rights have been otherwise harmed, immediately notify our designated copyright agent by emailing <a href="mailto:hey@getdaps.io">hey@getdaps.io</a>. Your notice must comply with the requirements of the DMCA by including the following: (i) a physical or electronic signature of a person authorized to act on behalf of the owner of an exclusive right that is allegedly infringed; (ii) identification of the copyrighted work claimed to have been infringed, or, if multiple copyrighted works at a single online site are covered by a single notification, a representative list of such works at that site; (iii) identification of the material that is claimed to be infringing or to be the subject of infringing activity and that is to be removed or access to which is to be disabled, and information reasonably sufficient to permit us to locate the material; (iv) information reasonably sufficient to permit us to contact you, such as an address, telephone number, and, if available, an electronic mail address at which the complaining party may be contacted; (v) a statement that you have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law; and (vi) a statement that the information in the notification is accurate, and under penalty of perjury, that you are authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.</p>
+
+      <p>If you repeatedly infringe third party copyrights (e.g., by submitting Content without permission), whether proven or alleged, it is our policy to terminate your account on the Platform.</p>
+
+      <h2>Your Content; Feedback</h2>
+      <p>"Your Content" means any Content submitted to the Platform by you. We have the right, but no obligation, to monitor or screen Your Content and remove any of Your Content that we deem objectionable in any way. By submitting any of Your Content, you: (i) represent and warrant that you have all right, title, and interest to do so; (ii) acknowledge that Your Content will not be treated as confidential, and may be publicly visible via the Platform; (iii) grant us and our affiliates a non-exclusive, worldwide, perpetual, irrevocable, fully paid, royalty-free, and fully transferable and sublicensable license to use, reproduce, display, perform, modify, transmit, distribute and create derivative works of Your Content in any media and for any purpose whatsoever (including to operate, maintain, improve, and promote the Platform) without attribution or compensation; and (iv) irrevocably waive any claims of moral rights, privacy, publicity, or similar rights in any of Your Content.</p>
+
+      <p>YOU ACKNOWLEDGE THAT YOUR CONTENT WILL NOT BE KEPT CONFIDENTIAL AND WILL BE VISIBLE TO SOME OR ALL PLATFORM USERS. YOUR SUBMISSION OF CONTENT IS AT YOUR OWN SOLE RISK. PLEASE DO NOT SUBMIT ANY CONTENT THAT YOU WOULD PREFER TO KEEP CONFIDENTIAL.</p>
+
+      <p>In addition to and separately from the rights assigned above, if you use the Platform as an Athlete, you also hereby grant us the right to use your image, likeness, photo, video, voice, name, and biographical information to promote the Platform and your participation as an Athlete on the Platform in any media worldwide, and release any claims of publicity or privacy rights, or rights of publicity, regarding any such usage and promotion. Upon request from time to time you will provide us promotional materials such as high-resolution images, bio or resume, introductory videos, or otherwise for our use in these purposes and to establish your profile on the Platform. The rights you grant us in this paragraph will survive the termination or expiration of our relationship with you, provided that we will not create new marketing materials describing you as a participating Athlete once you no longer have an active account on the Platform.</p>
+
+      <p>If you provide feedback, suggestions, improvements, or requests for additional functionality (collectively, "Feedback"), you grant us an unrestricted, perpetual, irrevocable, royalty-free, worldwide license to use, reproduce, display, perform, modify, transmit, distribute, and create derivative works of such Feedback in any way we deem reasonable, without any attribution or accounting to you. This paragraph will survive any termination or expiration of these Terms or of your account on the Platform.</p>
+
+      <h2>Third Parties</h2>
+      <p>The Platform may contain links to websites owned or operated by third parties. We do not control or endorse such websites and we are not responsible for their content, nor are we responsible for the accuracy or reliability of any information, data, opinions, advice, or statements contained within such websites. We have the right, but not the obligation, to review any Content provided by third parties (including other users of the Platform) and may remove any such Content for any or no reason. We do not endorse such third-party Content, and any views expressed therein are the views of the applicable author and do not necessarily align with our views. We are not responsible for the accuracy or reliability of any Content provided by third parties and will not be liable for any causes of action (including slander, libel, or invasion of privacy) relating to such third-party Content. We have no control over, and are not responsible for, your interactions (online or in person) with any third parties, including other users of the Platform even if introduced via the Platform. You are solely responsible for your interactions with any third parties. If you have any disputes with other users of the Platform, we may (at our discretion) attempt to facilitate a resolution but are under no obligation to do so.</p>
+
+      <h2>Disclaimers</h2>
+      <p>YOUR USE OF THE PLATFORM AND CONTENT IS AT YOUR SOLE RISK AND THE PLATFORM ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. WE AND OUR LICENSORS EXPRESSLY DISCLAIM ALL WARRANTIES OF ANY KIND RELATED TO THE PLATFORM AND CONTENT, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT, OR THAT USE OF THE PLATFORM WILL BE UNINTERRUPTED OR ERROR-FREE OR THE CONTENT WILL BE COMPLETE OR ACCURATE. WE ARE NOT RESPONSIBLE FOR ANY PROBLEMS OR TECHNICAL MALFUNCTION OF ANY ELECTRONIC NETWORK OR LINES, SERVERS, SOFTWARE, OR FAILURE OF TRANSMISSION AS A RESULT OF TECHNICAL PROBLEMS OR TRAFFIC CONGESTION ON THE INTERNET OR ON ANY OF THE PLATFORM, INCLUDING ANY INJURY OR DAMAGE TO ANY PERSON'S COMPUTER RESULTING FROM PARTICIPATION OR DOWNLOADING MATERIALS IN CONNECTION WITH THE PLATFORM.</p>
+
+      <p>NEITHER WE, THE PLATFORM, NOR THE CONTENT PROVIDE ATHLETIC COMPLIANCE, LEGAL, TAX, FINANCIAL OR OTHER PROFESSIONAL ADVICE. YOU SHOULD CONSULT PROFESSIONAL ADVISORS ABOUT THE ATHLETIC COMPLIANCE, LEGAL, TAX, OR FINANCIAL CONSEQUENCES OF YOUR ACTIVITIES. WE CANNOT GUARANTEE ANY SPECIFIC RESULTS FROM USE OF THE PLATFORM OR CONTENT. THE PLATFORM IS PROVIDED TO FACILITATE CONNECTIONS BETWEEN THIRD-PARTY ATHLETES AND FANS. WE ARE NOT A BROKER OR AGENT OF ANY OF ATHLETES OR FANS LISTED ON THE PLATFORM.</p>
+
+      <p>UNDER NO CIRCUMSTANCES SHALL WE BE RESPONSIBLE FOR ANY LOSS OR DAMAGE, INCLUDING PERSONAL INJURY OR DEATH, RESULTING FROM USE OF THE PLATFORM, CONTENT, OR FROM THE CONDUCT OF ANY USERS OF THE PLATFORM OR OTHER THIRD PARTIES. WE DO NOT ENDORSE ANY USERS OR OTHER THIRD PARTIES LISTED, REFERENCED, OR REGISTERED USING THE PLATFORM.</p>
+
+      <p>WE MAY PLACE A SUSPENSION, HOLD, OR FREEZE ON USER ACCOUNTS OR PAYMENTS IF WE BELIEVE IT IS REASONABLY NECESSARY IN ORDER TO COMPLY WITH THE LAW OR TO PROTECT OUR SYSTEMS OR INTERESTS OR THOSE OF OUR USERS OR THIRD PARTIES, INCLUDING IN CASES OF SUSPECTED FRAUD OR ILLEGAL ACTIVITY. WE WILL HAVE NO LIABILITY FOR ANY SUCH ACTIONS.</p>
+
+      <p>SOME STATES DO NOT ALLOW CERTAIN DISCLAIMERS OR LIMITATIONS ON WARRANTIES, SO SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU. THESE LIMITATIONS WILL APPLY TO THE MAXIMUM EXTENT PERMITTED BY LAW.</p>
+
+      <h2>Limitation of Liability</h2>
+      <p>TO THE FULLEST EXTENT ALLOWED BY APPLICABLE LAW, NEITHER WE NOR OUR LICENSORS WILL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, GOODWILL, OR DATA (EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), RESULTING FROM THE USE OF OR THE INABILITY TO USE THE PLATFORM, UNDER ANY LEGAL THEORY WHATSOEVER (INCLUDING, WITHOUT LIMITATION, TORT, CONTRACT, STRICT LIABILITY, OR OTHERWISE). TO THE FULLEST EXTENT ALLOWED BY APPLICABLE LAW, NEITHER WE NOR OUR LICENSORS WILL BE LIABLE TO YOU FOR AN AGGREGATE AMOUNT EXCEEDING THE GREATER OF $100 USD OR THE AMOUNTS PAID BY YOU TO US IN THE PAST THREE MONTHS. SOME STATES DO NOT ALLOW CERTAIN LIMITATIONS OF LIABILITY FOR DAMAGES, SO THE ABOVE MAY NOT APPLY TO YOU. YOUR SOLE REMEDY IF YOU ARE DISSATISFIED WITH THE PLATFORM IS TO DISCONTINUE YOUR USE THEREOF.</p>
+
+      <h2>Release and Indemnity</h2>
+      <p>You will release, defend, indemnify, and hold us, our past, present, and future affiliates, licensors, licensees, marketing partners, and suppliers, together with their respective officers, directors, employees, and agents, harmless from and against any damages, losses, claims, actions or demands, liabilities and settlements including without limitation, reasonable legal and accounting fees, resulting from your use of the Platform, Your Content, your violation of these Terms, and any Transaction you consider or enter into (including any dispute with an Athlete or Fan as to the performance of obligations under a Transaction, quality of any services or deliverables, amount and timeliness of payment, etc.). We may opt to defend such claims at our sole discretion, in which case you will indemnify us for the costs of such defense.</p>
+
+      <p>CALIFORNIA RESIDENTS HEREBY WAIVE CALIFORNIA CIVIL CODE SECTION 1542, WHICH STATES: "A GENERAL RELEASE DOES NOT EXTEND TO CLAIMS THAT THE CREDITOR OR RELEASING PARTY DOES NOT KNOW OR SUSPECT TO EXIST IN HIS OR HER FAVOR AT THE TIME OF EXECUTING THE RELEASE, AND THAT IF KNOWN BY HIM OR HER WOULD HAVE MATERIALLY AFFECTED HIS OR HER SETTLEMENT WITH THE DEBTOR OR RELEASED PARTY."</p>
+
+      <h2>Termination</h2>
+      <p>We reserve the right to modify or discontinue, temporarily or permanently, the Platform (or any part thereof) without notice. We may terminate or suspend your account at any time, for any reason, without liability to you. Your right to use the Platform will automatically terminate if you breach these Terms. You may stop using the Platform at any time; to delete your account please contact us as set forth at the end of these Terms. Termination will not relieve either party from any obligations incurred or arising prior to such termination, and those sections of these Terms which are by their nature intended to survive termination (including, without limitation, the disclaimers, limitation of liability, indemnity, and general clauses) shall so survive. WITHOUT LIMITING THE GENERALITY OF THE FOREGOING, YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT WE MAY CONTINUE TO HOST, DISPLAY, AND OTHERWISE USE YOUR CONTENT EVEN AFTER YOUR ACCOUNT HAS BEEN TERMINATED.</p>
+
+      <h2>Governing Law; Mandatory Arbitration; Waiver of Jury Trial and Class Action</h2>
+      <p>These terms are governed by and will be construed in accordance with the laws of the State of New York, without regard to the conflicts of laws provisions thereof.</p>
+
+      <p>THE PARTIES AGREE THAT ANY DISPUTES ARISING IN CONNECTION WITH THE PLATFORM OR THESE TERMS OR OUR PRIVACY POLICY WILL BE EXCLUSIVELY RESOLVED IN BINDING, CONFIDENTIAL ARBITRATION USING THE DISPUTE RESOLUTION PROCEDURES OF THE AMERICAN ARBITRATION ASSOCIATION LOCATED IN NEW YORK, NEW YORK. NOTWITHSTANDING THE FOREGOING OBLIGATION TO ARBITRATE DISPUTES, EACH PARTY SHALL HAVE THE RIGHT TO PURSUE INJUNCTIVE OR OTHER EQUITABLE RELIEF AT ANY TIME, FROM ANY COURT OF COMPETENT JURISDICTION.</p>
+
+      <p>THE PARTIES HERETO EXPRESSLY WAIVE THE RIGHT TO TRIAL BY JURY AND ANY RIGHT TO PARTICIPATE IN CLASS-ACTION PROCEEDINGS. YOU ACKNOWLEDGE THAT BOTH PARTIES ARE GIVING UP CERTAIN LEGAL RIGHTS THEY WOULD OTHERWISE HAVE TO LITIGATE DISPUTES, ENGAGE IN THE KIND OF DISCOVERY ALLOWED IN LITIGATION, AND OTHERWISE.</p>
+
+      <p>You have the right to opt out of the mandatory arbitration provision by sending written notice of such decision to us at 52 East 80th Street, New York, NY 10075, Attn: Arbitration Opt-Out. Your notice must be received within 30 days from date you first created an account on the Platform, and must include your name and address, each email address you have used to set up an account on the Platform, and an unequivocal statement that you want to opt out of the mandatory arbitration provisions. If you opt-out as described above, we will be automatically deemed to have opted out as well and will be free to pursue legal claims in court against you in the event of any disputes.</p>
+
+      <h2>Force Majeure</h2>
+      <p>We will not be responsible or liable for any delays or failures to perform due to causes beyond our reasonable control, which may include natural disasters, terrorist attacks, criminal activity, failure of internet or communications networks, health emergencies including pandemics or similar serious outbreaks of disease, or other force majeure events.</p>
+
+      <h2>General</h2>
+      <p>We may from time to time offer you the chance to try certain "beta" or "evaluation" products, services, features, or functionality ("Beta Offerings"). NOTWITHSTANDING ANYTHING TO THE CONTRARY HEREIN, ALL BETA OFFERINGS ARE PROVIDED ON A COMPLETE "AS-IS" BASIS WITHOUT REPRESENTATIONS OR WARRANTIES OF ANY KIND WHATSOEVER, AND WE WILL HAVE NO LIABILITY IN CONNECTION WITH THE BETA OFFERINGS.</p>
+
+      <p>Some or all of the Platform's features and services may be limited or unavailable to users who are not residents and/or citizens of the United States.</p>
+
+      <p>You may not assign these Terms or these rights and obligations without our prior written consent; any purported assignment in violation of these Terms will be null and void. If any provision of these Terms is determined to be void or unenforceable in whole or in part, the remaining provisions of these Terms shall not be affected thereby and shall remain in force and effect.</p>
+
+      <p>These Terms and any policies referenced herein constitute the entire agreement between the parties regarding the subject matter thereof and supersede any prior or contemporaneous agreements with regards to such subject matter. A party's failure to exercise or enforce any right or provision of these Terms shall not operate as a waiver of such right or provision.</p>
+
+      <p>You may provide notice to us by contacting us as set forth below. We may provide notice to you by email or regular mail at the address listed in your account profile, or through messages displayed or sent via this website or the Platform.</p>
+
+      <div class="contact-box">
+        <h3>Contact</h3>
+        <p>For more information or for help in answering any questions, please contact us at:</p>
+        <a href="mailto:hey@getdaps.io">hey@getdaps.io</a>
+      </div>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--line);background:#FAFBFC">
+    <div style="max-width:var(--container);margin:auto;padding:26px 20px;display:flex;align-items:center;gap:18px;color:#6B7280;font-size:14px">
+      <span>Copyright © 2025 Daps</span>
+      <span style="margin-left:auto"></span>
+      <a href="/privacy-policy.html" style="color:inherit;text-decoration:none">Privacy policy</a><span aria-hidden="true"> · </span>
+      <a href="/terms-of-service.html" style="color:inherit;text-decoration:none">Terms of use</a>
+    </div>
+  </footer>
+
+  <script>
+    var API = 'http://localhost:5175';
+    var currentUser = null;
+
+    // Check authentication and update UI - matches index.html
+    function checkAuth() {
+      var token = localStorage.getItem('jwt');
+      if (!token) {
+        document.getElementById('signInBtn').style.display = 'inline-block';
+        document.getElementById('userBadge').style.display = 'none';
+        return;
+      }
+
+      fetch(API + '/api/users/me', {
+        headers: { Authorization: 'Bearer ' + token }
+      }).then(function(res){
+        if (!res.ok) throw new Error('Not authenticated');
+        return res.json();
+      }).then(function(user){
+        currentUser = user;
+        var initials = ((user.firstName || '')[0] || '') + ((user.lastName || '')[0] || '');
+        document.getElementById('userInitials').textContent = initials.toUpperCase() || 'U';
+        document.getElementById('dropdownName').textContent = (user.firstName || '') + ' ' + (user.lastName || '');
+        document.getElementById('dropdownEmail').textContent = user.email || '';
+        document.getElementById('signInBtn').style.display = 'none';
+        document.getElementById('userBadge').style.display = 'flex';
+      }).catch(function(){
+        localStorage.removeItem('jwt');
+        document.getElementById('signInBtn').style.display = 'inline-block';
+        document.getElementById('userBadge').style.display = 'none';
+      });
+    }
+
+    // Toggle dropdown
+    window.toggleDropdown = function() {
+      var dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('open');
+    };
+
+    // Logout
+    window.logout = function() {
+      localStorage.removeItem('jwt');
+      currentUser = null;
+      window.location.reload();
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e){
+      var badge = document.getElementById('userBadge');
+      var dropdown = document.getElementById('userDropdown');
+      if (badge && dropdown && !badge.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // OPTIONAL: mobile nav toggle behavior
+    (function(){
+      var burger = document.getElementById('hamburger');
+      var nav = document.getElementById('nav');
+      if(!burger || !nav) return;
+
+      burger.addEventListener('click', function(){
+        var expanded = burger.getAttribute('aria-expanded') === 'true';
+        var next = !expanded;
+        burger.setAttribute('aria-expanded', String(next));
+        // simple show/hide
+        if(next){
+          nav.style.display = 'flex';
+          nav.style.flexDirection = 'column';
+          nav.style.position = 'absolute';
+          nav.style.top = '60px';
+          nav.style.right = '20px';
+          nav.style.background = '#fff';
+          nav.style.border = '1px solid var(--line)';
+          nav.style.borderRadius = '12px';
+          nav.style.padding = '16px';
+          nav.style.boxShadow = 'var(--shadow-2)';
+          nav.style.gap = '16px';
+          nav.style.zIndex = '9999';
+        } else {
+          nav.removeAttribute('style');
+        }
+      });
+    })();
+
+    // Initialize auth check on page load
+    checkAuth();
+  </script>
+
+</body>
+</html>
